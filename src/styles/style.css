@@ -1,0 +1,913 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  /* Matches CONFIG.plainColor. The sticky canvas and the plain section
+     meet edge-to-edge as you scroll past the track, and a black page
+     behind them shows any sub-pixel rounding there as a dark hairline. */
+  background: #fefef7;
+  width: 100%;
+  height: 100%;
+  scrollbar-width: none; /* Firefox: cosmetic only, does not affect scroll behavior */
+  -ms-overflow-style: none; /* old Edge/IE */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome/Safari: cosmetic only */
+}
+
+#scroll-track {
+  position: relative;
+  width: 100%;
+  /* height is set in JS based on frame count + speed config */
+}
+
+#scene {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: block;
+  background: #fefef7;
+}
+
+#plain-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: #fefef7; /* CONFIG.plainColor in script.js */
+  color: rgba(20, 18, 14, 0.86);
+  /* deliberately not `overflow: hidden` — that would make this a scroll
+     container and stop the portraits sticking */
+}
+
+/* ---- founder profiles --------------------------------------------- */
+.profile {
+  display: grid;
+  grid-template-columns: minmax(0, 34%) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 88px);
+  align-items: start;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: clamp(90px, 16vh, 200px) 6% clamp(70px, 12vh, 160px);
+}
+
+.profile + .profile {
+  border-top: 1px solid rgba(20, 18, 14, 0.14);
+}
+
+/* ---- our story ------------------------------------------------------
+   Keeps the profile's outer frame — same max-width, same page margin — so
+   it sits in the same measure as the two profiles. But it has no portrait
+   column, so it drops to a single centred column rather than leaving the
+   left third empty. */
+#story {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  text-align: center;
+}
+
+#story .profile-body {
+  max-width: 66ch;
+}
+
+/* The profile rules cap the measure and left-align it against a portrait
+   that is not here; centred, the text needs its measure centred too. */
+#story .profile-body p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* The bracketing rule belongs to the left of left-aligned text. Centred, it
+   reads as a stray mark, so the quote stands on its own. */
+#story .pull {
+  border-left: none;
+  padding-left: 0;
+  max-width: 26ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* A shade smaller than a profile name — it is two full lines rather than
+   a person's name, and at the profile size it swamped the page.
+   Written as .profile-name.story-title so it wins on specificity: a bare
+   .story-title ties with .profile-name and would lose on source order. */
+.profile-name.story-title {
+  font-size: clamp(26px, 3.4vw, 46px);
+  line-height: 1.08;
+  margin-bottom: 0.5em;
+}
+
+.profile-portrait {
+  position: sticky;
+  top: 16vh;
+}
+
+.profile-portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The scoped selector is not redundant: these labels are <p> elements
+   inside .profile-body, and `.profile-body p` (0,1,1) outranks a bare
+   `.eyebrow` (0,1,0) whatever the source order — so the label was being
+   set as an oversized, letterspaced body paragraph. */
+.eyebrow,
+.profile-body p.eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(20, 18, 14, 0.55);
+  margin-bottom: 1.6em;
+}
+
+.profile-name {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(34px, 5vw, 68px);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.34em;
+  color: var(--brand-red);
+}
+
+/* Same specificity problem as .eyebrow above. */
+.profile-role,
+.profile-body p.profile-role {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(20, 18, 14, 0.55);
+  margin-bottom: 2.4em;
+}
+
+.profile-body p {
+  font-family: var(--text);
+  font-size: clamp(16px, 1.15vw, 18.5px);
+  line-height: 1.72;
+  margin-bottom: 1.5em;
+  max-width: 62ch;
+}
+
+.profile-body .lede {
+  font-size: clamp(18px, 1.6vw, 25px);
+  line-height: 1.5;
+  color: rgba(20, 18, 14, 0.95);
+  margin-bottom: 1.8em;
+}
+
+.profile-body .stanza {
+  color: rgba(20, 18, 14, 0.66);
+}
+
+.pull {
+  font-family: var(--serif);
+  font-size: clamp(24px, 3.2vw, 44px);
+  line-height: 1.22;
+  margin: 0.4em 0 1.5em;
+  padding-left: 0.62em;
+  border-left: 1px solid rgba(20, 18, 14, 0.3);
+  max-width: 22ch;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: clamp(18px, 2.5vw, 44px);
+  margin-top: clamp(36px, 5vh, 64px);
+  padding-top: clamp(24px, 3vh, 40px);
+  border-top: 1px solid rgba(20, 18, 14, 0.16);
+}
+
+.stats dt {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3.4vw, 46px);
+  line-height: 1;
+  margin-bottom: 0.34em;
+}
+
+.stats dd {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(20, 18, 14, 0.55);
+  line-height: 1.6;
+}
+
+@media (max-width: 880px) {
+  .profile {
+    grid-template-columns: 1fr;
+    gap: clamp(24px, 6vw, 48px);
+  }
+
+  .profile-portrait {
+    position: static;
+    max-width: 340px;
+  }
+}
+
+/* ---- looping hero video -------------------------------------------
+   Sits over the frame canvas at the top of the page and fades out as
+   you scroll, so the sequence underneath is revealed rather than cut
+   to. Opacity is driven per-frame from script.js. */
+#hero-loop {
+  position: fixed;
+  inset: 0;
+  z-index: 65; /* over the canvas, under the grid (70) and logo (80) */
+  background: #fefef7; /* CONFIG.plainColor, so no dark flash before it paints */
+  overflow: hidden;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+#loop-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- navigation grid ------------------------------------------------
+   Tune the whole layout from these four values; every line, marker and
+   label is positioned off them. */
+:root {
+  /* Resting position of the frame. Script.js slides these to follow the
+     fruit, so keep them in step with FRAME_BASE there. */
+  --frame-l: 6%;
+  --frame-r: 94%;
+  --frame-t: 11%;
+  --frame-b: 71%;
+
+  --ink: rgba(20, 18, 14, 0.28);
+  --ink-strong: rgba(20, 18, 14, 0.6);
+
+  /* Display only — names, pull quotes, figures, the scroll copy.
+     Instrument Serif is a high-contrast display serif: it is drawn to be
+     set large, and thins out badly in a paragraph. */
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+
+  /* Running text. Newsreader is a reading face — bigger x-height, much
+     less stroke contrast, spaced for continuous prose — so the founder
+     stories hold up at 16px in a way the display serif never could.
+     Georgia leads the fallbacks for the same reason. */
+  --text: "Newsreader", Georgia, "Times New Roman", serif;
+
+  /* JetBrains Mono rather than the system stack: ui-monospace resolves to
+     Consolas on Windows, which reads as code next to this type. */
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* Sampled from the wordmark in logo.png — its dominant fully-opaque red. */
+  --brand-red: #c72f1d;
+}
+
+#grid-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+}
+
+.grid-line {
+  position: absolute;
+  background: var(--ink);
+}
+
+.grid-line--v {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+
+.grid-line--h {
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+.frame-l { left: var(--frame-l); }
+.frame-r { left: var(--frame-r); }
+.frame-t { top: var(--frame-t); }
+.frame-b { top: var(--frame-b); }
+
+/* four-pointed stars at the corners of the frame */
+.marker {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  transform: translate(-50%, -50%);
+  background: var(--ink-strong);
+  clip-path: polygon(
+    50% 0%, 58% 42%, 100% 50%, 58% 58%,
+    50% 100%, 42% 58%, 0% 50%, 42% 42%
+  );
+}
+
+.marker--tl { left: var(--frame-l); top: var(--frame-t); }
+.marker--tr { left: var(--frame-r); top: var(--frame-t); }
+.marker--bl { left: var(--frame-l); top: var(--frame-b); }
+.marker--br { left: var(--frame-r); top: var(--frame-b); }
+
+/* --- rules draw themselves in ---------------------------------------
+   Each rule runs along its own length rather than fading up, so the
+   frame assembles itself a line at a time. Held collapsed until the
+   loading screen lifts (#grid-overlay.is-ready), otherwise the whole
+   thing would play out behind the loader and never be seen.
+
+   Scale rather than width/height: it runs on the compositor, so the
+   draw costs nothing while the frame sequence is decoding. */
+@keyframes rule-draw-v {
+  to { transform: scaleY(1); }
+}
+
+@keyframes rule-draw-h {
+  to { transform: scaleX(1); }
+}
+
+.grid-line--v {
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+.grid-line--h {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* 1.15s on a steep ease-out: quick off the mark, long settle. */
+#grid-overlay.is-ready .grid-line--v {
+  animation: rule-draw-v 1.15s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+#grid-overlay.is-ready .grid-line--h {
+  animation: rule-draw-h 1.15s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Staggered so the four arrive in sequence instead of together. */
+#grid-overlay.is-ready .frame-l { animation-delay: 0.2s; }
+#grid-overlay.is-ready .frame-t { animation-delay: 0.25s; }
+#grid-overlay.is-ready .frame-r { animation-delay: 0.3s; }
+#grid-overlay.is-ready .frame-b { animation-delay: 0.4s; }
+
+/* Stars land once the rules that cross beneath them have arrived. A
+   transition, not an animation, so the in-story rules below can still
+   take the bottom pair back out. */
+.marker {
+  opacity: 0;
+}
+
+#grid-overlay.is-ready .marker {
+  opacity: 1;
+  transition: opacity 0.5s ease 0.95s;
+}
+
+/* Anyone who asks for less motion gets the frame already drawn. */
+@media (prefers-reduced-motion: reduce) {
+  .grid-line--v { transform: scaleY(1); }
+  .grid-line--h { transform: scaleX(1); }
+
+  #grid-overlay.is-ready .grid-line--v,
+  #grid-overlay.is-ready .grid-line--h {
+    animation: none;
+  }
+
+  #grid-overlay.is-ready .marker {
+    transition: none;
+  }
+}
+
+/* Only opacity is transitioned — the line positions are already eased
+   in JS, and a CSS transition on top of that would fight it. */
+.grid-line,
+.marker,
+.nav-mask {
+  transition: opacity 0.55s ease;
+}
+
+/* --- how the grid stands once the story section has settled --------- */
+
+/* Hides the band above the top rule, so paragraphs scrolling up vanish
+   at that line rather than sliding behind the logo. Sits first in the
+   overlay so the rules themselves still draw over it. */
+.nav-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--frame-t);
+  background: #fefef7; /* CONFIG.plainColor */
+  opacity: 0;
+}
+
+#grid-overlay.in-story .nav-mask {
+  opacity: 1;
+}
+
+/* The story layout keeps only the clean rules: open at the bottom, and
+   with no tick marks crossing them. */
+#grid-overlay.in-story .frame-b,
+#grid-overlay.in-story .marker--bl,
+#grid-overlay.in-story .marker--br {
+  opacity: 0;
+}
+
+/* Story section only: the right vertical starts at the top rule, so its
+   stub no longer runs through the navigation bar. During the frame
+   scroll it spans the full height, like the left one. The line itself
+   stays — only that top segment goes. */
+#grid-overlay.in-story .frame-r {
+  top: var(--frame-t);
+}
+
+
+
+
+.readout {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-strong);
+}
+
+
+
+.readout {
+  position: absolute;
+  left: calc(var(--frame-l) + 10px);
+  bottom: 6vh;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+#brand-logo {
+  position: fixed;
+  left: 50%;
+  top: 18px;
+  transform: translateX(-50%);
+  z-index: 80;
+  width: clamp(62px, 9vw, 123px);
+  height: auto;
+  pointer-events: none;
+}
+
+/* ---- scroll copy ---------------------------------------------------
+   Stacked in a single grid cell so every line shares one origin and they
+   can cross-fade without nudging the layout. Opacity and the small rise
+   are written per-frame by script.js; only the resting state lives here,
+   so the lines stay invisible if the script never runs. */
+#scroll-copy {
+  position: fixed;
+  /* Hung off the frame's bottom-left corner and travelling with it, so
+     the copy always stands on the horizontal rule. The two offsets are
+     the relationship pear.no uses at a 1280 viewport: 28px in from the
+     vertical rule, 42px of air above the horizontal one. */
+  left: calc(var(--frame-l) + 28px);
+  top: var(--frame-b);
+  right: auto;
+  bottom: auto;
+  transform: translateY(calc(-100% - 42px));
+  /* The frame closes in as you scroll, carrying this corner toward the
+     middle — without a cap a beat could run off the right edge. */
+  max-width: calc(100vw - var(--frame-l) - 56px);
+  z-index: 66; /* over the frames and the intro video, under the grid (70) */
+  display: grid;
+  justify-items: start;
+  /* Stacked beats would otherwise stretch to the tallest of them, so a
+     two-line beat would sit a line higher than a three-line one. Pinned
+     to the bottom they all stand on the rule and grow upward. */
+  align-items: end;
+  pointer-events: none;
+}
+
+.copy-line {
+  grid-area: 1 / 1;
+  margin: 0;
+  /* Narrow measure, so each beat breaks into a short stack rather than
+     running along the rule. */
+  max-width: 12ch;
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 3.3vw, 3.3rem);
+  font-weight: 400;
+  /* Leading tighter than the type size, as pear sets it — the lines close
+     up into a single block instead of reading as separate sentences. */
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  text-align: left;
+  /* Adaptive, like the guide grid — the sequence runs from bright sky to
+     dark foliage, and fixed ink would vanish against one or the other. */
+  color: var(--ink-strong);
+  opacity: 0;
+}
+
+/* On a narrow screen the frame closes in far enough to carry its left
+   rule most of the way across, which would push the copy off the right
+   edge. Below this width it keeps the vertical relationship — still
+   standing on the horizontal rule — but holds the page margin instead of
+   chasing the vertical one sideways. */
+@media (max-width: 768px) {
+  #scroll-copy {
+    left: 6%;
+    max-width: 88vw;
+  }
+}
+
+#loader-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 2px;
+  background: rgba(20, 18, 14, 0.15);
+  overflow: hidden;
+  z-index: 60;
+  transition: opacity 0.5s ease;
+}
+
+#loader-bar.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#loader-fill {
+  width: 0%;
+  height: 100%;
+  background: rgba(20, 18, 14, 0.6);
+  transition: width 0.15s ease;
+}
+
+/* ---- left rail navigation -------------------------------------------
+   Sits under the 2x2 mark, outside #grid-overlay so it can take clicks. */
+#rail-nav {
+  position: fixed;
+  left: 2.6%;
+  /* Deliberately not tied to --frame-t: script.js animates that variable
+     as the guide frame closes in and tracks the fruit, which dragged the
+     rail around with it. This is the frame's resting top (11%) baked in,
+     so the icons hold one position. */
+  top: calc(11% + 44px);
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.rail-link {
+  display: inline-flex;
+  align-items: center;
+  /* Adaptive: script.js flips --ink-strong to white over dark frames.
+     A fixed dark colour disappeared entirely against the forest shots. */
+  color: var(--ink-strong);
+  opacity: 0.72;
+  text-decoration: none;
+  /* negative margin keeps the glyphs visually spaced while the padding
+     gives each one a comfortable hit area */
+  padding: 8px;
+  margin: -8px;
+  transition: color 0.25s ease, opacity 0.25s ease;
+}
+
+.rail-link:focus-visible {
+  outline: 1px solid var(--brand-red);
+  outline-offset: 2px;
+}
+
+.rail-link:hover,
+.rail-link:focus-visible {
+  color: var(--brand-red);
+  opacity: 1;
+}
+
+.rail-link.is-current {
+  opacity: 1;
+}
+
+/* Drawn marks rather than plain dots: the 2x2 grid glyph for home, and
+   fruit silhouettes for the cultivars. All inherit currentColor, so they
+   follow the link's ink and turn brand red on hover with the label. */
+.rail-glyph {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  display: block;
+}
+
+.rail-glyph svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* ---- loading screen -------------------------------------------------
+   Covers everything (above the logo at z 80) until the frame sequence has
+   preloaded, then fades away. */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: #fefef7; /* CONFIG.plainColor, so no flash before the video paints */
+  overflow: hidden;
+  transition: opacity 0.5s ease, background-color 0.3s ease;
+}
+
+/* During the handoff the backdrop clears so the page shows through and
+   the mark travels over it — fading the whole screen instead would fade
+   the mark out mid-flight. */
+#loading-screen.is-handoff {
+  background-color: transparent;
+}
+
+#loading-screen.is-done {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#loading-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- loading -> home logo handoff ----------------------------------
+   The clip ends on the logo; this picks it up and shrinks it into the
+   header logo's exact position, so the two read as one continuous mark
+   rather than a cut. */
+#loading-logo {
+  position: absolute;
+  /* left/top/width are set from JS to sit exactly where the clip's own
+     logo ends up, allowing for the video's cover-crop. A centred default
+     would jump, because the mark sits above centre in the frame. */
+  left: 0;
+  top: 0;
+  width: 0;
+  height: auto;
+  transform-origin: center center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+#loading-screen.is-handoff #loading-logo {
+  opacity: 1;
+}
+
+/* The video steps aside so the mark is alone for the shrink. */
+#loading-screen.is-handoff #loading-video,
+#loading-screen.is-handoff #loader-bar {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+/* The real header logo stays out of sight until the shrink lands on it,
+   otherwise both would be visible at once during the move. */
+#brand-logo.is-waiting {
+  opacity: 0;
+}
+
+/* ---- footer ---------------------------------------------------------
+   The one dark band on the page. Everything above it is sand, so ending
+   on warm ink reads as a base the site rests on rather than one more
+   section — and it lets the beige act as an accent instead of being the
+   ground it already is everywhere else.
+
+   The ink is warmed to the same hue family as the sand rather than a
+   neutral black, so the two read as one palette. */
+#site-footer {
+  --beige: #fefef7;
+  --beige-dim: rgba(254, 254, 247, 0.62);
+  --beige-faint: rgba(254, 254, 247, 0.16);
+
+  position: relative;
+  /* Above the fixed guide overlay (70), the rail and the header logo (80).
+     Those are all pinned to the viewport, so without this they carry on
+     painting over the footer — the sand nav-mask in particular kept a
+     beige band across the top of it. Clearing them lets the footer read
+     as a full panel the page ends on, and it brings its own logo and
+     links, so nothing is actually lost by covering them. */
+  z-index: 85;
+  background: #17150f;
+  color: var(--beige-dim);
+  padding: clamp(64px, 10vh, 120px) 6% clamp(28px, 4vh, 44px);
+
+  /* Fills the screen, so scrolling to the end lands on the footer alone
+     rather than on a strip of it under the previous section.
+     vh deliberately, not svh: svh is the viewport with the mobile browser
+     chrome *showing*, which left a band of the section above still
+     visible once that chrome retracted. Being a little taller than the
+     visible area costs nothing on a footer; being shorter defeats it. */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* Spreads the three bands over whatever height is going: brand at the
+     top, figures through the middle, legal line on the floor. */
+  justify-content: space-between;
+}
+
+.footer-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.6fr);
+  gap: clamp(48px, 7vw, 120px);
+  /* Flex items with auto side margins do not stretch — the auto margins
+     swallow the free space instead, and each band shrank to its own
+     content. This keeps them filling the footer, with max-width still
+     capping and the auto margins still centring. */
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding-bottom: clamp(48px, 7vh, 88px);
+}
+
+/* --- brand column --- */
+.footer-logo {
+  display: block;
+  width: clamp(96px, 11vw, 132px);
+  height: auto;
+  margin-bottom: clamp(24px, 3.5vh, 40px);
+}
+
+.footer-tagline {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3.4vw, 44px);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  color: var(--beige);
+  margin-bottom: 0.7em;
+}
+
+/* The italic cut is already loaded for the wordmark's voice. */
+.footer-tagline em {
+  font-style: italic;
+  color: var(--brand-red);
+}
+
+.footer-blurb {
+  font-family: var(--text);
+  font-size: clamp(14px, 1.05vw, 16.5px);
+  line-height: 1.7;
+  max-width: 42ch;
+}
+
+/* --- link columns --- */
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: clamp(32px, 4vw, 64px);
+}
+
+.footer-heading {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(222, 220, 210, 0.62);
+  margin-bottom: 1.9em;
+}
+
+.footer-col ul {
+  list-style: none;
+  display: grid;
+  gap: 0.95em;
+}
+
+.footer-col a {
+  font-family: var(--text);
+  font-size: clamp(15px, 1.15vw, 18px);
+  line-height: 1.35;
+  color: var(--beige);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.footer-col a:hover,
+.footer-col a:focus-visible {
+  color: var(--brand-red);
+}
+
+.footer-col a:focus-visible {
+  outline: 1px solid var(--brand-red);
+  outline-offset: 3px;
+}
+
+/* Long address, narrow phones: break rather than force the page wide. */
+.footer-email {
+  word-break: break-word;
+}
+
+.footer-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+}
+
+/* Stroked, not filled — an outline sits better than a solid mark at this
+   size against the hairlines around it. */
+.footer-social-glyph {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.footer-social-glyph svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+.footer-social-glyph .is-dot {
+  fill: currentColor;
+  stroke: none;
+}
+
+.footer-place {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(222, 220, 210, 0.62);
+  line-height: 1.7;
+  padding-top: 0.4em;
+}
+
+/* --- figures --- */
+.footer-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: clamp(20px, 3vw, 56px);
+  /* Flex items with auto side margins do not stretch — the auto margins
+     swallow the free space instead, and each band shrank to its own
+     content. This keeps them filling the footer, with max-width still
+     capping and the auto margins still centring. */
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: clamp(32px, 4.5vh, 52px) 0;
+  border-top: 1px solid var(--beige-faint);
+  border-bottom: 1px solid var(--beige-faint);
+}
+
+.footer-figures dt {
+  font-family: var(--serif);
+  font-size: clamp(30px, 3.6vw, 48px);
+  line-height: 1;
+  color: var(--beige);
+  margin-bottom: 0.3em;
+}
+
+.footer-figures dd {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(222, 220, 210, 0.62);
+  line-height: 1.6;
+}
+
+/* --- base bar --- */
+.footer-base {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  /* Flex items with auto side margins do not stretch — the auto margins
+     swallow the free space instead, and each band shrank to its own
+     content. This keeps them filling the footer, with max-width still
+     capping and the auto margins still centring. */
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding-top: clamp(22px, 3vh, 32px);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  /* Kept above 4.5:1 against the ink ground. These labels are 10px, and
+     small type needs more contrast than large, not less. */
+  color: rgba(222, 220, 210, 0.55);
+}
+
+/* Same breakpoint the profiles collapse at, so the page reflows on one
+   line rather than two. */
+@media (max-width: 880px) {
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: clamp(44px, 8vw, 64px);
+  }
+}

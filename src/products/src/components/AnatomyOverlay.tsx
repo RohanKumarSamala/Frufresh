@@ -1,0 +1,438 @@
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { FruitSpecimen } from '../types';
+
+interface AnatomyPoint {
+  id: string;
+  title: string;
+  subtitle: string;
+  accentColor: string;
+  imageNormX: number; // 0..1 in 1920x1080 frame space
+  imageNormY: number; // 0..1 in 1920x1080 frame space
+  side: 'left' | 'right';
+  className: string;
+}
+
+interface AnatomyOverlayProps {
+  selectedFruit: FruitSpecimen;
+  scrollProgress: number;
+  onOpenPartnership: () => void;
+  onSelectNextFruit: () => void;
+}
+
+export function AnatomyOverlay({
+  selectedFruit,
+  scrollProgress,
+  onSelectNextFruit,
+}: AnatomyOverlayProps) {
+  const isApple = selectedFruit.id === 'apple';
+  const isVisible = scrollProgress >= 0.78;
+
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [lineCoords, setLineCoords] = useState<
+    Array<{
+      id: string;
+      startX: number;
+      startY: number;
+      endX: number;
+      endY: number;
+      pathData: string;
+    }>
+  >([]);
+
+  // Card element refs
+  const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  const anatomyData: AnatomyPoint[] = isApple
+    ? [
+        {
+          id: 'layer',
+          title: 'Layered Structure',
+          subtitle: 'Dense cellular walls designed for maximum acoustic snap.',
+          accentColor: '#B87333',
+          imageNormX: 0.410,
+          imageNormY: 0.405, // Exactly Slice 2 top slice cut
+          side: 'left',
+          className: 'top-[30%] sm:top-[32%] left-4 sm:left-[10%] lg:left-[14%] xl:left-[18%]',
+        },
+        {
+          id: 'moisture',
+          title: 'Moisture Retention',
+          subtitle: '86% cold juice retention locked within the core matrix.',
+          accentColor: '#B87333',
+          imageNormX: 0.605,
+          imageNormY: 0.565, // Exactly Slice 4 center cut
+          side: 'right',
+          className: 'top-[46%] sm:top-[48%] right-4 sm:right-[10%] lg:right-[14%] xl:right-[18%]',
+        },
+        {
+          id: 'defects',
+          title: 'Zero Internal Defects',
+          subtitle: 'Pristine carpel cavity with balanced natural malic acid.',
+          accentColor: '#059669',
+          imageNormX: 0.435,
+          imageNormY: 0.655, // Exactly Slice 5 internal carpel cavity
+          side: 'left',
+          className: 'bottom-[22%] sm:bottom-[24%] left-4 sm:left-[12%] lg:left-[16%] xl:left-[20%]',
+        },
+        {
+          id: 'sugar',
+          title: 'Refractive Sugar Core',
+          subtitle: `${selectedFruit.brixLevel}° Brix gold-standard concentrated distribution.`,
+          accentColor: '#D97706',
+          imageNormX: 0.595,
+          imageNormY: 0.735, // Exactly Slice 6 lower slice cut
+          side: 'right',
+          className: 'bottom-[22%] sm:bottom-[24%] right-4 sm:right-[12%] lg:right-[16%] xl:right-[20%]',
+        },
+      ]
+    : [
+        {
+          id: 'layer',
+          title: 'Anthocyanin Vesicles',
+          subtitle: 'Deep ruby pigmentation rich in natural antioxidants.',
+          accentColor: '#E11D48',
+          imageNormX: 0.440,
+          imageNormY: 0.440,
+          side: 'left',
+          className: 'top-[30%] sm:top-[32%] left-4 sm:left-[10%] lg:left-[14%] xl:left-[18%]',
+        },
+        {
+          id: 'moisture',
+          title: 'Flavedo Essential Oils',
+          subtitle: 'Aromatic zest with intense terpene and citrus oil density.',
+          accentColor: '#EA580C',
+          imageNormX: 0.610,
+          imageNormY: 0.500,
+          side: 'right',
+          className: 'top-[46%] sm:top-[48%] right-4 sm:right-[10%] lg:right-[14%] xl:right-[18%]',
+        },
+        {
+          id: 'defects',
+          title: 'Zero Bitter Pith',
+          subtitle: 'Delicate albedo with seamless natural segment separation.',
+          accentColor: '#059669',
+          imageNormX: 0.430,
+          imageNormY: 0.560,
+          side: 'left',
+          className: 'bottom-[22%] sm:bottom-[24%] left-4 sm:left-[12%] lg:left-[16%] xl:left-[20%]',
+        },
+        {
+          id: 'sugar',
+          title: 'Volcanic Sugar Core',
+          subtitle: `${selectedFruit.brixLevel}° Brix gold-standard concentrated distribution.`,
+          accentColor: '#D97706',
+          imageNormX: 0.505,
+          imageNormY: 0.505,
+          side: 'right',
+          className: 'bottom-[22%] sm:bottom-[24%] right-4 sm:right-[12%] lg:right-[16%] xl:right-[20%]',
+        },
+      ];
+
+  // Precise coordinate calculation matching ScrollFrameBackground canvas object-fit cover
+  const updateCoordinates = useCallback(() => {
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+
+    const frameAspect = 1920 / 1080;
+    const viewportAspect = W / H;
+
+    let renderW = W;
+    let renderH = H;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    if (viewportAspect > frameAspect) {
+      renderW = W;
+      renderH = W / frameAspect;
+      offsetX = 0;
+      offsetY = (H - renderH) / 2;
+    } else {
+      renderH = H;
+      renderW = H * frameAspect;
+      offsetX = (W - renderW) / 2;
+      offsetY = 0;
+    }
+
+    const calculated = anatomyData.map((item) => {
+      // Calculate target point on fruit in screen coordinates
+      const endX = offsetX + item.imageNormX * renderW;
+      const endY = offsetY + item.imageNormY * renderH;
+
+      // Calculate anchor point on card
+      const cardEl = cardRefs.current[item.id];
+      let startX = 0;
+      let startY = 0;
+
+      if (cardEl) {
+        const rect = cardEl.getBoundingClientRect();
+        if (item.side === 'left') {
+          startX = rect.right + 12;
+          startY = rect.top + 22;
+        } else {
+          startX = rect.left - 12;
+          startY = rect.top + 22;
+        }
+      } else {
+        if (item.side === 'left') {
+          startX = W * 0.32;
+          startY = endY;
+        } else {
+          startX = W * 0.68;
+          startY = endY;
+        }
+      }
+
+      // Generate organic S-curve path matching leader line aesthetics
+      let pathData = '';
+      if (item.side === 'left') {
+        const dx = Math.max(20, endX - startX);
+        const cp1X = startX + dx * 0.40;
+        const cp1Y = startY;
+        const cp2X = endX - dx * 0.25;
+        const cp2Y = endY;
+        pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
+      } else {
+        const dx = Math.max(20, startX - endX);
+        const cp1X = startX - dx * 0.40;
+        const cp1Y = startY;
+        const cp2X = endX + dx * 0.25;
+        const cp2Y = endY;
+        pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
+      }
+
+      return {
+        id: item.id,
+        startX,
+        startY,
+        endX,
+        endY,
+        pathData,
+      };
+    });
+
+    setLineCoords(calculated);
+  }, [anatomyData]);
+
+  // Recalculate on resize, scroll, and fruit change
+  useEffect(() => {
+    updateCoordinates();
+    window.addEventListener('resize', updateCoordinates);
+    window.addEventListener('scroll', updateCoordinates, { passive: true });
+
+    const timer = setTimeout(updateCoordinates, 50);
+    const timer2 = setTimeout(updateCoordinates, 250);
+
+    return () => {
+      window.removeEventListener('resize', updateCoordinates);
+      window.removeEventListener('scroll', updateCoordinates);
+      clearTimeout(timer);
+      clearTimeout(timer2);
+    };
+  }, [updateCoordinates, selectedFruit.id, isVisible]);
+
+  return (
+    <div
+      id="anatomy-section-container"
+      className={`transition-opacity duration-700 ${
+        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}
+    >
+      {/* 1. HIGH-PRECISION WHITE ANATOMICAL LEADER LINES SVG OVERLAY */}
+      <svg
+        className="fixed inset-0 w-full h-full pointer-events-none z-15 select-none"
+        style={{ width: '100vw', height: '100vh' }}
+      >
+        <defs>
+          {/* Subtle Glow & Drop-Shadow Filter for Pure White Crispness */}
+          <filter id="white-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="1.5" stdDeviation="3" floodColor="#000000" floodOpacity="0.45" />
+            <feDropShadow dx="0" dy="0" stdDeviation="1.5" floodColor="#FFFFFF" floodOpacity="0.8" />
+          </filter>
+
+          <filter id="node-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="1" stdDeviation="3" floodColor="#000000" floodOpacity="0.5" />
+            <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#FFFFFF" floodOpacity="0.9" />
+          </filter>
+        </defs>
+
+        {lineCoords.map((line) => {
+          const item = anatomyData.find((a) => a.id === line.id);
+          const isHovered = hoveredId === line.id;
+          const isDimmed = hoveredId !== null && !isHovered;
+
+          return (
+            <g
+              key={line.id}
+              className="transition-all duration-300"
+              style={{ opacity: isDimmed ? 0.35 : 1 }}
+            >
+              {/* Primary White Anatomical Leader Line */}
+              <path
+                d={line.pathData}
+                fill="none"
+                stroke="#FFFFFF"
+                strokeWidth={isHovered ? 2.8 : 2.0}
+                strokeLinecap="round"
+                filter="url(#white-glow)"
+                className="transition-all duration-300"
+              />
+
+              {/* Card Connection Anchor Dot */}
+              <circle
+                cx={line.startX}
+                cy={line.startY}
+                r={isHovered ? 4.5 : 3.5}
+                fill="#FFFFFF"
+                filter="url(#white-glow)"
+                className="transition-all duration-300"
+              />
+              <circle
+                cx={line.startX}
+                cy={line.startY}
+                r={isHovered ? 7 : 5.5}
+                fill="none"
+                stroke="#FFFFFF"
+                strokeWidth="1.2"
+                strokeOpacity="0.75"
+              />
+
+              {/* Fruit Slice Target Node: Outer Expanding Radar Ping */}
+              <circle
+                cx={line.endX}
+                cy={line.endY}
+                r={isHovered ? 16 : 12}
+                fill="none"
+                stroke="#FFFFFF"
+                strokeWidth="1.2"
+                strokeOpacity={isHovered ? '0.85' : '0.45'}
+                className="animate-ping"
+                style={{
+                  animationDuration: isHovered ? '1.5s' : '3s',
+                  transformOrigin: `${line.endX}px ${line.endY}px`,
+                }}
+              />
+
+              {/* Fruit Slice Target Node: Middle Glowing Ring */}
+              <circle
+                cx={line.endX}
+                cy={line.endY}
+                r={isHovered ? 7.5 : 5.5}
+                fill="none"
+                stroke="#FFFFFF"
+                strokeWidth="1.6"
+                filter="url(#node-glow)"
+                className="transition-all duration-300"
+              />
+
+              {/* Fruit Slice Target Node: Solid Center Core Dot */}
+              <circle
+                cx={line.endX}
+                cy={line.endY}
+                r={isHovered ? 3.5 : 2.5}
+                fill={item?.accentColor || '#FFFFFF'}
+                filter="url(#white-glow)"
+                className="transition-all duration-300"
+              />
+
+              {/* Crosshair Accent Ticks for Botanical Precision */}
+              <line
+                x1={line.endX - (isHovered ? 12 : 9)}
+                y1={line.endY}
+                x2={line.endX - (isHovered ? 7 : 5)}
+                y2={line.endY}
+                stroke="#FFFFFF"
+                strokeWidth="1.2"
+                strokeOpacity="0.85"
+                filter="url(#white-glow)"
+              />
+              <line
+                x1={line.endX + (isHovered ? 7 : 5)}
+                y1={line.endY}
+                x2={line.endX + (isHovered ? 12 : 9)}
+                y2={line.endY}
+                stroke="#FFFFFF"
+                strokeWidth="1.2"
+                strokeOpacity="0.85"
+                filter="url(#white-glow)"
+              />
+              <line
+                x1={line.endX}
+                y1={line.endY - (isHovered ? 12 : 9)}
+                x2={line.endX}
+                y2={line.endY - (isHovered ? 7 : 5)}
+                stroke="#FFFFFF"
+                strokeWidth="1.2"
+                strokeOpacity="0.85"
+                filter="url(#white-glow)"
+              />
+              <line
+                x1={line.endX}
+                y1={line.endY + (isHovered ? 7 : 5)}
+                x2={line.endX}
+                y2={line.endY + (isHovered ? 12 : 9)}
+                stroke="#FFFFFF"
+                strokeWidth="1.2"
+                strokeOpacity="0.85"
+                filter="url(#white-glow)"
+              />
+            </g>
+          );
+        })}
+      </svg>
+
+      {/* 2. FLOATING ANATOMICAL CALLOUT LABELS (PURE TEXT ON BACKGROUND - NO BOXES) */}
+      {anatomyData.map((item) => {
+        const isHovered = hoveredId === item.id;
+
+        return (
+          <div
+            key={item.id}
+            ref={(el) => {
+              cardRefs.current[item.id] = el;
+            }}
+            onMouseEnter={() => setHoveredId(item.id)}
+            onMouseLeave={() => setHoveredId(null)}
+            className={`fixed ${item.className} z-20 pointer-events-auto max-w-[210px] sm:max-w-[240px] cursor-pointer transition-all duration-300 ${
+              isHovered ? 'scale-105' : 'hover:scale-[1.02]'
+            }`}
+          >
+            <div className="space-y-1.5 select-none">
+              {/* Category / Accent Dot */}
+              <div className="flex items-center gap-2">
+                <span
+                  className="w-2 h-2 rounded-full transition-transform duration-300"
+                  style={{
+                    backgroundColor: item.accentColor,
+                    transform: isHovered ? 'scale(1.4)' : 'scale(1)',
+                  }}
+                />
+                {/* The reading face, not the display serif: this is 14px, and
+                    the display serif is a single weight — font-semibold on it
+                    is a synthesised bold rather than a drawn one. */}
+                <span className="font-sans text-sm font-semibold text-[#1A1A1A]">
+                  {item.title}
+                </span>
+              </div>
+
+              {/* Subtitle description (Pure text) */}
+              <p className="font-sans text-[11px] text-[#1A1A1A]/80 leading-relaxed font-normal">
+                {item.subtitle}
+              </p>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* 3. BOTTOM GLASSMORPHIC ACTION DOCK */}
+      <div className="fixed bottom-7 left-1/2 -translate-x-1/2 z-20 pointer-events-auto flex items-center gap-3">
+        <button
+          id="anatomy-switch-fruit-btn"
+          onClick={onSelectNextFruit}
+          className="px-5 py-3 rounded-full text-xs font-bold uppercase tracking-wider glass-btn-pearl transition-all shadow-md hover:scale-105 cursor-pointer"
+        >
+          VIEW {isApple ? 'ORANGE' : 'APPLE'}
+        </button>
+      </div>
+    </div>
+  );
+}

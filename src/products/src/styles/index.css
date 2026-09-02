@@ -1,0 +1,605 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: 'Newsreader', 'Instrument Serif', 'Cinzel', Georgia, serif;
+  --font-editorial: 'Newsreader', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #fefef7;
+  color: #1A1A1A;
+  overflow-x: hidden;
+}
+
+/* Hide the scrollbar, as the home page does. Cosmetic only — scrolling
+   itself is untouched, which matters because the whole frame sequence is
+   driven by scroll position. */
+html,
+body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* old Edge/IE */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* Luxury Editorial Glassmorphism System */
+.glass-card-luxury {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.42) 100%);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.90);
+  box-shadow: 
+    0 24px 60px -15px rgba(0, 0, 0, 0.08),
+    0 4px 20px -2px rgba(0, 0, 0, 0.04),
+    inset 0 2px 3px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+.glass-card-editorial-apple {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.76) 0%, rgba(253, 248, 242, 0.50) 100%);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 28px 65px -12px rgba(184, 115, 51, 0.08),
+    0 8px 24px -4px rgba(0, 0, 0, 0.04),
+    inset 0 2px 3px 0 #FFFFFF,
+    inset 0 0 0 1px rgba(184, 115, 51, 0.12);
+}
+
+.glass-card-editorial-orange {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.76) 0%, rgba(255, 246, 238, 0.52) 100%);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 28px 65px -12px rgba(234, 88, 12, 0.09),
+    0 8px 24px -4px rgba(0, 0, 0, 0.04),
+    inset 0 2px 3px 0 #FFFFFF,
+    inset 0 0 0 1px rgba(234, 88, 12, 0.12);
+}
+
+.glass-card-subtle {
+  background: rgba(255, 255, 255, 0.30);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 
+    0 4px 16px -4px rgba(0, 0, 0, 0.03),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.90);
+}
+
+.glass-btn-obsidian {
+  background: rgba(26, 26, 26, 0.90);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 10px 30px -5px rgba(0, 0, 0, 0.20),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.35);
+  color: #FFFFFF;
+}
+
+.glass-btn-obsidian:hover {
+  background: #000000;
+  box-shadow: 
+    0 14px 36px -4px rgba(0, 0, 0, 0.30),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.50);
+  color: #FFFFFF;
+}
+
+.glass-btn-pearl {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 4px 16px -2px rgba(0, 0, 0, 0.04),
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95);
+  color: #1A1A1A;
+}
+
+.glass-btn-pearl:hover {
+  background: rgba(255, 255, 255, 0.70);
+  border-color: #FFFFFF;
+  box-shadow: 
+    0 8px 24px -2px rgba(0, 0, 0, 0.08),
+    inset 0 1.5px 2px 0 #FFFFFF;
+}
+
+.glass-pill-luxury {
+  background: rgba(255, 255, 255, 0.40);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.80);
+  box-shadow: 
+    0 2px 10px -2px rgba(0, 0, 0, 0.03),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.90);
+}
+
+.glass-track {
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.50);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+
+
+/* ============================================================
+   Frufresh home-site design language.
+   Flat greige, hairline rules, letterspaced mono, red serif —
+   the opposite of the glass system above. Used by the header,
+   the guide grid and the buttons so the product page reads as
+   part of the same site.
+   ============================================================ */
+:root {
+  /* Display — headings and titles. Cormorant Garamond is an old-style
+     serif with fine, drawn detail; it suits a page of specimens and
+     measurements far better than the previous display face, which had
+     quirky proportions that fought the photography. It runs small on the
+     body, so the display sizes below are set larger to compensate, and at
+     500 rather than 400 so it does not read as thin. */
+  --fr-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+
+  /* Running text and UI. Plus Jakarta Sans is a humanist sans with a
+     large x-height and open apertures — crisp at 15px, where any serif
+     on this page was doing the reading work badly. Setting the body in a
+     sans against a serif display is also what gives the page its
+     contrast; the old all-serif setting read as one grey mass. */
+  --fr-text: 'Plus Jakarta Sans', -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* JetBrains Mono rather than the system stack: ui-monospace resolves to
+     Consolas on Windows, which reads as code next to this type. */
+  --fr-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  /* The brand red, as sampled from the wordmark. Used for rules, fills and
+     borders, where contrast against text does not apply. */
+  --fr-red: #c72f1d;
+
+  /* A deeper red for red *text*. The brand red measured 4.86:1 over the
+     hero video — legible, but the weakest thing on the page by a wide
+     margin. This clears 7:1 against every ground the copy sits on (video,
+     frame backdrop and flat page alike) while still reading as the same
+     colour, so the wordmark keeps its exact red and the text stops
+     straining. */
+  --fr-red-text: #962213;
+  --fr-ink: rgba(20, 18, 14, 0.26);
+  --fr-ink-strong: rgba(20, 18, 14, 0.62);
+
+  /* The static guide rectangle. GuideGrid.tsx renders against these. */
+  --fr-l: 6%;
+  --fr-r: 94%;
+  /* Anchored to the header rather than a percentage: a percentage that
+     sits above the video on one viewport height drifts into the header
+     bar on another. This always clears it by the same margin. */
+  --fr-header-h: 62px;
+  --fr-t: calc(var(--fr-header-h) + 8px);
+  --fr-b: 71%;
+}
+
+/* ---- hero copy column ----
+   Above the two-column breakpoint the copy sits in its own third of the
+   grid and 360px is simply its measure. Below it the grid collapses, the
+   media goes full-bleed behind the copy, and a fixed 360px was 58% of a
+   620px screen — so the text ran straight over the fruit. Capping it as a
+   share of the viewport keeps it clear of the middle at every width. */
+.fr-hero-copy {
+  max-width: 360px;
+}
+
+@media (max-width: 1023px) {
+  .fr-hero-copy {
+    max-width: min(360px, 46vw);
+  }
+}
+
+/* Only genuinely narrow screens. At tablet widths the fruit still sits
+   beside the copy, so the 46vw cap above has to keep applying — set this
+   breakpoint too high and the column goes wide again, straight back over
+   the fruit. Here there is no room to sit beside it, so the copy takes
+   most of the width and the media reads as a backdrop behind it. */
+@media (max-width: 520px) {
+  .fr-hero-copy {
+    max-width: 82vw;
+  }
+}
+
+/* ---- guide grid ---- */
+.fr-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  pointer-events: none;
+}
+
+.fr-line { position: absolute; background: var(--fr-ink); }
+.fr-line--v { top: 0; bottom: 0; width: 1px; }
+.fr-line--h { left: 0; right: 0; height: 1px; }
+.fr-l { left: var(--fr-l); }
+.fr-r { left: var(--fr-r); }
+.fr-t { top: var(--fr-t); }
+.fr-b { top: var(--fr-b); }
+
+/* four-pointed stars at the corners */
+.fr-mark {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  transform: translate(-50%, -50%);
+  background: var(--fr-ink-strong);
+  clip-path: polygon(
+    50% 0%, 58% 42%, 100% 50%, 58% 58%,
+    50% 100%, 42% 58%, 0% 50%, 42% 42%
+  );
+}
+.fr-mark--tl { left: var(--fr-l); top: var(--fr-t); }
+.fr-mark--tr { left: var(--fr-r); top: var(--fr-t); }
+.fr-mark--bl { left: var(--fr-l); top: var(--fr-b); }
+.fr-mark--br { left: var(--fr-r); top: var(--fr-b); }
+
+.fr-readout {
+  position: absolute;
+  left: calc(var(--fr-l) + 10px);
+  bottom: 6vh;
+  font-family: var(--fr-mono);
+  font-size: 10px;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  color: var(--fr-ink-strong);
+}
+
+/* ---- header ---- */
+.fr-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  height: 62px;
+  padding: 0 6%;
+  background: transparent;
+  /* No rule of its own: the guide grid's top rule is the structural
+     line, and a border here read as a second, competing one. */
+}
+
+.fr-tab {
+  font-family: var(--fr-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(20, 18, 14, 0.45);
+  padding: 4px 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.fr-tab:hover { color: rgba(20, 18, 14, 0.8); }
+
+.fr-tab[data-active='true'] {
+  color: var(--fr-red-text);
+  border-bottom-color: var(--fr-red-text);
+}
+
+.fr-rule { width: 1px; height: 18px; background: var(--fr-ink); }
+
+/* ---- buttons ---- */
+.fr-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--fr-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  border: 1px solid var(--fr-ink-strong);
+  border-radius: 0;
+  background: transparent;
+  color: rgba(20, 18, 14, 0.85);
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.fr-btn:hover {
+  background: rgba(20, 18, 14, 0.06);
+  border-color: rgba(20, 18, 14, 0.85);
+}
+
+.fr-btn--primary {
+  border-color: var(--fr-red);
+  color: var(--fr-red);
+}
+
+.fr-btn--primary:hover {
+  background: var(--fr-red);
+  border-color: var(--fr-red);
+  color: #fefef7;
+}
+
+.fr-btn--sm { padding: 9px 15px; font-size: 9px; }
+
+.fr-btn:disabled { opacity: 0.45; pointer-events: none; }
+
+/* Brand mark centred over the header bar, as on the home page. The bar
+   is fixed, so this positions against it. */
+.fr-brand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  line-height: 0;
+  cursor: pointer;
+}
+
+/* ============================================================
+   Product page → home-site typography and controls.
+
+   These rules are intentionally unlayered, so they win over
+   Tailwind's layered utilities (rounded-full, shadow-*, bg-*)
+   without needing !important. Redefining the glass classes here
+   restyles every existing usage across the components, rather
+   than rewriting each one's markup.
+   ============================================================ */
+
+/* Typography, in the same three roles the home page uses: a display serif
+   for headings, a reading face for everything that is actually read, and
+   mono for the small labels.
+   --font-sans is what body inherits, so it carries the running text and
+   must be the reading face — pointing it at the display serif set every
+   paragraph on the page in a face built for 60px headlines. */
+:root {
+  --font-serif: var(--fr-serif);
+  --font-editorial: var(--fr-text);
+  --font-sans: var(--fr-text);
+  --font-mono: var(--fr-mono);
+}
+
+/* Cards and pills: flat, hairline, square. */
+.glass-card-luxury,
+.glass-card-editorial-apple,
+.glass-card-editorial-orange,
+.glass-card-subtle,
+.glass-pill-luxury,
+.glass-track {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--fr-ink);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.glass-pill-luxury {
+  font-family: var(--fr-mono);
+  letter-spacing: 0.14em;
+}
+
+/* Emphatic button — brand red outline, fills on hover. */
+.glass-btn-obsidian {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--fr-red);
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--fr-red);
+  font-family: var(--fr-mono);
+  letter-spacing: 0.2em;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.glass-btn-obsidian:hover {
+  background: var(--fr-red);
+  border-color: var(--fr-red);
+  box-shadow: none;
+  color: #fefef7;
+}
+
+/* Secondary button — neutral hairline outline. */
+.glass-btn-pearl {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--fr-ink-strong);
+  border-radius: 0;
+  box-shadow: none;
+  color: rgba(20, 18, 14, 0.85);
+  font-family: var(--fr-mono);
+  letter-spacing: 0.2em;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-btn-pearl:hover {
+  background: rgba(20, 18, 14, 0.06);
+  border-color: rgba(20, 18, 14, 0.85);
+  box-shadow: none;
+}
+
+/* Keep page content clear of the left guide rule. Derived from --fr-l so
+   the two can't drift apart if the grid moves. */
+#fruit-website-root > main {
+  padding-left: calc(var(--fr-l) + 34px);
+  padding-right: calc(var(--fr-l) + 34px);
+}
+
+/* The fixed chapter panels sit outside that padding, so they need the
+   same clearance applied directly. */
+#fruit-website-root .fr-clear-left {
+  left: calc(var(--fr-l) + 34px);
+}
+
+/* ---- left rail navigation (mirrors the home page) ------------------- */
+.fr-rail-nav {
+  position: fixed;
+  left: 2.6%;
+  top: calc(var(--fr-t) + 40px);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.fr-rail-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--fr-ink-strong);
+  text-decoration: none;
+  background: none;
+  border: 0;
+  /* negative margin keeps the glyphs visually spaced while the padding
+     gives each one a comfortable hit area */
+  padding: 8px;
+  margin: -8px;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.fr-rail-link:focus-visible {
+  outline: 1px solid var(--fr-red);
+  outline-offset: 2px;
+}
+
+.fr-rail-link:hover,
+.fr-rail-link:focus-visible {
+  color: var(--fr-red);
+}
+
+.fr-rail-link[data-active='true'] {
+  color: var(--fr-ink-strong);
+}
+
+/* Drawn marks rather than plain dots: the 2x2 grid glyph for home, and
+   fruit silhouettes for the cultivars. All inherit currentColor, so they
+   follow the link's ink and turn brand red on hover with the label. */
+.fr-rail-glyph {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  display: block;
+}
+
+.fr-rail-glyph svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* ---- product page typography ---------------------------------------
+   Ink and brand red only, letterspaced mono for labels, serif for
+   anything carrying meaning, hairline rules instead of boxes. */
+.fr-label {
+  font-family: var(--fr-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(20, 18, 14, 0.5);
+}
+
+.fr-label--accent {
+  color: var(--fr-red-text);
+  margin-bottom: 0.9em;
+}
+
+/* Latin binomials belong in the serif italic, not the sans — kept in step
+   with the display face in case this is used again. */
+.fr-botanical {
+  font-family: var(--fr-serif);
+  font-style: italic;
+  font-size: 12px;
+  color: rgba(20, 18, 14, 0.5);
+}
+
+.fr-display {
+  font-family: var(--fr-serif);
+  /* Larger than the old 24–34px: Cormorant has a small x-height, so it
+     sets visually smaller than a display face at the same pixel size.
+     The vw term does the work here — at 3vw it never came off its 30px
+     floor below a desktop width, so on a narrow screen the headline stayed
+     large, ran wide and collided with the fruit behind it. */
+  font-size: clamp(21px, 3.9vw, 44px);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.005em;
+  color: var(--fr-red-text);
+  margin-bottom: 0.5em;
+}
+
+.fr-body {
+  font-family: var(--fr-text);
+  /* Scales with the viewport for the same reason as the display above: a
+     flat 15px held its full measure on narrow screens. */
+  font-size: clamp(13px, 2.4vw, 15px);
+  font-weight: 400;
+  /* A sans at this size needs a touch less leading than the serif it
+     replaced, or the lines drift apart. */
+  line-height: 1.6;
+  /* Raised from 0.72: legibility was never the issue here, but at 0.72 the
+     paragraph sat back far enough to read as secondary against the display
+     line above it. */
+  color: rgba(20, 18, 14, 0.82);
+  max-width: 38ch;
+}
+
+.fr-notes {
+  font-family: var(--fr-text);
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(20, 18, 14, 0.85);
+  margin-top: 0.5em;
+}
+
+.fr-value {
+  font-family: var(--fr-text);
+  font-size: clamp(14px, 2.5vw, 16px);
+  /* Slightly heavier than the body: these are measured values sitting
+     under a mono label, and at regular weight the sans let them blend
+     into the surrounding text. */
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: rgba(20, 18, 14, 0.9);
+  margin-top: 0.35em;
+}
+
+/* Hairline rules that replace the old bordered boxes. */
+.fr-rule-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(20, 18, 14, 0.18);
+}
+
+.fr-rule-top {
+  padding-top: 14px;
+  border-top: 1px solid rgba(20, 18, 14, 0.18);
+}
+
+/* Side-panel headline — the display size is too large away from the hero. */
+.fr-heading {
+  font-family: var(--fr-serif);
+  font-size: clamp(23px, 2.2vw, 31px);
+  font-weight: 500;
+  line-height: 1.18;
+  color: rgba(20, 18, 14, 0.92);
+}

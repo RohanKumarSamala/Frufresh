@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Frufresh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- Instrument Serif sets the display type only. Newsreader carries the
+     running text: it is a reading face with a larger x-height and far less
+     stroke contrast, which is what long paragraphs need and what a display
+     serif cannot do at 16px. Both are already used by the products pages,
+     so the two halves of the site share one type system. -->
+<link
+  href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=JetBrains+Mono:wght@400;500&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" href="styles/style.css" />
+</head>
+<body>
+  <div id="scroll-track">
+    <canvas id="scene"></canvas>
+  </div>
+
+  <!-- Loops on open, then fades out over the first stretch of scroll to
+       hand off to the frame sequence underneath. -->
+  <div id="hero-loop">
+    <video
+      id="loop-video"
+      src="assets/video/hero-video.mp4"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+    ></video>
+  </div>
+
+  <!-- One line at a time, surfacing over the frame sequence. Each owns a
+       window of the sequence, given as fractions of the way through it;
+       script.js cross-fades them from the same eased progress that drives
+       the frames, so the copy breathes with the fruit rather than
+       twitching with the raw scrollbar. -->
+  <div id="scroll-copy">
+    <p class="copy-line" data-from="0.05" data-to="0.27">It begins somewhere.</p>
+    <p class="copy-line" data-from="0.30" data-to="0.50">We go there.</p>
+    <p class="copy-line" data-from="0.53" data-to="0.73">25 countries.</p>
+    <p class="copy-line" data-from="0.76" data-to="0.97">We know fruit.</p>
+  </div>
+
+  <section id="plain-section">
+    <!-- Opens the section. Unlike the two profiles below, it has no portrait
+         column: the company speaks before the people do, so it is set as a
+         single centred column instead. -->
+    <article class="profile" id="story">
+      <div class="profile-body">
+        <p class="eyebrow">Our story</p>
+        <h2 class="profile-name story-title">
+          A legacy built over generations.<br />
+          A business built for the world.
+        </h2>
+
+        <p class="lede">
+          For over 50 years, our family has been deeply rooted in the
+          fresh-produce business, building generations of expertise around
+          fruit — its origins, seasons, quality, markets, and the relationships
+          that bring it all together.
+        </p>
+
+        <p>
+          As our vision evolved, we expanded beyond India, building trusted
+          partnerships with growers and suppliers across the world. Today, FRU
+          FRESH sources premium fresh produce from 25+ countries and distributes
+          across 8 states in India, connecting the right origins with the right
+          quality and the right market at the right time.
+        </p>
+
+        <p>
+          This approach has earned us lasting relationships with leading
+          organisations including Adani Group, Walmart Group, Reliance, and many
+          more.
+        </p>
+
+        <p>
+          FRU FRESH is the next generation of a family legacy — bringing five
+          decades of experience, trust and relationships together with a global
+          outlook and a vision for what comes next.
+        </p>
+
+        <p class="stanza">
+          Our roots are traditional, our sourcing is global, and our ambition is
+          forward.
+        </p>
+
+        <blockquote class="pull">
+          50+ years behind us. A world ahead of us.
+        </blockquote>
+      </div>
+    </article>
+
+    <article class="profile" id="founder">
+      <div class="profile-portrait">
+        <img src="assets/images/founder.webp" alt="Vanne Venu Gopal" />
+      </div>
+
+      <div class="profile-body">
+        <p class="eyebrow">The man behind the foundation</p>
+        <h2 class="profile-name">Vanne Venu Gopal</h2>
+        <p class="profile-role">Founder, Chairman &amp; Director — Fru Fresh</p>
+
+        <p class="lede">
+          For more than 30 years, Vanne Venu Gopal has built his career in the
+          fresh-produce industry around something that cannot be learned from a
+          textbook — trust.
+        </p>
+
+        <p>
+          His journey began in the Indian fruit trade, long before FRU FRESH
+          existed, through businesses including Vanne Agri Fresh, Sri Sai Fruit
+          Agency and Vishnu Fruit Traders, where he built deep expertise through
+          markets, customers and relationships.
+        </p>
+
+        <p>
+          Over the years, those relationships expanded far beyond India, creating
+          a network that today spans 25+ countries, connecting FRU FRESH with
+          growers, exporters, suppliers and partners across the global
+          fresh-produce industry.
+        </p>
+
+        <p>
+          In Hyderabad’s fresh-produce trade, he is known as “The Big Boss” — a
+          reputation built not simply through position, but through decades of
+          experience, relationships and credibility.
+        </p>
+
+        <p>
+          His understanding of seasons, markets, quality and people has played a
+          defining role in establishing FRU FRESH as a leading fresh-produce
+          business in Hyderabad and Telangana, with a growing presence across 8
+          states in India.
+        </p>
+
+        <p>
+          For him, success has never been measured only in numbers, but in the
+          suppliers who continue to trust him, the customers who continue to work
+          with him, and the relationships that stand the test of time.
+        </p>
+
+        <p>
+          Today, he brings that experience and global network to FRU FRESH while
+          working alongside the next generation to build its future.
+        </p>
+
+        <blockquote class="pull">
+          Because the greatest thing he has built isn’t just a company — it’s a
+          reputation.
+        </blockquote>
+
+        <dl class="stats">
+          <div>
+            <dt>30+</dt>
+            <dd>years of experience</dd>
+          </div>
+          <div>
+            <dt>25+</dt>
+            <dd>countries of relationships</dd>
+          </div>
+          <div>
+            <dt>One</dt>
+            <dd>foundation built on trust</dd>
+          </div>
+        </dl>
+      </div>
+    </article>
+
+    <article class="profile" id="leadership">
+      <div class="profile-portrait">
+        <img src="assets/images/ceo.webp" alt="Vanne Sai Pranav" />
+      </div>
+
+      <div class="profile-body">
+        <p class="eyebrow">The person behind Fru Fresh</p>
+        <h2 class="profile-name">Vanne Sai Pranav</h2>
+
+        <p class="lede">
+          I’ve spent most of my life around fruit. But I never wanted to just sell it.
+        </p>
+
+        <p>
+          I’m Vanne Sai Pranav, and FRU FRESH is my way of looking at an industry
+          I’ve known all my life with a completely different perspective.
+        </p>
+
+        <p>
+          My family has been in the fresh-produce business for more than 50 years.
+          Growing up around it, I got to see the business from a side most people
+          never do — the early mornings, the markets, the conversations, the
+          uncertainty of seasons and the incredible journey a fruit makes before it
+          reaches you.
+        </p>
+
+        <p>And the more I understood the business, the more curious I became.</p>
+
+        <p class="stanza">
+          What makes one origin better than another?<br />
+          Why does the same fruit taste completely different depending on where it
+          comes from?<br />
+          And how do you bring that quality all the way to India and make it consistent?
+        </p>
+
+        <p>Those questions became an obsession.</p>
+
+        <p>
+          I started looking beyond the markets we already knew and towards the farms,
+          growers and suppliers around the world.
+        </p>
+
+        <p>That journey eventually became FRU FRESH.</p>
+
+        <p>
+          Today, we source from 25+ countries and distribute across 8 states in India,
+          building relationships across the entire supply chain and working with
+          established organisations.
+        </p>
+
+        <p>But for me, that’s only the beginning.</p>
+
+        <p>I don’t want FRU FRESH to be known simply as a company that imports fruit.</p>
+
+        <blockquote class="pull">I want it to be known for knowing fruit.</blockquote>
+
+        <p class="stanza">
+          Knowing where it comes from.<br />
+          Knowing when it’s at its best.<br />
+          Knowing what makes it special.<br />
+          And knowing how to get it to India the right way.
+        </p>
+
+        <p>
+          I’m building FRU FRESH with something I inherited from my family — 50+ years
+          of experience — but I’m building it with my own curiosity, ideas and ambition.
+        </p>
+
+        <p class="stanza">
+          Because I believe the best way to respect a legacy isn’t to simply continue it.<br />
+          It’s to see how far you can take it.
+        </p>
+
+        <p>And that’s exactly what I’m here to do.</p>
+
+        <dl class="stats">
+          <div>
+            <dt>50+</dt>
+            <dd>years of family experience</dd>
+          </div>
+          <div>
+            <dt>25+</dt>
+            <dd>countries sourced from</dd>
+          </div>
+          <div>
+            <dt>8</dt>
+            <dd>states distributed across</dd>
+          </div>
+        </dl>
+      </div>
+    </article>
+  </section>
+
+  <!-- Closes the page. Deliberately the one dark band on the site: the
+       sand runs from the loading screen all the way down, so ending on
+       ink makes the footer read as a base rather than another section,
+       and lets the beige work as an accent on it. -->
+  <footer id="site-footer">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <img class="footer-logo" src="assets/images/logo.png" alt="Fru Fresh" />
+        <p class="footer-tagline">Known for<br /><em>knowing fruit.</em></p>
+        <p class="footer-blurb">
+          Fresh produce sourced from growers across 25+ countries and
+          distributed through 8 states in India — built on relationships
+          rather than transactions.
+        </p>
+      </div>
+
+      <nav class="footer-nav" aria-label="Footer">
+        <div class="footer-col">
+          <h2 class="footer-heading">Explore</h2>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/products/?fruit=apple">Apples</a></li>
+            <li><a href="/products/?fruit=orange">Oranges</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h2 class="footer-heading">Company</h2>
+          <ul>
+            <li><a href="#founder">The Founder</a></li>
+            <li><a href="#leadership">Leadership</a></li>
+            <li><a href="#story">Our Story</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col footer-col--contact">
+          <h2 class="footer-heading">Get in touch</h2>
+          <ul>
+            <li>
+              <a class="footer-email" href="mailto:frufreshindia@gmail.com"
+                >frufreshindia@gmail.com</a
+              >
+            </li>
+            <li>
+              <a
+                class="footer-social"
+                href="https://www.instagram.com/frufresh_ind"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Fru Fresh on Instagram"
+              >
+                <span class="footer-social-glyph">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="5" />
+                    <circle cx="12" cy="12" r="4.1" />
+                    <circle class="is-dot" cx="17.2" cy="6.8" r="1.15" />
+                  </svg>
+                </span>
+                <span>@frufresh_ind</span>
+              </a>
+            </li>
+            <li class="footer-place">Hyderabad, Telangana &middot; India</li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <dl class="footer-figures">
+      <div>
+        <dt>25+</dt>
+        <dd>countries sourced from</dd>
+      </div>
+      <div>
+        <dt>8</dt>
+        <dd>states distributed across</dd>
+      </div>
+      <div>
+        <dt>50+</dt>
+        <dd>years in fresh produce</dd>
+      </div>
+    </dl>
+
+    <div class="footer-base">
+      <span>&copy; 2026 Fru Fresh. All rights reserved.</span>
+      <span class="footer-base-right">Fresh produce, sourced properly.</span>
+    </div>
+  </footer>
+
+  <!-- Fixed navigation grid: spans the frame story and the plain section alike. -->
+  <div id="grid-overlay" aria-hidden="true">
+    <!-- Masks the band above the top rule once the story starts, so
+         paragraphs scroll out of sight at that line instead of running
+         up behind the logo. -->
+    <div class="nav-mask"></div>
+
+    <span class="grid-line grid-line--v frame-l"></span>
+    <span class="grid-line grid-line--v frame-r"></span>
+    <span class="grid-line grid-line--h frame-t"></span>
+    <span class="grid-line grid-line--h frame-b"></span>
+
+    <span class="marker marker--tl"></span>
+    <span class="marker marker--tr"></span>
+    <span class="marker marker--bl"></span>
+    <span class="marker marker--br"></span>
+
+    <div class="readout"><span id="scroll-pct">0%</span></div>
+  </div>
+
+  <!-- Outside the grid overlay: that layer is aria-hidden and has
+       pointer-events disabled, so interactive controls cannot live in it.
+       Icon-only, so each control carries an aria-label for screen readers. -->
+  <nav id="rail-nav" aria-label="Sections">
+    <a class="rail-link is-current" href="/" aria-label="Home" aria-current="page">
+      <span class="rail-glyph">
+        <svg viewBox="0 0 14 14" aria-hidden="true">
+          <rect x="1" y="1" width="4.6" height="4.6" />
+          <rect x="8.4" y="1" width="4.6" height="4.6" />
+          <rect x="1" y="8.4" width="4.6" height="4.6" />
+          <rect x="8.4" y="8.4" width="4.6" height="4.6" />
+        </svg>
+      </span>
+    </a>
+    <a class="rail-link" href="/products/?fruit=apple" aria-label="Apple">
+      <span class="rail-glyph">
+        <svg viewBox="0 0 14 14" aria-hidden="true">
+          <path d="M7 4.6c-1-1.1-2.6-1.3-3.6-.3-1.3 1.1-1.4 3.3-.5 5 .6 1.3 1.7 2.7 2.7 3.2.8.4 1.2.1 1.4 0 .2.1.6.4 1.4 0 1-.5 2.1-1.9 2.7-3.2.9-1.7.8-3.9-.5-5-1-1-2.6-.8-3.6.3z" />
+          <path d="M7.5 3.5c.5-1 1.7-1.5 2.7-1.4-.1 1-.8 2-2 2.2-.5.1-.8-.2-.7-.8z" />
+        </svg>
+      </span>
+    </a>
+    <a class="rail-link" href="/products/?fruit=orange" aria-label="Orange">
+      <span class="rail-glyph">
+        <svg viewBox="0 0 14 14" aria-hidden="true">
+          <circle cx="7" cy="8.3" r="4.6" />
+          <path d="M7.3 3.4c.5-1 1.6-1.5 2.6-1.4-.1 1-.8 1.9-1.9 2.1-.5.1-.8-.2-.7-.7z" />
+        </svg>
+      </span>
+    </a>
+  </nav>
+
+  <img id="brand-logo" src="assets/images/logo.png" alt="Frufresh" />
+
+  <!-- Loading screen: holds until the frame sequence has preloaded, so the
+       scroll-scrub never runs against missing frames. The progress bar
+       lives inside it and fades out with it. -->
+  <div id="loading-screen">
+    <video
+      id="loading-video"
+      src="assets/video/loading.mp4"
+      autoplay
+      muted
+      playsinline
+      preload="auto"
+    ></video>
+
+    <!-- Picks up where the clip's own logo leaves off, then shrinks into
+         the header logo's exact position. -->
+    <img id="loading-logo" src="assets/images/logo.png" alt="" aria-hidden="true" />
+
+    <div id="loader-bar"><div id="loader-fill"></div></div>
+  </div>
+
+  <script src="scripts/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+node_modules/
+src/products/node_modules/
+src/products/dist/
+*.log
+.env*
+!.env.example

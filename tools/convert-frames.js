@@ -11,46 +11,67 @@ const root = path.resolve(__dirname, "..");
 const SRC_DIR = path.join(root, "..", "Frufresh-original-assets", "assets", "images", "frames", "hero");
 const OUT_DIR = path.join(root, "src", "assets", "frames", "hero");
 const TARGET_WIDTH = 1920;
-// Was 100 — full-fidelity JPEGs came out to ~1.5MB each (184 frames scrubbed
-// on scroll), which is what made the hero laggy. The products page's frame
-// sequences use quality 82 and scroll smoothly, so matching that here.
-const JPEG_QUALITY = 82;
+const QUALITY = 82;
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
-const files = fs
-  .readdirSync(SRC_DIR)
-  .filter((f) => /^frame_\d+\.png$/i.test(f))
-  .sort();
+function updateManifest() {
+  const outFiles = fs
+    .readdirSync(OUT_DIR)
+    .filter((f) => /^frame_\d+\.(webp|jpg|jpeg|png)$/i.test(f))
+    .sort();
 
-console.log(`Converting ${files.length} frames -> ${OUT_DIR}`);
+  if (!outFiles.length) {
+    console.error(`No frames found in ${OUT_DIR}`);
+    return null;
+  }
 
-let done = 0;
-for (const file of files) {
-  const srcPath = path.join(SRC_DIR, file);
-  const outName = file.replace(/\.png$/i, ".jpg");
-  const outPath = path.join(OUT_DIR, outName);
+  const ext = path.extname(outFiles[0]).replace(/^\./, "").toLowerCase();
+  const digitsMatch = outFiles[0].match(/\d+/);
 
-  await sharp(srcPath)
-    .resize({ width: TARGET_WIDTH })
-    .jpeg({ quality: JPEG_QUALITY, mozjpeg: true })
-    .toFile(outPath);
+  const manifest = {
+    count: outFiles.length,
+    prefix: "assets/frames/hero/frame_",
+    digits: digitsMatch ? digitsMatch[0].length : 4,
+    ext,
+  };
 
-  done++;
-  if (done % 25 === 0 || done === files.length) {
-    console.log(`  ${done}/${files.length}`);
+  fs.writeFileSync(
+    path.join(root, "src", "config", "manifest.json"),
+    JSON.stringify(manifest, null, 2)
+  );
+
+  console.log("Done. Manifest updated:", manifest);
+  return manifest;
+}
+
+if (fs.existsSync(SRC_DIR)) {
+  const files = fs
+    .readdirSync(SRC_DIR)
+    .filter((f) => /^frame_\d+\.(png|webp|jpg|jpeg)$/i.test(f))
+    .sort();
+
+  if (files.length > 0) {
+    console.log(`Converting ${files.length} frames -> ${OUT_DIR}`);
+
+    let done = 0;
+    for (const file of files) {
+      const srcPath = path.join(SRC_DIR, file);
+      const outName = file.replace(/\.(png|jpg|jpeg)$/i, ".webp");
+      const outPath = path.join(OUT_DIR, outName);
+
+      await sharp(srcPath)
+        .resize({ width: TARGET_WIDTH })
+        .webp({ quality: QUALITY })
+        .toFile(outPath);
+
+      done++;
+      if (done % 25 === 0 || done === files.length) {
+        console.log(`  ${done}/${files.length}`);
+      }
+    }
   }
 }
 
-const manifest = {
-  count: files.length,
-  prefix: "assets/frames/hero/frame_",
-  digits: files.length ? files[0].match(/\d+/)[0].length : 4,
-  ext: "jpg",
-};
-fs.writeFileSync(
-  path.join(root, "src", "config", "manifest.json"),
-  JSON.stringify(manifest, null, 2)
-);
+updateManifest();
 
-console.log("Done.", manifest);

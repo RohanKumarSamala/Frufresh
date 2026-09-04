@@ -8,15 +8,22 @@ import { fileURLToPath } from "node:url";
 // the order is wrong at that point.
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
-const DIR = path.join(root, "assets", "images", "frames", "hero");
+const candidates = [
+  path.join(root, "src", "assets", "frames", "hero"),
+  path.join(root, "assets", "images", "frames", "hero"),
+];
+const DIR = candidates.find((d) => fs.existsSync(d) && fs.readdirSync(d).length > 0) || candidates[0];
 
 const W = 32;
 const H = 18;
 
-const files = fs
-  .readdirSync(DIR)
-  .filter((f) => /^frame_\d+\.png$/i.test(f))
-  .sort();
+const files = fs.existsSync(DIR)
+  ? fs
+      .readdirSync(DIR)
+      .filter((f) => /^frame_\d+\.(png|webp|jpg|jpeg)$/i.test(f))
+      .sort()
+  : [];
+
 
 const sigs = [];
 for (const f of files) {

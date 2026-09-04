@@ -626,7 +626,7 @@ function drawFrame(index) {
 }
 
 // A loaded <img> is not necessarily a *decoded* one. The browser cannot
-// hold 184 full-size bitmaps at once, so it evicts them — and the first
+// hold hundreds of full-size bitmaps at once, so it evicts them — and the first
 // drawImage of an evicted frame decodes it synchronously, on the main
 // thread, which is exactly the hitch you feel mid-scroll.
 //

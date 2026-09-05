@@ -80,9 +80,40 @@ body::-webkit-scrollbar {
 }
 
 .story-header {
+  position: relative;
   text-align: center;
   max-width: 900px;
   margin: 0 auto clamp(48px, 7vh, 80px);
+}
+
+.story-header::before {
+  content: "";
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  width: 520px;
+  height: 420px;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(199, 47, 29, 0.06), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.story-header .eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: fit-content;
+  margin: 0 auto 18px;
+}
+
+.story-header .eyebrow::before,
+.story-header .eyebrow::after {
+  content: "";
+  width: 26px;
+  height: 1px;
+  background: rgba(199, 47, 29, 0.45);
 }
 
 .story-title {
@@ -121,16 +152,34 @@ body::-webkit-scrollbar {
 }
 
 .bento-card {
+  position: relative;
   background: #fefef7;
   border: 1px solid rgba(20, 18, 14, 0.12);
   border-radius: 20px;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
   overflow: hidden;
 }
 
+.bento-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--brand-red), rgba(199, 47, 29, 0.1));
+  opacity: 0.45;
+  transition: opacity 0.35s ease;
+}
+
 .bento-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--brand-red);
+  transform: translateY(-5px);
+  border-color: rgba(20, 18, 14, 0.18);
+  box-shadow: 0 28px 52px -28px rgba(20, 18, 14, 0.22);
+}
+
+.bento-card:hover::before {
+  opacity: 1;
 }
 
 .bento-card-inner {
@@ -140,13 +189,46 @@ body::-webkit-scrollbar {
   height: 100%;
 }
 
+.bento-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.bento-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 12px;
+  background: rgba(199, 47, 29, 0.07);
+  border: 1px solid rgba(199, 47, 29, 0.18);
+  color: var(--brand-red);
+}
+
+.bento-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.bento-index {
+  font-family: var(--serif);
+  font-size: 36px;
+  line-height: 1;
+  font-weight: 400;
+  color: rgba(20, 18, 14, 0.1);
+}
+
 .bento-tag {
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: rgba(20, 18, 14, 0.5);
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .bento-title {
@@ -175,8 +257,8 @@ body::-webkit-scrollbar {
   align-items: baseline;
   gap: 12px;
   padding: 8px 16px;
-  background: #fefef7;
-  border: 1px solid rgba(20, 18, 14, 0.1);
+  background: rgba(199, 47, 29, 0.05);
+  border: 1px solid rgba(199, 47, 29, 0.14);
   border-radius: 10px;
   margin-top: auto;
   align-self: flex-start;
@@ -219,15 +301,16 @@ body::-webkit-scrollbar {
 
 .origin-pill:hover {
   color: var(--brand-red);
-  border-color: var(--brand-red);
+  border-color: rgba(199, 47, 29, 0.4);
+  background: rgba(199, 47, 29, 0.06);
 }
 
 /* Trusted Partners Strip */
 .story-partners {
-  background: #fefef7;
-  border: 1px solid rgba(20, 18, 14, 0.12);
-  border-radius: 20px;
-  padding: clamp(24px, 3vw, 36px);
+  background: linear-gradient(180deg, rgba(20, 18, 14, 0.025), transparent);
+  border: 1px solid rgba(20, 18, 14, 0.1);
+  border-radius: 24px;
+  padding: clamp(28px, 3.2vw, 44px) clamp(20px, 3vw, 40px);
   text-align: center;
   margin-bottom: clamp(40px, 6vh, 64px);
 }
@@ -238,7 +321,7 @@ body::-webkit-scrollbar {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: rgba(20, 18, 14, 0.55);
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .partner-chips {
@@ -246,30 +329,28 @@ body::-webkit-scrollbar {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 14px;
+  gap: 0;
 }
 
 .partner-chip {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 22px;
-  background: #fefef7;
-  border: 1px solid rgba(20, 18, 14, 0.12);
-  border-radius: 999px;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  padding: 4px clamp(18px, 2.4vw, 34px);
+  border-right: 1px solid rgba(20, 18, 14, 0.14);
 }
 
-.partner-chip:hover {
-  transform: translateY(-2px);
-  border-color: var(--brand-red);
+.partner-chip:last-child {
+  border-right: none;
 }
 
 .partner-bullet {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--brand-red);
+  opacity: 0.65;
+  flex: none;
 }
 
 .partner-name {
@@ -279,19 +360,42 @@ body::-webkit-scrollbar {
   font-style: normal;
   letter-spacing: -0.01em;
   color: #14120e;
+  transition: color 0.2s ease;
+}
+
+.partner-chip:hover .partner-name {
+  color: var(--brand-red);
 }
 
 /* Pull Quote Banner */
 .story-pull-banner {
-  background: #fefef7;
+  position: relative;
+  background: linear-gradient(135deg, rgba(199, 47, 29, 0.05), rgba(20, 18, 14, 0.015));
   border: 1px solid rgba(20, 18, 14, 0.12);
   border-left: 4px solid var(--brand-red);
   border-radius: 20px;
-  padding: clamp(32px, 4vw, 52px) clamp(24px, 4vw, 64px);
+  padding: clamp(40px, 5vw, 64px) clamp(24px, 4vw, 64px);
   text-align: center;
+  overflow: hidden;
+}
+
+.story-pull-banner::before {
+  content: "\201C";
+  position: absolute;
+  top: -0.2em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--serif);
+  font-size: clamp(160px, 20vw, 260px);
+  line-height: 1;
+  color: rgba(199, 47, 29, 0.07);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .story-pull-banner .pull-text {
+  position: relative;
+  z-index: 1;
   font-family: var(--serif);
   font-style: normal;
   font-weight: 400;
@@ -303,6 +407,8 @@ body::-webkit-scrollbar {
 }
 
 .story-pull-banner .pull-sub {
+  position: relative;
+  z-index: 1;
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.16em;
@@ -311,10 +417,100 @@ body::-webkit-scrollbar {
   margin: 0;
 }
 
+/* ---- Gallery (masonry, 3 columns) -----------------------------------
+   Built as an explicit grid of 3 flex columns — the same
+   grid-template-columns mechanism as .story-bento above, with the same
+   gap — rather than CSS multi-column, whose column-width rounding could
+   leave the rightmost card sitting a hair off the frame-r guideline. */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 2.5vw, 32px);
+  align-items: start;
+}
+
+.gallery-column {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 2.5vw, 32px);
+  min-width: 0;
+}
+
+.gallery-item {
+  display: block;
+}
+
+.gallery-placeholder {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  background: rgba(20, 18, 14, 0.025);
+  border: 1px dashed rgba(20, 18, 14, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: rgba(20, 18, 14, 0.35);
+  transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+}
+
+.gallery-placeholder:hover {
+  border-color: var(--brand-red);
+  color: var(--brand-red);
+  background: rgba(199, 47, 29, 0.04);
+}
+
+.gallery-placeholder-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.gallery-placeholder-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Varied aspect ratios so the grid reads as a masonry layout rather
+   than a uniform tile grid, matching the reference layout. */
+.gallery-item--tall .gallery-placeholder {
+  aspect-ratio: 3 / 4.3;
+}
+
+.gallery-item--medium .gallery-placeholder {
+  aspect-ratio: 3 / 4;
+}
+
+.gallery-item--short .gallery-placeholder {
+  aspect-ratio: 4 / 3;
+}
+
+.gallery-item--square .gallery-placeholder {
+  aspect-ratio: 1 / 1;
+}
+
 /* ---- Profiles (Founder & Leadership) -------------------------------- */
 .profile-portrait {
   position: sticky;
-  top: clamp(80px, 14vh, 130px);
+  top: clamp(100px, 16vh, 150px);
+  margin-top: clamp(28px, 5vh, 64px);
+  z-index: 0;
+}
+
+.profile-portrait::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  width: 130%;
+  height: 85%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(199, 47, 29, 0.08), transparent 72%);
+  z-index: -1;
+  pointer-events: none;
 }
 
 .portrait-image {
@@ -322,14 +518,13 @@ body::-webkit-scrollbar {
   width: 100%;
   max-width: 100%;
   height: auto;
-  border-radius: 20px;
-  border: 1px solid rgba(20, 18, 14, 0.1);
-  box-shadow: 0 14px 36px -12px rgba(20, 18, 14, 0.08);
+  border: none;
+  border-radius: 24px;
   transition: transform 0.4s ease;
 }
 
 .profile-portrait:hover .portrait-image {
-  transform: scale(1.015);
+  transform: translateY(-4px) scale(1.015);
 }
 
 .profile-body {
@@ -353,7 +548,7 @@ body::-webkit-scrollbar {
   font-style: normal;
   line-height: 1.04;
   letter-spacing: -0.015em;
-  color: #14120e;
+  color: var(--brand-red);
   margin-bottom: 8px;
 }
 
@@ -452,6 +647,10 @@ body::-webkit-scrollbar {
     grid-template-columns: 1fr;
   }
 
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
   #founder,
   #leadership {
     grid-template-columns: 1fr;
@@ -470,6 +669,10 @@ body::-webkit-scrollbar {
     padding: 60px 20px;
   }
 
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
   .stats {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -483,6 +686,13 @@ body::-webkit-scrollbar {
   .partner-chip {
     width: 100%;
     justify-content: center;
+    padding: 14px 0;
+    border-right: none;
+    border-bottom: 1px solid rgba(20, 18, 14, 0.14);
+  }
+
+  .partner-chip:last-child {
+    border-bottom: none;
   }
 }
 
@@ -538,6 +748,9 @@ body::-webkit-scrollbar {
 
   /* Sampled from the wordmark in logo.png — its dominant fully-opaque red. */
   --brand-red: #c72f1d;
+
+  /* Orange-cultivar accent, used only for the orange rail link's hover. */
+  --brand-orange: #e2740f;
 }
 
 #grid-overlay {
@@ -701,6 +914,7 @@ body::-webkit-scrollbar {
 
 
 
+
 .readout {
   font-family: var(--mono);
   font-size: 10px;
@@ -857,6 +1071,11 @@ body::-webkit-scrollbar {
 .rail-link:focus-visible {
   color: var(--brand-red);
   opacity: 1;
+}
+
+.rail-link--orange:hover,
+.rail-link--orange:focus-visible {
+  color: var(--brand-orange);
 }
 
 .rail-link.is-current {
@@ -1039,11 +1258,11 @@ body::-webkit-scrollbar {
 
 .footer-heading {
   font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 400;
+  font-size: 13px;
+  font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(222, 220, 210, 0.62);
+  color: var(--brand-red);
   margin-bottom: 1.9em;
 }
 

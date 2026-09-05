@@ -474,7 +474,9 @@ function ruleRightTarget() {
     const r = el.getBoundingClientRect();
     // Whichever article is crossing the middle of the screen owns the rule.
     if (r.top <= mid && r.bottom >= mid) {
-      return el.id === "story" ? RULE_RIGHT_STORY : RULE_RIGHT_PROFILE;
+      return el.id === "story" || el.id === "gallery"
+        ? RULE_RIGHT_STORY
+        : RULE_RIGHT_PROFILE;
     }
   }
 

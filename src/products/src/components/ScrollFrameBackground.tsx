@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState } from 'react';
 // These must match the files on disk exactly: the loader asks for
 // frame_001..frame_<count>, so a count higher than the folder holds sends
 // it after frames that 404, and the canvas stalls on the last good one.
-export const FRAME_COUNTS = { apple: 95, orange: 69, dragonfruit: 80 } as const;
+export const FRAME_COUNTS = { apple: 95, orange: 69, dragonfruit: 144 } as const;
 
 // Share of the page's scroll the looping hero video owns before the frame
 // sequence starts turning. Without this the frames begin scrubbing at the
@@ -27,7 +27,7 @@ const MEDIA_SCALE = 1;
 const BACKDROP = {
   apple: [223, 223, 222] as const,
   orange: [203, 188, 174] as const,
-  dragonfruit: [232, 222, 226] as const,
+  dragonfruit: [228, 228, 226] as const,
   dark: [8, 8, 10] as const,
 };
 

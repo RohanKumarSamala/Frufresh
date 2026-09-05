@@ -132,44 +132,44 @@ export function AnatomyOverlay({
       ]
     : [
         {
-          id: 'layer',
-          title: 'Foliar Bract Scales',
-          subtitle: 'Chlorophyll-rich jade-tipped scales protecting tender epidermis.',
-          accentColor: '#10B981',
-          imageNormX: 0.420,
-          imageNormY: 0.380,
-          side: 'left',
-          className: 'top-[30%] sm:top-[32%] left-4 sm:left-[10%] lg:left-[14%] xl:left-[18%]',
-        },
-        {
-          id: 'moisture',
-          title: 'Betacyanin Pericarp',
-          subtitle: 'Vivid magenta protective rind rich in potent betalain antioxidants.',
-          accentColor: '#E11D74',
-          imageNormX: 0.620,
-          imageNormY: 0.480,
-          side: 'right',
-          className: 'top-[46%] sm:top-[48%] right-4 sm:right-[10%] lg:right-[14%] xl:right-[18%]',
-        },
-        {
           id: 'defects',
           title: 'Micro-Seed Matrix',
           subtitle: 'Thousands of edible black seeds loaded with oleic fatty acids & micro-crunch.',
           accentColor: '#4B5563',
-          imageNormX: 0.430,
-          imageNormY: 0.620,
+          imageNormX: 0.365,
+          imageNormY: 0.540,
           side: 'left',
-          className: 'bottom-[22%] sm:bottom-[24%] left-4 sm:left-[12%] lg:left-[16%] xl:left-[20%]',
+          className: 'top-[26%] sm:top-[28%] left-4 sm:left-[8%] lg:left-[12%] xl:left-[15%]',
+        },
+        {
+          id: 'layer',
+          title: 'Foliar Bract Scales',
+          subtitle: 'Chlorophyll-rich jade-tipped scales protecting tender epidermis.',
+          accentColor: '#10B981',
+          imageNormX: 0.285,
+          imageNormY: 0.670,
+          side: 'left',
+          className: 'bottom-[18%] sm:bottom-[20%] left-4 sm:left-[8%] lg:left-[12%] xl:left-[15%]',
         },
         {
           id: 'sugar',
           title: 'Refractive Floral Core',
           subtitle: `${selectedFruit.brixLevel}° Brix crystalline sweetness with delicate melon-pear notes.`,
           accentColor: '#D97706',
-          imageNormX: 0.550,
-          imageNormY: 0.680,
+          imageNormX: 0.655,
+          imageNormY: 0.540,
           side: 'right',
-          className: 'bottom-[22%] sm:bottom-[24%] right-4 sm:right-[12%] lg:right-[16%] xl:right-[20%]',
+          className: 'top-[26%] sm:top-[28%] right-4 sm:right-[8%] lg:right-[12%] xl:right-[15%]',
+        },
+        {
+          id: 'moisture',
+          title: 'Betacyanin Pericarp',
+          subtitle: 'Vivid magenta protective rind rich in potent betalain antioxidants.',
+          accentColor: '#E11D74',
+          imageNormX: 0.655,
+          imageNormY: 0.700,
+          side: 'right',
+          className: 'bottom-[18%] sm:bottom-[20%] right-4 sm:right-[8%] lg:right-[12%] xl:right-[15%]',
         },
       ];
 
@@ -178,25 +178,17 @@ export function AnatomyOverlay({
     const W = window.innerWidth;
     const H = window.innerHeight;
 
-    const frameAspect = 1920 / 1080;
-    const viewportAspect = W / H;
+    // Dimensions of native 1920x1080 media frame
+    const nativeW = 1920;
+    const nativeH = 1080;
 
-    let renderW = W;
-    let renderH = H;
-    let offsetX = 0;
-    let offsetY = 0;
+    // object-fit: cover exact scale
+    const scale = Math.max(W / nativeW, H / nativeH);
+    const renderW = nativeW * scale;
+    const renderH = nativeH * scale;
 
-    if (viewportAspect > frameAspect) {
-      renderW = W;
-      renderH = W / frameAspect;
-      offsetX = 0;
-      offsetY = (H - renderH) / 2;
-    } else {
-      renderH = H;
-      renderW = H * frameAspect;
-      offsetX = (W - renderW) / 2;
-      offsetY = 0;
-    }
+    const offsetX = (W - renderW) / 2;
+    const offsetY = (H - renderH) / 2;
 
     const calculated = anatomyData.map((item) => {
       // Calculate target point on fruit in screen coordinates
@@ -227,22 +219,63 @@ export function AnatomyOverlay({
         }
       }
 
-      // Generate organic S-curve path matching leader line aesthetics
+      // Generate leader line matching user's architectural guide aesthetics
       let pathData = '';
-      if (item.side === 'left') {
-        const dx = Math.max(20, endX - startX);
-        const cp1X = startX + dx * 0.40;
-        const cp1Y = startY;
-        const cp2X = endX - dx * 0.25;
-        const cp2Y = endY;
-        pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
+      if (isDragonFruit) {
+        if (item.side === 'left') {
+          const isTop = endY > startY;
+          if (isTop) {
+            // Horizontal out from card, smooth rounded bend, drops down into cut face
+            const cp1X = startX + (endX - startX) * 0.72;
+            const cp1Y = startY;
+            const cp2X = endX;
+            const cp2Y = startY + (endY - startY) * 0.45;
+            pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
+          } else {
+            // Smooth upward swoop from bottom card into lower contour
+            const dx = Math.max(20, endX - startX);
+            const cp1X = startX + dx * 0.45;
+            const cp1Y = startY;
+            const cp2X = endX - dx * 0.15;
+            const cp2Y = endY + (startY - endY) * 0.35;
+            pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
+          }
+        } else {
+          const isTop = endY > startY;
+          if (isTop) {
+            // Horizontal out from card (heading left), smooth rounded bend, drops down into cut face
+            const cp1X = startX - (startX - endX) * 0.72;
+            const cp1Y = startY;
+            const cp2X = endX;
+            const cp2Y = startY + (endY - startY) * 0.45;
+            pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
+          } else {
+            // Smooth upward swoop from bottom card into lower contour
+            const dx = Math.max(20, startX - endX);
+            const cp1X = startX - dx * 0.45;
+            const cp1Y = startY;
+            const cp2X = endX + dx * 0.15;
+            const cp2Y = endY + (startY - endY) * 0.35;
+            pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
+          }
+        }
       } else {
-        const dx = Math.max(20, startX - endX);
-        const cp1X = startX - dx * 0.40;
-        const cp1Y = startY;
-        const cp2X = endX + dx * 0.25;
-        const cp2Y = endY;
-        pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
+        // Original S-curve path for apple & orange
+        if (item.side === 'left') {
+          const dx = Math.max(20, endX - startX);
+          const cp1X = startX + dx * 0.40;
+          const cp1Y = startY;
+          const cp2X = endX - dx * 0.25;
+          const cp2Y = endY;
+          pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
+        } else {
+          const dx = Math.max(20, startX - endX);
+          const cp1X = startX - dx * 0.40;
+          const cp1Y = startY;
+          const cp2X = endX + dx * 0.25;
+          const cp2Y = endY;
+          pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
+        }
       }
 
       return {

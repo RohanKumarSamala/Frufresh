@@ -751,6 +751,9 @@ body::-webkit-scrollbar {
 
   /* Orange-cultivar accent, used only for the orange rail link's hover. */
   --brand-orange: #e2740f;
+
+  /* Dragonfruit-cultivar accent, used for the dragonfruit rail link's hover. */
+  --brand-dragonfruit: #e11d74;
 }
 
 #grid-overlay {
@@ -1076,6 +1079,11 @@ body::-webkit-scrollbar {
 .rail-link--orange:hover,
 .rail-link--orange:focus-visible {
   color: var(--brand-orange);
+}
+
+.rail-link--dragonfruit:hover,
+.rail-link--dragonfruit:focus-visible {
+  color: var(--brand-dragonfruit);
 }
 
 .rail-link.is-current {

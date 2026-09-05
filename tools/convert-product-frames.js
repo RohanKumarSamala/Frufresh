@@ -33,7 +33,7 @@ for (const seq of SEQUENCES) {
 
   const files = fs
     .readdirSync(dir)
-    .filter((f) => /\.png$/i.test(f))
+    .filter((f) => /\.(png|webp)$/i.test(f))
     .sort();
 
   if (!files.length) {
@@ -44,14 +44,17 @@ for (const seq of SEQUENCES) {
   let before = 0;
   let after = 0;
 
-  for (const file of files) {
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
     const from = path.join(dir, file);
-    // Same stem, same folder — only the extension changes.
-    const to = path.join(dir, file.replace(/\.png$/i, ".jpg"));
+    // Standardize to 1-indexed 3-digit frame naming: frame_001.jpg, frame_002.jpg...
+    const padded = String(i + 1).padStart(3, "0");
+    const to = path.join(dir, `frame_${padded}.jpg`);
 
-    await sharp(from).jpeg({ quality: QUALITY, mozjpeg: true }).toFile(to);
+    const input = fs.readFileSync(from);
+    await sharp(input).jpeg({ quality: QUALITY, mozjpeg: true }).toFile(to);
 
-    before += fs.statSync(from).size;
+    before += input.length;
     after += fs.statSync(to).size;
 
     fs.renameSync(from, path.join(bak, file));

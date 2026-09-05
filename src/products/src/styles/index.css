@@ -69,6 +69,18 @@ body::-webkit-scrollbar {
     inset 0 0 0 1px rgba(234, 88, 12, 0.12);
 }
 
+.glass-card-editorial-dragonfruit {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 242, 248, 0.52) 100%);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 28px 65px -12px rgba(225, 29, 116, 0.08),
+    0 8px 24px -4px rgba(0, 0, 0, 0.04),
+    inset 0 2px 3px 0 #FFFFFF,
+    inset 0 0 0 1px rgba(225, 29, 116, 0.12);
+}
+
 .glass-card-subtle {
   background: rgba(255, 255, 255, 0.30);
   backdrop-filter: blur(18px) saturate(160%);
@@ -375,6 +387,7 @@ body::-webkit-scrollbar {
 .glass-card-luxury,
 .glass-card-editorial-apple,
 .glass-card-editorial-orange,
+.glass-card-editorial-dragonfruit,
 .glass-card-subtle,
 .glass-pill-luxury,
 .glass-track {

@@ -1,3 +1,5 @@
+export type FruitId = 'apple' | 'orange' | 'dragonfruit';
+
 export interface FruitSpecimen {
   id: string;
   name: string;

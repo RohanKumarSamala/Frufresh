@@ -25,6 +25,8 @@ export function AnatomyOverlay({
   onSelectNextFruit,
 }: AnatomyOverlayProps) {
   const isApple = selectedFruit.id === 'apple';
+  const isOrange = selectedFruit.id === 'orange';
+  const isDragonFruit = selectedFruit.id === 'dragonfruit';
   const isVisible = scrollProgress >= 0.78;
 
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -85,7 +87,8 @@ export function AnatomyOverlay({
           className: 'bottom-[22%] sm:bottom-[24%] right-4 sm:right-[12%] lg:right-[16%] xl:right-[20%]',
         },
       ]
-    : [
+    : isOrange
+    ? [
         {
           id: 'layer',
           title: 'Anthocyanin Vesicles',
@@ -123,6 +126,48 @@ export function AnatomyOverlay({
           accentColor: '#D97706',
           imageNormX: 0.505,
           imageNormY: 0.505,
+          side: 'right',
+          className: 'bottom-[22%] sm:bottom-[24%] right-4 sm:right-[12%] lg:right-[16%] xl:right-[20%]',
+        },
+      ]
+    : [
+        {
+          id: 'layer',
+          title: 'Foliar Bract Scales',
+          subtitle: 'Chlorophyll-rich jade-tipped scales protecting tender epidermis.',
+          accentColor: '#10B981',
+          imageNormX: 0.420,
+          imageNormY: 0.380,
+          side: 'left',
+          className: 'top-[30%] sm:top-[32%] left-4 sm:left-[10%] lg:left-[14%] xl:left-[18%]',
+        },
+        {
+          id: 'moisture',
+          title: 'Betacyanin Pericarp',
+          subtitle: 'Vivid magenta protective rind rich in potent betalain antioxidants.',
+          accentColor: '#E11D74',
+          imageNormX: 0.620,
+          imageNormY: 0.480,
+          side: 'right',
+          className: 'top-[46%] sm:top-[48%] right-4 sm:right-[10%] lg:right-[14%] xl:right-[18%]',
+        },
+        {
+          id: 'defects',
+          title: 'Micro-Seed Matrix',
+          subtitle: 'Thousands of edible black seeds loaded with oleic fatty acids & micro-crunch.',
+          accentColor: '#4B5563',
+          imageNormX: 0.430,
+          imageNormY: 0.620,
+          side: 'left',
+          className: 'bottom-[22%] sm:bottom-[24%] left-4 sm:left-[12%] lg:left-[16%] xl:left-[20%]',
+        },
+        {
+          id: 'sugar',
+          title: 'Refractive Floral Core',
+          subtitle: `${selectedFruit.brixLevel}° Brix crystalline sweetness with delicate melon-pear notes.`,
+          accentColor: '#D97706',
+          imageNormX: 0.550,
+          imageNormY: 0.680,
           side: 'right',
           className: 'bottom-[22%] sm:bottom-[24%] right-4 sm:right-[12%] lg:right-[16%] xl:right-[20%]',
         },
@@ -430,7 +475,7 @@ export function AnatomyOverlay({
           onClick={onSelectNextFruit}
           className="px-5 py-3 rounded-full text-xs font-bold uppercase tracking-wider glass-btn-pearl transition-all shadow-md hover:scale-105 cursor-pointer"
         >
-          VIEW {isApple ? 'ORANGE' : 'APPLE'}
+          VIEW {isApple ? 'ORANGE' : isOrange ? 'DRAGON FRUIT' : 'APPLE'}
         </button>
       </div>
     </div>

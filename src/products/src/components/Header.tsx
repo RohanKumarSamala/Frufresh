@@ -1,12 +1,12 @@
 import React from 'react';
-import { FruitSpecimen } from '../types';
+import { FruitSpecimen, FruitId } from '../types';
 import { FrufreshLogo } from './FrufreshLogo';
 
 interface HeaderProps {
   fruits: FruitSpecimen[];
   selectedFruit: FruitSpecimen;
-  activeView: 'apple' | 'orange';
-  onSelectView: (view: 'apple' | 'orange') => void;
+  activeView: FruitId;
+  onSelectView: (view: FruitId) => void;
   onOpenPartnership: () => void;
   onOpenThemeSandbox?: () => void;
   isDarkMode?: boolean;

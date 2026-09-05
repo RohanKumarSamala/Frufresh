@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState } from 'react';
 // These must match the files on disk exactly: the loader asks for
 // frame_001..frame_<count>, so a count higher than the folder holds sends
 // it after frames that 404, and the canvas stalls on the last good one.
-export const FRAME_COUNTS = { apple: 95, orange: 69 } as const;
+export const FRAME_COUNTS = { apple: 95, orange: 69, dragonfruit: 80 } as const;
 
 // Share of the page's scroll the looping hero video owns before the frame
 // sequence starts turning. Without this the frames begin scrubbing at the
@@ -24,19 +24,15 @@ const MEDIA_SCALE = 1;
 
 // Sampled from the edges of the media as it actually renders, so the
 // margin around the scaled-down footage continues its sweep.
-//
-// Apple is read from its loop video (neutral grey). Orange is read from
-// its frame stills instead: the orange loop is a full-bleed close-up of
-// the fruit with no backdrop at its edges, so there is nothing there to
-// match — its margin only lines up once the frame sequence takes over.
 const BACKDROP = {
   apple: [223, 223, 222] as const,
   orange: [203, 188, 174] as const,
+  dragonfruit: [232, 222, 226] as const,
   dark: [8, 8, 10] as const,
 };
 
 interface ScrollFrameBackgroundProps {
-  fruitId: string; // 'apple' | 'orange'
+  fruitId: string; // 'apple' | 'orange' | 'dragonfruit'
   totalFrames?: number;
   isDarkMode?: boolean;
 }
@@ -54,13 +50,22 @@ export function ScrollFrameBackground({
   const lastRenderedFrameRef = useRef<number>(-1);
   const animationFrameId = useRef<number | null>(null);
 
-  const currentBgR = useRef<number>(isDarkMode ? 8 : BACKDROP.apple[0]);
-  const currentBgG = useRef<number>(isDarkMode ? 8 : BACKDROP.apple[1]);
-  const currentBgB = useRef<number>(isDarkMode ? 10 : BACKDROP.apple[2]);
+  const getBackdropColor = (id: string, dark: boolean): readonly [number, number, number] => {
+    if (dark) return BACKDROP.dark;
+    if (id === 'dragonfruit') return BACKDROP.dragonfruit;
+    if (id === 'orange') return BACKDROP.orange;
+    return BACKDROP.apple;
+  };
+
+  const initialBackdrop = getBackdropColor(fruitId, isDarkMode);
+
+  const currentBgR = useRef<number>(initialBackdrop[0]);
+  const currentBgG = useRef<number>(initialBackdrop[1]);
+  const currentBgB = useRef<number>(initialBackdrop[2]);
 
   // Held in a ref, not read from props inside the render loop: that loop's
   // effect does not depend on fruitId, so a prop read there could go stale.
-  const backdropRef = useRef<readonly [number, number, number]>(BACKDROP.apple);
+  const backdropRef = useRef<readonly [number, number, number]>(initialBackdrop);
   
   const [activeFruit, setActiveFruit] = useState(fruitId);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -70,25 +75,22 @@ export function ScrollFrameBackground({
   const [layers, setLayers] = useState({ video: true, canvas: false });
 
   // Determine total frame count and loop video url based on fruit cultivar
-  const isOrange = fruitId === 'orange';
-  const frameCount = isOrange ? FRAME_COUNTS.orange : FRAME_COUNTS.apple;
-  const loopVideoUrl = isOrange ? '/products-assets/video/oranges-loop.mp4' : '/products-assets/video/apple-loop.mp4';
+  const frameCount =
+    FRAME_COUNTS[fruitId as keyof typeof FRAME_COUNTS] ?? FRAME_COUNTS.apple;
+  const loopVideoUrl =
+    fruitId === 'dragonfruit'
+      ? '/products-assets/video/dragonfruit-loop.mp4'
+      : fruitId === 'orange'
+      ? '/products-assets/video/oranges-loop.mp4'
+      : '/products-assets/video/apple-loop.mp4';
 
   // Keep the backdrop in step with the cultivar on screen.
   useEffect(() => {
-    backdropRef.current = isDarkMode
-      ? BACKDROP.dark
-      : isOrange
-      ? BACKDROP.orange
-      : BACKDROP.apple;
-  }, [isOrange, isDarkMode]);
+    backdropRef.current = getBackdropColor(fruitId, isDarkMode);
+  }, [fruitId, isDarkMode]);
 
-  const backdropCss = `rgb(${(isDarkMode
-    ? BACKDROP.dark
-    : isOrange
-    ? BACKDROP.orange
-    : BACKDROP.apple
-  ).join(', ')})`;
+  const activeBackdrop = getBackdropColor(fruitId, isDarkMode);
+  const backdropCss = `rgb(${activeBackdrop.join(', ')})`;
 
   // .jpg, not .png: the sequences live in the same frames/ folder as
   // before, but re-encoded (tools/convert-product-frames.js). The PNGs
@@ -286,6 +288,12 @@ export function ScrollFrameBackground({
               ctx.fillRect(0, 0, cw, ch);
               ctx.drawImage(img, x, y, imgW, imgH);
             }
+          } else if (lastRenderedFrameRef.current === -1) {
+            const cw = canvas.clientWidth || window.innerWidth;
+            const ch = canvas.clientHeight || window.innerHeight;
+            ctx.clearRect(0, 0, cw, ch);
+            ctx.fillStyle = `rgb(${bgR}, ${bgG}, ${bgB})`;
+            ctx.fillRect(0, 0, cw, ch);
           }
         }
       }

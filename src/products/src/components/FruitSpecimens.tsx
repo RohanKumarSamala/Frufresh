@@ -27,12 +27,12 @@ export function FruitSpecimens({
           </span>
         </div>
         <span className="font-sans text-[10px] text-[#1A1A1A]/60 uppercase tracking-widest font-mono">
-          2 AVAILABLE
+          {fruits.length} AVAILABLE
         </span>
       </div>
 
-      {/* 2-column comparative cards positioned on flanks with clear central corridor */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8">
+      {/* Comparative cards positioned on flanks with clear central corridor */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-8">
         {fruits.map((fruit, idx) => {
           const isSelected = fruit.id === selectedFruit.id;
           return (

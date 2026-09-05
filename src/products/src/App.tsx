@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FRUIT_SPECIMENS } from './data/fruits';
-import { FruitSpecimen } from './types';
+import { FruitSpecimen, FruitId } from './types';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { PartnershipModal } from './components/PartnershipModal';
@@ -12,17 +12,18 @@ import { AnatomyOverlay } from './components/AnatomyOverlay';
 const SNAP_POINTS = [0, 0.32, 0.62, 1.0];
 
 export default function App() {
-  // Links from the home page arrive as /products/?fruit=orange, so the
+  // Links from the home page arrive as /products/?fruit=orange or ?fruit=dragonfruit, so the
   // page opens on the cultivar that was asked for.
+  const queryFruit = new URLSearchParams(window.location.search).get('fruit');
   const initialFruit =
     FRUIT_SPECIMENS.find(
-      (f) => f.id === new URLSearchParams(window.location.search).get('fruit')
+      (f) => f.id === queryFruit || (queryFruit === 'dragon-fruit' && f.id === 'dragonfruit')
     ) || FRUIT_SPECIMENS[0];
 
   const [fruits] = useState<FruitSpecimen[]>(FRUIT_SPECIMENS);
   const [selectedFruit, setSelectedFruit] = useState<FruitSpecimen>(initialFruit);
-  const [activeView, setActiveView] = useState<'apple' | 'orange'>(
-    initialFruit.id as 'apple' | 'orange'
+  const [activeView, setActiveView] = useState<FruitId>(
+    initialFruit.id as FruitId
   );
   const [isPartnershipOpen, setIsPartnershipOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -224,15 +225,10 @@ export default function App() {
     };
   }, [isPartnershipOpen, getDocHeight, scrollToStage]);
 
-  const handleSelectView = (view: 'apple' | 'orange') => {
+  const handleSelectView = (view: FruitId) => {
     setActiveView(view);
-    if (view === 'apple') {
-      const apple = fruits.find(f => f.id === 'apple') || fruits[0];
-      setSelectedFruit(apple);
-    } else if (view === 'orange') {
-      const orange = fruits.find(f => f.id === 'orange') || fruits[1];
-      setSelectedFruit(orange);
-    }
+    const fruit = fruits.find(f => f.id === view) || fruits[0];
+    setSelectedFruit(fruit);
     scrollToStage(0);
   };
 
@@ -241,7 +237,7 @@ export default function App() {
     const nextIndex = (currentIndex + 1) % fruits.length;
     const nextFruit = fruits[nextIndex];
     setSelectedFruit(nextFruit);
-    setActiveView(nextFruit.id as 'apple' | 'orange');
+    setActiveView(nextFruit.id as FruitId);
     scrollToStage(0);
   };
 
@@ -256,6 +252,7 @@ export default function App() {
   const trackVh = (frames * VH_PER_FRAME) / (1 - INTRO_FRACTION);
 
   const isApple = selectedFruit.id === 'apple';
+  const isOrange = selectedFruit.id === 'orange';
   const isDarkMode = false;
 
   return (
@@ -313,7 +310,9 @@ export default function App() {
             <h3 className="fr-heading">
               {isApple
                 ? 'Glacial snowmelt & high-altitude diurnal winds.'
-                : 'Mount Etna mineral ash & Mediterranean sun.'}
+                : isOrange
+                ? 'Mount Etna mineral ash & Mediterranean sun.'
+                : 'Volcanic coastal loam & moonlit monsoon nights.'}
             </h3>
 
             <p className="fr-body">{selectedFruit.description}</p>
@@ -332,12 +331,16 @@ export default function App() {
             <h3 className="fr-heading">
               {isApple
                 ? 'Aged Comté, Salted Tart Tatin & Blanc de Blancs.'
-                : 'Seared Duck Breast, 74% Dark Chocolate & Nero d’Avola.'}
+                : isOrange
+                ? 'Seared Duck Breast, 74% Dark Chocolate & Nero d’Avola.'
+                : 'Chilled Lychee Granita, Yuzu Hamachi Ceviche & Sparkling Pet-Nat Rosé.'}
             </h3>
             <p className="fr-body">
               {isApple
                 ? 'The dense cell structure and malic acidity cut cleanly through aged mountain cheeses and caramelized pastry.'
-                : 'Intense raspberry anthocyanins and citrus oils harmonize with game meats and rich single-origin chocolates.'}
+                : isOrange
+                ? 'Intense raspberry anthocyanins and citrus oils harmonize with game meats and rich single-origin chocolates.'
+                : 'Delicate melon-floral sweetness and micro-seed texture provide an ethereal counterbalance to bright citrus and mineral-forward wines.'}
             </p>
 
           </div>

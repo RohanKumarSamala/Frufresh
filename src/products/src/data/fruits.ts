@@ -42,6 +42,28 @@ export const FRUIT_SPECIMENS: FruitSpecimen[] = [
       aroma: 96,
       crispness: 65,
     }
+  },
+  {
+    id: 'dragonfruit',
+    name: 'Royal Red Pitaya',
+    botanicalName: 'Selenicereus undatus',
+    tagline: 'Tropical Volcanic Pitaya',
+    heroHeadline: 'Vibrant night-blooming Dragon Fruit.',
+    heroSubheadline: 'Crystalline pitaya flesh laced with subtle kiwi-pear floral sweetness, crisp micro-seeds, and vivid betacyanin magenta.',
+    brixLevel: 15.2,
+    acidity: 'Mild Malic-Citric',
+    harvestWindow: 'Monsoon to Autumn Zenith',
+    origin: 'Binh Thuan Foothills',
+    elevation: '420m',
+    notes: ['Crystalline Pulp', 'Night-Blooming Floral', 'Dragon Scale Zest', 'Black Poppy Snap'],
+    description: 'Climbing epiphytic cacti blooming under full moonlight. Hand-harvested at peak brix when bract scales blush vibrant jade-green.',
+    flavorProfile: {
+      sweetness: 84,
+      tartness: 35,
+      aroma: 94,
+      crispness: 92,
+    }
   }
 ];
+
 

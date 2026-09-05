@@ -16,7 +16,7 @@ const root = path.resolve(__dirname, "..");
 const SRC = path.join(root, "src", "products", "assets", "images", "frames");
 const BACKUP = path.join(root, "..", "Frufresh-original-assets", "product-frames");
 
-const SEQUENCES = ["apple", "orange"];
+const SEQUENCES = ["apple", "orange", "dragonfruit"];
 const QUALITY = 90;
 
 const mb = (n) => (n / 1048576).toFixed(1) + "MB";

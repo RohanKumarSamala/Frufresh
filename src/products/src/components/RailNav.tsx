@@ -1,8 +1,9 @@
 import React from 'react';
+import { FruitId } from '../types';
 
 interface RailNavProps {
-  activeView: 'apple' | 'orange';
-  onSelectView: (view: 'apple' | 'orange') => void;
+  activeView: FruitId;
+  onSelectView: (view: FruitId) => void;
 }
 
 /**
@@ -11,7 +12,7 @@ interface RailNavProps {
  * currentColor, so it follows its label's ink instead of introducing
  * colours the rest of the site does not use.
  *
- * Home is a real link back to the main site; the two cultivars switch in
+ * Home is a real link back to the main site; the cultivars switch in
  * place rather than navigating, so the frame sequence does not reload.
  */
 const HomeMark = () => (
@@ -34,6 +35,12 @@ const OrangeMark = () => (
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <circle cx="7" cy="8.3" r="4.6" />
     <path d="M7.3 3.4c.5-1 1.6-1.5 2.6-1.4-.1 1-.8 1.9-1.9 2.1-.5.1-.8-.2-.7-.7z" />
+  </svg>
+);
+
+const DragonFruitMark = () => (
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <path d="M7 1.4c-.5 1.1-.4 2.1.1 2.9-1.1.3-2.1 1.1-2.6 2.2-.7-.2-1.5.1-1.9.7.6.7 1.4.9 2.2.5.1 1 .6 1.9 1.4 2.6.8.6 1.9.8 3.4.1.7.5 1.6.5 2.4 0 .8-.7 1.3-1.6 1.4-2.6.8.4 1.6.2 2.2-.5-.4-.6-1.2-.9-1.9-.7-.5-1.1-1.5-1.9-2.6-2.2.5-.8.6-1.8.1-2.9-.6.7-1.2 1.5-1.2 2.3-.2-.8-.7-1.6-1.2-2.4z" />
   </svg>
 );
 
@@ -67,6 +74,18 @@ export function RailNav({ activeView, onSelectView }: RailNavProps) {
       >
         <span className="fr-rail-glyph">
           <OrangeMark />
+        </span>
+      </button>
+
+      <button
+        type="button"
+        className="fr-rail-link"
+        data-active={activeView === 'dragonfruit'}
+        onClick={() => onSelectView('dragonfruit')}
+        aria-label="Dragon Fruit"
+      >
+        <span className="fr-rail-glyph">
+          <DragonFruitMark />
         </span>
       </button>
     </nav>

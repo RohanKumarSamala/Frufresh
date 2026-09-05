@@ -35,6 +35,13 @@ export function PartnershipModal({ isOpen, onClose, selectedFruit, isDarkMode = 
     onClose();
   };
 
+  const isOrange = selectedFruit.id === 'orange';
+  const editorialCardClass = isApple
+    ? 'glass-card-editorial-apple'
+    : isOrange
+    ? 'glass-card-editorial-orange'
+    : 'glass-card-editorial-dragonfruit';
+
   if (!isOpen) return null;
 
   return (
@@ -44,9 +51,7 @@ export function PartnershipModal({ isOpen, onClose, selectedFruit, isDarkMode = 
           initial={{ opacity: 0, scale: 0.96, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: 8 }}
-          className={`relative w-full max-w-xl rounded-[32px] p-6 sm:p-8 transition-all duration-700 ${
-            isApple ? 'glass-card-editorial-apple' : 'glass-card-editorial-orange'
-          } text-[#1A1A1A]`}
+          className={`relative w-full max-w-xl rounded-[32px] p-6 sm:p-8 transition-all duration-700 ${editorialCardClass} text-[#1A1A1A]`}
         >
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-black/[0.08]">

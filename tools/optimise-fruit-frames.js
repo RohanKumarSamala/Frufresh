@@ -14,7 +14,7 @@ const root = path.resolve(__dirname, "..");
 const SRC = path.join(root, "src", "products", "assets", "images", "frames");
 const OUT = path.join(root, "src", "products", "assets", "images", "frames-optimised");
 
-const SEQUENCES = ["apple", "orange"];
+const SEQUENCES = ["apple", "orange", "dragonfruit"];
 // Full source width and a high quality: the earlier 1600px/82 pass was
 // visibly softer than the originals when scrubbed. At native width and
 // quality 92 the frames are hard to tell from the PNGs, while still

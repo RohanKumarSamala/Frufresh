@@ -2,6 +2,7 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createServer as createViteServer } from "vite";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT = path.join(__dirname, "..");
@@ -11,25 +12,19 @@ const PROJECT = path.join(__dirname, "..");
 const ROOT = path.join(PROJECT, "src");
 const PORT = process.env.PORT || 5173;
 
-// The products page is a separate Vite app living inside the main one at
-// src/products. Build it with:
-//   cd src/products && npx vite build --base=/products/
-//
-// Its bundle is mounted at /products/. Its media is referenced from the
-// source as absolute paths built at runtime, which Vite's `base` does not
-// rewrite — so it gets its own /products-assets/ namespace, kept clear of
-// the main site's /assets/ (which falls through to src/assets).
-const PRODUCTS_APP = path.join(ROOT, "products");
-const MOUNTS = [
-  { prefix: "/products-assets", dir: path.join(PRODUCTS_APP, "assets") },
-  { prefix: "/products", dir: path.join(PRODUCTS_APP, "dist") },
-];
+// The products page used to be a separate Vite app you had to `cd` into and
+// run its own `npm run dev` for. It's merged in now: its source lives at
+// src/product-page (one dependency tree, one `npm run dev` here), and Vite
+// runs in middleware mode inside this same process/port, so editing it
+// live-reloads exactly like the vanilla pages do. `npm run build:products`
+// still produces a static src/product-page/dist for anyone who wants a
+// prebuilt bundle instead, but dev no longer needs it.
+const PRODUCT_PAGE = path.join(ROOT, "product-page");
+const PRODUCTS_BASE = "/products/";
 
-// The products sequences are served straight from assets/images/frames/.
-// There used to be a swap here that handed back compressed JPEGs from a
-// frames-optimised/ folder; that folder is gone and the originals are
-// served as they are, so the swap (and its existsSync on every single
-// frame request) has gone with it.
+const MOUNTS = [
+  { prefix: "/products-assets", dir: path.join(ROOT, "assets", "product-page") },
+];
 
 function resolveFile(reqPath) {
   for (const mount of MOUNTS) {
@@ -61,7 +56,7 @@ const MIME = {
   ".mp4": "video/mp4",
 };
 
-const server = http.createServer((req, res) => {
+function serveStatic(req, res) {
   const reqPath = decodeURIComponent(req.url.split("?")[0]);
   const filePath = resolveFile(reqPath);
 
@@ -113,8 +108,53 @@ const server = http.createServer((req, res) => {
     });
     fs.createReadStream(filePath).pipe(res);
   });
+}
+
+// Create the raw server first, with no request listener yet, so it can be
+// handed to Vite as the socket to attach its HMR websocket to — otherwise
+// Vite would spin up a second listener of its own for that.
+const server = http.createServer();
+
+const vite = await createViteServer({
+  configFile: path.join(PROJECT, "vite.config.ts"),
+  root: PRODUCT_PAGE,
+  base: PRODUCTS_BASE,
+  server: {
+    middlewareMode: true,
+    hmr: { server },
+  },
+  appType: "custom",
+});
+
+async function serveProductsIndex(req, res) {
+  try {
+    const indexPath = path.join(PRODUCT_PAGE, "index.html");
+    const raw = fs.readFileSync(indexPath, "utf-8");
+    const html = await vite.transformIndexHtml(req.url, raw);
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    res.end(html);
+  } catch (err) {
+    vite.ssrFixStacktrace(err);
+    res.writeHead(500, { "Content-Type": "text/plain" });
+    res.end(String(err));
+  }
+}
+
+server.on("request", (req, res) => {
+  const reqPath = decodeURIComponent(req.url.split("?")[0]);
+
+  if (reqPath === "/products" || reqPath === "/products/") {
+    serveProductsIndex(req, res);
+    return;
+  }
+
+  // Vite only intercepts requests under its own base (/products/...) plus
+  // its internal /@vite, /@react-refresh, etc. paths — anything else calls
+  // next(), which falls through to the plain static file server below.
+  vite.middlewares(req, res, () => serveStatic(req, res));
 });
 
 server.listen(PORT, () => {
   console.log(`Serving ${ROOT} at http://localhost:${PORT}`);
+  console.log(`Products app (live, via Vite) at http://localhost:${PORT}/products/`);
 });

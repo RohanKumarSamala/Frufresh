@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node server/index.js",
-    "build:products": "cd src/products && npx vite build --base=/products/",
+    "build:products": "vite build",
+    "lint:products": "tsc --noEmit -p src/product-page/tsconfig.json",
     "convert-frames": "node tools/convert-frames.js",
     "optimise-portraits": "node tools/optimise-portraits.js",
     "optimise-product-frames": "node tools/optimise-fruit-frames.js",
@@ -13,6 +14,19 @@
     "check-frames": "node tools/check-continuity.js"
   },
   "dependencies": {
-    "sharp": "^0.35.4"
+    "lucide-react": "^0.546.0",
+    "motion": "^12.23.24",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "sharp": "^0.35.4",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "tailwindcss": "^4.1.14",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.3"
   }
 }

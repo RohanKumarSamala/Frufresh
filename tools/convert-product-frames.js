@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 
-const SRC = path.join(root, "src", "products", "assets", "images", "frames");
+const SRC = path.join(root, "src", "assets", "product-page", "images", "frames");
 const BACKUP = path.join(root, "..", "Frufresh-original-assets", "product-frames");
 
 const SEQUENCES = ["apple", "orange", "dragonfruit"];

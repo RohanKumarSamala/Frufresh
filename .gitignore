@@ -1,6 +1,5 @@
 node_modules/
-src/products/node_modules/
-src/products/dist/
+src/product-page/dist/
 *.log
 .env*
 !.env.example

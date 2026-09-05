@@ -1,24 +1,31 @@
 # Frufresh
 
-Two pages served by one small static server:
+Two pages, one project, one dev server:
 
 - **Home** — a canvas scroll-scrubbed frame sequence, then the founder/CEO story.
   Vanilla HTML/CSS/JS, served straight out of `src/`.
-- **Products** — a React + Vite app for the apple and orange cultivars.
-  It lives *inside* the main app at `src/products/` and is mounted at `/products/`.
+- **Products** — a React + Vite app for the apple, orange, and dragonfruit cultivars.
+  It lives at `src/product-page/` and is mounted at `/products/`.
+
+Both used to need their own `npm install` and their own `npm run dev` (the
+products app was a separate nested npm project at `src/products/`). That's
+gone now — one dependency tree, one dev server, one command.
 
 ## Run it
 
 ```
-npm run dev            # http://localhost:5173
+npm install
+npm run dev             # http://localhost:5173
 ```
 
-The products page is a build artifact, so rebuild it after changing anything
-under `src/products/src`:
+`server/index.js` runs Vite in middleware mode inside the same process, so
+editing anything under `src/product-page/` hot-reloads at `/products/` exactly
+like editing `src/index.html` reloads the home page — no separate server, no
+rebuild step needed while developing.
 
-```
-npm run build:products
-```
+`npm run build:products` still exists if you ever want a prebuilt static
+bundle of the products app (e.g. for a host that can't run this Node server),
+but it is optional — dev doesn't depend on it.
 
 ## Layout
 
@@ -35,13 +42,14 @@ src/                           the site's web root
   scripts/script.js              scroll engine, grain dissolve, guide grid, logo handoff
   config/manifest.json           frame count/prefix/extension, read at runtime
   assets/
-    images/                      logo.png, founder.webp, ceo.webp        -> /assets/images/...
-    video/                       hero-video.mp4, loading.mp4             -> /assets/video/...
-    frames/hero/                 143 optimised WebP frames               -> /assets/frames/hero/...
+    images/                      logo.png, founder.png, ceo.png            -> /assets/images/...
+    video/                       hero-video.mp4, loading.mp4               -> /assets/video/...
+    frames/hero/                 143 optimised WebP frames                 -> /assets/frames/hero/...
+    product-page/                the products app's own media (see below)  -> /products-assets/...
 
-  products/                    the products app, contained in the main project
-    index.html                   Vite entry document
-    vite.config.ts, tsconfig.json, package.json
+  product-page/                the products app's source
+    index.html                    Vite entry document
+    tsconfig.json
     src/
       main.tsx, App.tsx
       components/                UI components
@@ -49,38 +57,33 @@ src/                           the site's web root
       data/                      fruit specimen data
       types/                     shared TypeScript types
       styles/                    index.css (Tailwind + component styles)
-    assets/                                                              -> /products-assets/...
-      images/frames/             source PNG sequences (apple, orange)
-      images/frames-optimised/   compressed JPEG stand-ins actually served
-      video/                     apple-loop.mp4, oranges-loop.mp4
-    public/                      Vite publicDir, mirrors the same URL namespace
-    dist/                        build output, mounted at /products/
+    dist/                        optional prebuilt bundle from `npm run build:products` (gitignored)
 
-server/index.js                static server: byte-range media, /products mounts
+vite.config.ts                 config for the products app (root src/product-page, base /products/)
+server/index.js                one server: byte-range media for the home page,
+                                Vite middleware mode for /products, and the
+                                /products-assets mount below
 tools/                         one-off asset pipeline scripts (sharp)
 ```
 
 ### URL namespaces
 
-The two apps keep separate media prefixes so they never collide:
+The two pages keep separate media prefixes so they never collide:
 
-| prefix              | serves from                  |
-| ------------------- | ---------------------------- |
-| `/`                 | `src/`                       |
-| `/assets/…`         | `src/assets/` (home media)   |
-| `/products/…`       | `src/products/dist/`         |
-| `/products-assets/…`| `src/products/assets/`       |
-
-`/products-assets/images/frames/<fruit>/frame_NNN.png` is transparently answered
-with the matching JPEG from `images/frames-optimised/`, so the app can keep asking
-for the PNG while the wire only ever carries the light file.
+| prefix              | serves from                        |
+| ------------------- | ----------------------------------- |
+| `/`                 | `src/`                              |
+| `/assets/…`         | `src/assets/` (home media)          |
+| `/products/…`       | `src/product-page/` (live via Vite) |
+| `/products-assets/…`| `src/assets/product-page/`          |
 
 ## Asset pipeline
 
 | script                          | in                              | out                            |
-| ------------------------------- | ------------------------------- | ------------------------------ |
-| `npm run convert-frames`        | `assets/images/frames/hero/`    | `src/assets/frames/hero/` + manifest |
-| `npm run optimise-portraits`    | `assets/images/portraits/`      | `src/assets/images/*.webp`     |
-| `npm run optimise-product-frames` | `src/products/assets/images/frames/` | `…/frames-optimised/`     |
-| `npm run trim-logo`             | `assets/images/logo/logo.png`   | `src/assets/images/logo.png`   |
-| `npm run check-frames`          | `assets/images/frames/hero/`    | continuity report              |
+| ------------------------------- | -------------------------------- | ------------------------------ |
+| `npm run convert-frames`        | `assets/images/frames/hero/`     | `src/assets/frames/hero/` + manifest |
+| `npm run optimise-portraits`    | `assets/images/portraits/`       | `src/assets/images/*.webp`     |
+| `npm run optimise-product-frames` | `src/assets/product-page/images/frames/` | `…/frames-optimised/`   |
+| `npm run trim-logo`             | `assets/images/logo/logo.png`    | `src/assets/images/logo.png`   |
+| `npm run check-frames`          | `assets/images/frames/hero/`     | continuity report              |
+| `npm run lint:products`         | `src/product-page/`               | TypeScript type-check           |

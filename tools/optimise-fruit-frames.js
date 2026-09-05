@@ -11,8 +11,8 @@ import { fileURLToPath } from "node:url";
 // server/index.js serves these in their place when it asks for a frame.
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
-const SRC = path.join(root, "src", "products", "assets", "images", "frames");
-const OUT = path.join(root, "src", "products", "assets", "images", "frames-optimised");
+const SRC = path.join(root, "src", "assets", "product-page", "images", "frames");
+const OUT = path.join(root, "src", "assets", "product-page", "images", "frames-optimised");
 
 const SEQUENCES = ["apple", "orange", "dragonfruit"];
 // Full source width and a high quality: the earlier 1600px/82 pass was

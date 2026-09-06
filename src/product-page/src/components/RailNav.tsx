@@ -40,7 +40,14 @@ const OrangeMark = () => (
 
 const DragonFruitMark = () => (
   <svg viewBox="0 0 14 14" aria-hidden="true">
-    <path d="M7 1.4c-.5 1.1-.4 2.1.1 2.9-1.1.3-2.1 1.1-2.6 2.2-.7-.2-1.5.1-1.9.7.6.7 1.4.9 2.2.5.1 1 .6 1.9 1.4 2.6.8.6 1.9.8 3.4.1.7.5 1.6.5 2.4 0 .8-.7 1.3-1.6 1.4-2.6.8.4 1.6.2 2.2-.5-.4-.6-1.2-.9-1.9-.7-.5-1.1-1.5-1.9-2.6-2.2.5-.8.6-1.8.1-2.9-.6.7-1.2 1.5-1.2 2.3-.2-.8-.7-1.6-1.2-2.4z" />
+    {/* Body: an egg-shaped pitaya sitting low in the frame, so the crown
+        of leaf-spikes above reads clearly at small sizes. */}
+    <path d="M7 4.4c2 0 3.6 1.9 3.6 4.2S9 12.8 7 12.8 3.4 10.9 3.4 8.6 5 4.4 7 4.4z" />
+    {/* Three spikes, reusing the same pointed-leaf shape as the apple's
+        stem leaf, fanned out across the top like the fruit's scales. */}
+    <path d="M7 4.6c-.3-1.1.1-2.1.9-2.7.5.9.3 1.9-.3 2.6-.2.2-.4.2-.6.1z" />
+    <path d="M4.9 5.3c-.7-.9-1.7-1.2-2.7-1 .4.9 1.3 1.5 2.3 1.5.2 0 .3-.2.4-.5z" />
+    <path d="M9.1 5.3c.7-.9 1.7-1.2 2.7-1-.4.9-1.3 1.5-2.3 1.5-.2 0-.3-.2-.4-.5z" />
   </svg>
 );
 
@@ -63,6 +70,7 @@ export function RailNav({ activeView, onSelectView }: RailNavProps) {
         <span className="fr-rail-glyph">
           <AppleMark />
         </span>
+        <span className="fr-rail-label">Apple</span>
       </button>
 
       <button
@@ -75,6 +83,7 @@ export function RailNav({ activeView, onSelectView }: RailNavProps) {
         <span className="fr-rail-glyph">
           <OrangeMark />
         </span>
+        <span className="fr-rail-label">Orange</span>
       </button>
 
       <button
@@ -87,6 +96,7 @@ export function RailNav({ activeView, onSelectView }: RailNavProps) {
         <span className="fr-rail-glyph">
           <DragonFruitMark />
         </span>
+        <span className="fr-rail-label">Dragon</span>
       </button>
     </nav>
   );

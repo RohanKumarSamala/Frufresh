@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { FruitSpecimen } from '../types';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 interface AnatomyPoint {
   id: string;
@@ -28,6 +29,7 @@ export function AnatomyOverlay({
   const isOrange = selectedFruit.id === 'orange';
   const isDragonFruit = selectedFruit.id === 'dragonfruit';
   const isVisible = scrollProgress >= 0.78;
+  const isMobile = useIsMobile();
 
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [lineCoords, setLineCoords] = useState<
@@ -44,7 +46,16 @@ export function AnatomyOverlay({
   // Card element refs
   const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
-  const anatomyData: AnatomyPoint[] = isApple
+  /* Memoised, and it has to be. This array is a dependency of
+     updateCoordinates, which is a dependency of the effect that calls
+     setLineCoords. Rebuilt inline on every render it gave that callback
+     a new identity each time, so the effect re-ran, set state, and
+     re-rendered — a render loop that ran for as long as the page was
+     open ("Maximum update depth exceeded", tens of thousands of times).
+     Keyed on the cultivar, which is the only thing the contents vary on. */
+  const anatomyData: AnatomyPoint[] = useMemo(
+    () =>
+      isApple
     ? [
         {
           id: 'layer',
@@ -171,7 +182,9 @@ export function AnatomyOverlay({
           side: 'right',
           className: 'bottom-[18%] sm:bottom-[20%] right-4 sm:right-[8%] lg:right-[12%] xl:right-[15%]',
         },
-      ];
+      ],
+    [isApple, isOrange]
+  );
 
   // Precise coordinate calculation matching ScrollFrameBackground canvas object-fit cover
   const updateCoordinates = useCallback(() => {
@@ -291,8 +304,12 @@ export function AnatomyOverlay({
     setLineCoords(calculated);
   }, [anatomyData]);
 
-  // Recalculate on resize, scroll, and fruit change
+  // Recalculate on resize, scroll, and fruit change. Skipped on a phone,
+  // where the callouts are a stacked list rather than pinned to points on
+  // the fruit — there is nothing for a leader line to join up.
   useEffect(() => {
+    if (isMobile) return;
+
     updateCoordinates();
     window.addEventListener('resize', updateCoordinates);
     window.addEventListener('scroll', updateCoordinates, { passive: true });
@@ -306,7 +323,42 @@ export function AnatomyOverlay({
       clearTimeout(timer);
       clearTimeout(timer2);
     };
-  }, [updateCoordinates, selectedFruit.id, isVisible]);
+  }, [updateCoordinates, selectedFruit.id, isVisible, isMobile]);
+
+  /* Phone layout. Four callouts pinned around the fruit need margins to
+     sit in; at 390px they landed on top of each other and on the fruit.
+     They become a sheet along the bottom instead — the fruit still reads
+     above it, and the copy is finally legible. The leader lines go with
+     them, since there is no longer a point on the image to lead to. */
+  if (isMobile) {
+    return (
+      <div
+        id="anatomy-section-container"
+        className={`fixed inset-x-0 bottom-0 z-20 transition-opacity duration-700 ${
+          isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="fr-anatomy-sheet">
+          <p className="fr-anatomy-sheet-title">Anatomy</p>
+          <ul className="fr-anatomy-sheet-list">
+            {anatomyData.map((item) => (
+              <li key={item.id}>
+                <span
+                  className="fr-anatomy-sheet-dot"
+                  style={{ backgroundColor: item.accentColor }}
+                  aria-hidden="true"
+                />
+                <div>
+                  <span className="fr-anatomy-sheet-heading">{item.title}</span>
+                  <p className="fr-anatomy-sheet-copy">{item.subtitle}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -500,17 +552,6 @@ export function AnatomyOverlay({
           </div>
         );
       })}
-
-      {/* 3. BOTTOM GLASSMORPHIC ACTION DOCK */}
-      <div className="fixed bottom-7 left-1/2 -translate-x-1/2 z-20 pointer-events-auto flex items-center gap-3">
-        <button
-          id="anatomy-switch-fruit-btn"
-          onClick={onSelectNextFruit}
-          className="px-5 py-3 rounded-full text-xs font-bold uppercase tracking-wider glass-btn-pearl transition-all shadow-md hover:scale-105 cursor-pointer"
-        >
-          VIEW {isApple ? 'ORANGE' : isOrange ? 'DRAGON FRUIT' : 'APPLE'}
-        </button>
-      </div>
     </div>
   );
 }

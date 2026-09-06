@@ -696,6 +696,73 @@ body::-webkit-scrollbar {
   }
 }
 
+/* ---- gallery, phone layout ------------------------------------------
+   Stacked, nine photos deep, the gallery was most of the page's scroll
+   on a phone. It becomes a swipeable rail instead: one photo at a time,
+   snapping, bled to the screen edges so it reads as something to push
+   sideways rather than a column that ran out of room.
+
+   The three column groups are lifted out with display:contents so the
+   photos themselves become the slides — otherwise each "slide" would be
+   a stack of three. The masonry aspect ratios are dropped with them: a
+   row of mixed heights staggers, where the vertical layout wanted the
+   variety.
+
+   After the breakpoints above, so these win on the same specificity. */
+@media (max-width: 768px) {
+  .gallery-grid {
+    display: flex;
+    grid-template-columns: none;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    /* Full-bleed: the rail runs to both screen edges while the section
+       keeps its 20px gutter, so a photo is always half-visible at the
+       edge and the swipe is discoverable. */
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 0 20px 4px;
+    scrollbar-width: none;
+  }
+
+  .gallery-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gallery-column {
+    display: contents;
+  }
+
+  /* Flattening the columns leaves the photos in column order — 01, 04,
+     07, 02, … — so the rail would swipe out of sequence. These put them
+     back into the order the desktop grid reads in, left to right across
+     each row: column n's nth photo is (row-1) * 3 + n. */
+  .gallery-column:nth-child(1) .gallery-item:nth-child(1) { order: 1; }
+  .gallery-column:nth-child(2) .gallery-item:nth-child(1) { order: 2; }
+  .gallery-column:nth-child(3) .gallery-item:nth-child(1) { order: 3; }
+  .gallery-column:nth-child(1) .gallery-item:nth-child(2) { order: 4; }
+  .gallery-column:nth-child(2) .gallery-item:nth-child(2) { order: 5; }
+  .gallery-column:nth-child(3) .gallery-item:nth-child(2) { order: 6; }
+  .gallery-column:nth-child(1) .gallery-item:nth-child(3) { order: 7; }
+  .gallery-column:nth-child(2) .gallery-item:nth-child(3) { order: 8; }
+  .gallery-column:nth-child(3) .gallery-item:nth-child(3) { order: 9; }
+
+  .gallery-item {
+    flex: 0 0 auto;
+    width: 76vw;
+    max-width: 320px;
+    scroll-snap-align: center;
+  }
+
+  .gallery-item .gallery-placeholder {
+    aspect-ratio: auto;
+    height: 64vw;
+    max-height: 270px;
+  }
+}
+
 /* ---- looping hero video -------------------------------------------
    Sits over the frame canvas at the top of the page and fades out as
    you scroll, so the sequence underneath is revealed rather than cut
@@ -1047,12 +1114,19 @@ body::-webkit-scrollbar {
   z-index: 80;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
+  /* Centered, not flex-start: "Orange" and "Dragon" are different label
+     widths, and left-aligning the whole link block let each icon drift
+     to a different x depending on its own label's width. Centering the
+     blocks keeps every icon on the same vertical line. */
+  align-items: center;
 }
 
 .rail-link {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
+  gap: 6px;
   /* Adaptive: script.js flips --ink-strong to white over dark frames.
      A fixed dark colour disappeared entirely against the forest shots. */
   color: var(--ink-strong);
@@ -1063,6 +1137,25 @@ body::-webkit-scrollbar {
   padding: 8px;
   margin: -8px;
   transition: color 0.25s ease, opacity 0.25s ease;
+}
+
+.rail-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: inherit;
+}
+
+/* The left guide rule sits at 6% of the viewport — under ~30px on a
+   phone screen, narrower than any label. Icon-only there, same as this
+   rail always was before labels were added. */
+@media (max-width: 640px) {
+  .rail-label {
+    display: none;
+  }
 }
 
 .rail-link:focus-visible {
@@ -1105,6 +1198,193 @@ body::-webkit-scrollbar {
   width: 100%;
   height: 100%;
   fill: currentColor;
+}
+
+/* ---- mobile navigation ----------------------------------------------
+   Hidden on desktop, where the left rail does this job. Below 768px the
+   rail goes and these take over: the button sits opposite the logo, and
+   the panel is the one dark surface on the page besides the footer, so
+   it reads as an overlay rather than another section. */
+.nav-toggle {
+  display: none;
+  position: fixed;
+  /* Sits on the logo's line rather than under it. The logo is 18px down
+     and its height tracks its clamped width, so at phone sizes its
+     centre lands ~32px in; 10px puts this 44px hit area's centre on the
+     same line. Was calc(11% + 30px) — the rail's top, borrowed when this
+     replaced the rail, which left it 113px adrift of the mark. */
+  top: 10px;
+  right: 5%;
+  z-index: 95;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--ink-strong);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-toggle-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 22px;
+}
+
+.nav-toggle-bars span {
+  display: block;
+  height: 1.5px;
+  width: 100%;
+  background: currentColor;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+/* Bars cross into an X while the panel is open. */
+.nav-toggle[aria-expanded='true'] {
+  color: #fefef7;
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle-bars span:first-child {
+  transform: translateY(3.25px) rotate(45deg);
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle-bars span:last-child {
+  transform: translateY(-3.25px) rotate(-45deg);
+}
+
+/* Always in the DOM, held back by visibility rather than `display` or
+   `hidden`. A display swap needs a layout frame before the panel can
+   animate, which means an rAF hop — and if frames are throttled (back-
+   grounded tab, a hidden pane) the panel opens without ever sliding in.
+   visibility transitions honestly and costs nothing while closed. */
+.nav-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 92;
+  visibility: hidden;
+  pointer-events: none;
+  /* Visibility waits out the close animation, then flips. */
+  transition: visibility 0s linear 0.45s;
+}
+
+.nav-drawer.is-open {
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.nav-drawer-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 18, 14, 0.4);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.nav-drawer-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 clamp(28px, 9vw, 56px);
+  background: #14120e;
+  color: #fefef7;
+  transform: translateY(-100%);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-drawer.is-open .nav-drawer-scrim {
+  opacity: 1;
+}
+
+.nav-drawer.is-open .nav-drawer-panel {
+  transform: translateY(0);
+}
+
+.nav-drawer-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--brand-red);
+  margin-bottom: 22px;
+}
+
+.nav-drawer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-drawer-list li + li {
+  border-top: 1px solid rgba(254, 254, 247, 0.12);
+}
+
+.nav-drawer-list a {
+  display: block;
+  padding: 18px 0;
+  font-family: var(--serif);
+  font-size: clamp(30px, 9vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: #fefef7;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.nav-drawer-list a:hover,
+.nav-drawer-list a:focus-visible {
+  color: var(--brand-red);
+}
+
+.nav-drawer-foot {
+  margin-top: 28px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(254, 254, 247, 0.45);
+}
+
+/* Locks the page behind the open panel, so a swipe scrolls the menu
+   rather than the story underneath it. */
+body.nav-open {
+  overflow: hidden;
+}
+
+/* ---- phone layout ---------------------------------------------------
+   The desktop chrome all assumes margins either side of the column: the
+   rail sits in the left margin, the guide frame rules the page off at
+   6%/94%, and the scroll readout hangs beside them. At this width there
+   is no margin left to sit in — every one of them lands on top of the
+   text. So the rail becomes the menu button, and the frame furniture is
+   dropped once the story starts.
+
+   Placed after the rules it overrides rather than up with the other
+   breakpoints: these are all single-class/id selectors, so the later
+   declaration is the one that wins. */
+@media (max-width: 768px) {
+  #rail-nav {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+
+  /* The frame still draws over the hero sequence, where it is the whole
+     point — it just does not follow the story down the page. */
+  #grid-overlay.in-story .grid-line,
+  #grid-overlay.in-story .marker,
+  #grid-overlay.in-story .readout {
+    opacity: 0;
+  }
 }
 
 /* ---- loading screen -------------------------------------------------
@@ -1172,6 +1452,29 @@ body::-webkit-scrollbar {
    otherwise both would be visible at once during the move. */
 #brand-logo.is-waiting {
   opacity: 0;
+}
+
+/* ---- loading screen, phone layout -----------------------------------
+   The clip is 3840x2160. Cover-fitting 16:9 into a portrait phone scales
+   it to ~1500px wide inside a 390px screen, so roughly a quarter of the
+   frame was on show — a giant cropped apple, and a wordmark running off
+   both edges. contain shows the whole thing at a size you can read.
+
+   script.js repeats this fit when it lines its overlay mark up with the
+   clip's own; it reads the computed object-fit, so the two stay in step
+   from here rather than needing the same change made twice. */
+@media (max-width: 768px) {
+  #loading-video {
+    object-fit: contain;
+  }
+
+  /* Containing the clip leaves bars above and below it. Sampled from the
+     clip's own corners (#fffff9) rather than assuming the page cream
+     (#fefef7): one value apart per channel, which is invisible on its
+     own but reads as a distinct panel edge against a flat field. */
+  #loading-screen {
+    background: #fffff9;
+  }
 }
 
 /* ---- footer ---------------------------------------------------------

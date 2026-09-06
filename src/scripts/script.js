@@ -59,6 +59,44 @@ const gridOverlay = document.getElementById("grid-overlay");
 // script never runs, the logo should still be visible.
 if (brandLogo && loadingScreen) brandLogo.classList.add("is-waiting");
 
+// ---- mobile navigation ----------------------------------------------
+// Standalone: no scroll state, no rAF, nothing the frame loop below has
+// to know about. `hidden` comes off first so the panel has a frame to
+// lay out in before the class animates it down — toggling both at once
+// would land it open with no transition.
+const navToggle = document.getElementById("nav-toggle");
+const navDrawer = document.getElementById("nav-drawer");
+
+if (navToggle && navDrawer) {
+  // One class does the whole thing — the panel is always laid out, so
+  // there is no display swap to wait a frame for, and no timer to undo.
+  navDrawer.hidden = false;
+
+  const setNav = (open) => {
+    navToggle.setAttribute("aria-expanded", String(open));
+    navToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    document.body.classList.toggle("nav-open", open);
+    navDrawer.classList.toggle("is-open", open);
+  };
+
+  navToggle.addEventListener("click", () => {
+    setNav(navToggle.getAttribute("aria-expanded") !== "true");
+  });
+
+  // Scrim and every link close it: the links are real navigations, but
+  // the fruit pages are a separate document, so the panel would other-
+  // wise still be open behind the browser's own page transition.
+  navDrawer.addEventListener("click", (e) => {
+    if (e.target.closest("[data-nav-close]")) setNav(false);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && navToggle.getAttribute("aria-expanded") === "true") {
+      setNav(false);
+    }
+  });
+}
+
 // ---- loading screen ------------------------------------------------
 // Two gates, and the screen lifts only when both are open:
 //   1. the clip has played all the way through, and
@@ -88,14 +126,24 @@ const VIDEO_NATIVE = { w: 3840, h: 2160 };
 const MARK = { cx: 0.511, cy: 0.422, w: 0.479 };
 
 // Places the overlay mark exactly over the one in the video, repeating the
-// object-fit: cover maths the video element itself uses — so it lines up at
-// any viewport aspect, not just the one this was measured at.
+// object-fit maths the video element itself uses — so it lines up at any
+// viewport aspect, not just the one this was measured at.
+//
+// The fit is read off the element rather than assumed: the clip is
+// cover-fitted on desktop but contained on a phone, where covering 16:9
+// into a portrait screen cropped away most of the frame. Hard-coding
+// Math.max here would leave the mark off-screen at the handover on every
+// phone, so the CSS stays the single source of truth for which it is.
 function placeMarkOverVideo() {
   if (!loadingLogo) return;
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const scale = Math.max(vw / VIDEO_NATIVE.w, vh / VIDEO_NATIVE.h);
+  const fit = loadingVideo ? getComputedStyle(loadingVideo).objectFit : "cover";
+  const scale =
+    fit === "contain"
+      ? Math.min(vw / VIDEO_NATIVE.w, vh / VIDEO_NATIVE.h)
+      : Math.max(vw / VIDEO_NATIVE.w, vh / VIDEO_NATIVE.h);
   const dw = VIDEO_NATIVE.w * scale;
   const dh = VIDEO_NATIVE.h * scale;
   const offsetX = (vw - dw) / 2;

@@ -69,9 +69,9 @@ export interface ThemeBadgeProps {
 }
 
 /**
- * Small standing label. Kept as its own export because NavigationDrawer
- * and ThemeSandboxModal import it; restyled to the same flat, letterspaced
- * treatment as the buttons.
+ * Small standing label. Kept as its own export because ThemeSandboxModal
+ * imports it; restyled to the same flat, letterspaced treatment as the
+ * buttons.
  */
 export function ThemeBadge({
   children,

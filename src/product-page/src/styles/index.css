@@ -223,6 +223,13 @@ body::-webkit-scrollbar {
   .fr-hero-copy {
     max-width: 82vw;
   }
+
+  /* The left guide rule sits at 6% of the viewport — under ~30px on a
+     phone screen, narrower than any label. Icon-only here, same as the
+     rail always was before labels were added. */
+  .fr-rail-label {
+    display: none;
+  }
 }
 
 /* ---- guide grid ---- */
@@ -466,13 +473,19 @@ body::-webkit-scrollbar {
   z-index: 40;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  align-items: flex-start;
+  gap: 14px;
+  /* Centered, not flex-start: labels are different widths ("Apple" vs
+     "Dragon Fruit"), and left-aligning the whole button block let each
+     icon drift to a different x depending on its own label's width.
+     Centering the blocks keeps every icon on the same vertical line. */
+  align-items: center;
 }
 
 .fr-rail-link {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
+  gap: 6px;
   color: var(--fr-ink-strong);
   text-decoration: none;
   background: none;
@@ -483,6 +496,16 @@ body::-webkit-scrollbar {
   margin: -8px;
   cursor: pointer;
   transition: color 0.25s ease;
+}
+
+.fr-rail-label {
+  font-family: var(--fr-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: inherit;
 }
 
 .fr-rail-link:focus-visible {
@@ -615,4 +638,262 @@ body::-webkit-scrollbar {
   font-weight: 500;
   line-height: 1.18;
   color: rgba(20, 18, 14, 0.92);
+}
+
+/* ---- mobile navigation ----------------------------------------------
+   The phone counterpart to the left rail, and deliberately the same
+   object as the home page's menu so the two documents feel like one
+   site. Hidden above the breakpoint, where the rail does this job. */
+.fr-nav-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  right: 5%;
+  z-index: 95;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--fr-ink-strong);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fr-nav-toggle-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 22px;
+}
+
+.fr-nav-toggle-bars span {
+  display: block;
+  height: 1.5px;
+  width: 100%;
+  background: currentColor;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fr-nav-toggle[aria-expanded='true'] {
+  color: #fefef7;
+}
+
+.fr-nav-toggle[aria-expanded='true'] .fr-nav-toggle-bars span:first-child {
+  transform: translateY(3.25px) rotate(45deg);
+}
+
+.fr-nav-toggle[aria-expanded='true'] .fr-nav-toggle-bars span:last-child {
+  transform: translateY(-3.25px) rotate(-45deg);
+}
+
+/* Held back by visibility rather than display: a display swap needs a
+   layout frame before the panel can animate, and if frames are throttled
+   the panel opens without ever sliding in. */
+.fr-nav-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 92;
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s linear 0.45s;
+}
+
+.fr-nav-drawer.is-open {
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.fr-nav-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 18, 14, 0.4);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.fr-nav-drawer.is-open .fr-nav-scrim {
+  opacity: 1;
+}
+
+.fr-nav-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 clamp(28px, 9vw, 56px);
+  background: #14120e;
+  color: #fefef7;
+  transform: translateY(-100%);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fr-nav-drawer.is-open .fr-nav-panel {
+  transform: translateY(0);
+}
+
+.fr-nav-eyebrow {
+  font-family: var(--fr-mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--fr-red);
+  margin-bottom: 22px;
+}
+
+.fr-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fr-nav-list li + li {
+  border-top: 1px solid rgba(254, 254, 247, 0.12);
+}
+
+.fr-nav-list a,
+.fr-nav-list button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 18px 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--fr-serif);
+  font-size: clamp(30px, 9vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: #fefef7;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.fr-nav-list button[data-active='true'] {
+  color: var(--fr-red);
+}
+
+.fr-nav-list a:hover,
+.fr-nav-list button:hover {
+  color: var(--fr-red);
+}
+
+.fr-nav-foot {
+  margin-top: 28px;
+  font-family: var(--fr-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(254, 254, 247, 0.45);
+}
+
+body.fr-nav-open {
+  overflow: hidden;
+}
+
+/* ---- anatomy callouts, phone layout ---------------------------------
+   Rendered by AnatomyOverlay only below the breakpoint: a sheet along
+   the bottom instead of four labels pinned around the fruit, which at
+   this width overlapped each other and the fruit both. */
+.fr-anatomy-sheet {
+  background: rgba(254, 254, 247, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(20, 18, 14, 0.12);
+  padding: 18px clamp(18px, 5vw, 28px) calc(18px + env(safe-area-inset-bottom, 0px));
+  max-height: 52vh;
+  overflow-y: auto;
+}
+
+.fr-anatomy-sheet-title {
+  font-family: var(--fr-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fr-red);
+  margin-bottom: 14px;
+}
+
+.fr-anatomy-sheet-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.fr-anatomy-sheet-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.fr-anatomy-sheet-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+  margin-top: 6px;
+}
+
+.fr-anatomy-sheet-heading {
+  display: block;
+  font-family: var(--fr-text);
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+
+.fr-anatomy-sheet-copy {
+  margin: 2px 0 0;
+  font-family: var(--fr-text);
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(26, 26, 26, 0.75);
+}
+
+/* ---- phone layout ---------------------------------------------------
+   Same reasoning as the home page: every piece of desktop chrome here
+   assumes margins either side of the column — the rail in the left
+   margin, the guide rules ruling the page off at 6%. At this width
+   there is no margin to sit in, so the rail becomes the menu button and
+   the guide grid goes entirely.
+
+   After the base rules it overrides, so the later declaration wins. */
+@media (max-width: 768px) {
+  .fr-rail-nav {
+    display: none;
+  }
+
+  .fr-nav-toggle {
+    display: flex;
+  }
+
+  /* The guide rules are desktop furniture: at 6% of a phone screen the
+     vertical rule lands ~23px in, straight through the copy. */
+  .fr-grid {
+    display: none;
+  }
+
+  /* Without the rules to clear, the column can use the full width. */
+  #fruit-website-root > main {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  /* Both chapter panels are pinned to one side of the fruit at desktop
+     and given a max-width. On a phone there is no "side" to sit in, so
+     they span the column instead — anchored on both edges, which also
+     stops the right-hand one running off-screen (its right-4 inset plus
+     a content-width block was 32px wider than the viewport). */
+  #fruit-website-root .fr-chapter {
+    left: 20px;
+    right: 20px;
+    max-width: none;
+  }
 }

@@ -7,6 +7,7 @@ import { PartnershipModal } from './components/PartnershipModal';
 import { ScrollFrameBackground, FRAME_COUNTS, INTRO_FRACTION } from './components/ScrollFrameBackground';
 import { GuideGrid } from './components/GuideGrid';
 import { RailNav } from './components/RailNav';
+import { MobileNav } from './components/MobileNav';
 import { AnatomyOverlay } from './components/AnatomyOverlay';
 
 const SNAP_POINTS = [0, 0.32, 0.62, 1.0];
@@ -270,8 +271,15 @@ export default function App() {
       {/* Guide grid, matching the home page: rests wide, draws in on scroll */}
       <GuideGrid />
 
-      {/* Left-rail navigation, mirroring the home page */}
+      {/* Left-rail navigation, mirroring the home page. Below 768px the
+          rail is hidden by CSS and MobileNav takes over — same
+          destinations, in a panel a thumb can reach. */}
       <RailNav activeView={activeView} onSelectView={handleSelectView} />
+      <MobileNav
+        fruits={fruits}
+        activeView={activeView}
+        onSelectView={handleSelectView}
+      />
 
       {/* Top Architectural Header */}
       <Header
@@ -300,7 +308,7 @@ export default function App() {
 
         {/* CHAPTER 1: Terroir & Micro-climate (Stage 1: ~32% Scroll) */}
         <div
-          className={`fr-clear-left fixed top-1/2 -translate-y-1/2 max-w-sm sm:max-w-md z-20 pointer-events-auto transition-all duration-700 ${
+          className={`fr-chapter fr-clear-left fixed top-1/2 -translate-y-1/2 max-w-sm sm:max-w-md z-20 pointer-events-auto transition-all duration-700 ${
             scrollProgress >= 0.18 && scrollProgress <= 0.46
               ? 'opacity-100 translate-x-0'
               : 'opacity-0 -translate-x-12 pointer-events-none'
@@ -321,7 +329,7 @@ export default function App() {
 
         {/* CHAPTER 2: Gastronomy & Sommelier Pairings (Stage 2: ~62% Scroll) */}
         <div
-          className={`fixed top-1/2 -translate-y-1/2 right-4 sm:right-12 max-w-sm sm:max-w-md z-20 pointer-events-auto transition-all duration-700 ${
+          className={`fr-chapter fixed top-1/2 -translate-y-1/2 right-4 sm:right-12 max-w-sm sm:max-w-md z-20 pointer-events-auto transition-all duration-700 ${
             scrollProgress >= 0.48 && scrollProgress <= 0.76
               ? 'opacity-100 translate-x-0'
               : 'opacity-0 translate-x-12 pointer-events-none'

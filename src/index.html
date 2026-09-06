@@ -551,6 +551,7 @@
           <path d="M7.5 3.5c.5-1 1.7-1.5 2.7-1.4-.1 1-.8 2-2 2.2-.5.1-.8-.2-.7-.8z" />
         </svg>
       </span>
+      <span class="rail-label">Apple</span>
     </a>
     <a class="rail-link rail-link--orange" href="/products/?fruit=orange" aria-label="Orange">
       <span class="rail-glyph">
@@ -559,15 +560,52 @@
           <path d="M7.3 3.4c.5-1 1.6-1.5 2.6-1.4-.1 1-.8 1.9-1.9 2.1-.5.1-.8-.2-.7-.7z" />
         </svg>
       </span>
+      <span class="rail-label">Orange</span>
     </a>
     <a class="rail-link rail-link--dragonfruit" href="/products/?fruit=dragonfruit" aria-label="Dragon Fruit">
       <span class="rail-glyph">
         <svg viewBox="0 0 14 14" aria-hidden="true">
-          <path d="M7 1.4c-.5 1.1-.4 2.1.1 2.9-1.1.3-2.1 1.1-2.6 2.2-.7-.2-1.5.1-1.9.7.6.7 1.4.9 2.2.5.1 1 .6 1.9 1.4 2.6.8.6 1.9.8 3.4.1.7.5 1.6.5 2.4 0 .8-.7 1.3-1.6 1.4-2.6.8.4 1.6.2 2.2-.5-.4-.6-1.2-.9-1.9-.7-.5-1.1-1.5-1.9-2.6-2.2.5-.8.6-1.8.1-2.9-.6.7-1.2 1.5-1.2 2.3-.2-.8-.7-1.6-1.2-2.4z" />
+          <path d="M7 4.4c2 0 3.6 1.9 3.6 4.2S9 12.8 7 12.8 3.4 10.9 3.4 8.6 5 4.4 7 4.4z" />
+          <path d="M7 4.6c-.3-1.1.1-2.1.9-2.7.5.9.3 1.9-.3 2.6-.2.2-.4.2-.6.1z" />
+          <path d="M4.9 5.3c-.7-.9-1.7-1.2-2.7-1 .4.9 1.3 1.5 2.3 1.5.2 0 .3-.2.4-.5z" />
+          <path d="M9.1 5.3c.7-.9 1.7-1.2 2.7-1-.4.9-1.3 1.5-2.3 1.5-.2 0-.3-.2-.4-.5z" />
         </svg>
       </span>
+      <span class="rail-label">Dragon</span>
     </a>
   </nav>
+
+  <!-- Mobile navigation. The left rail is icon-and-label furniture that
+       only works with room either side of the content, so below 768px it
+       is swapped for this: one button, and a panel carrying the same four
+       destinations at a size a thumb can actually hit. -->
+  <button
+    id="nav-toggle"
+    class="nav-toggle"
+    type="button"
+    aria-label="Open menu"
+    aria-expanded="false"
+    aria-controls="nav-drawer"
+  >
+    <span class="nav-toggle-bars" aria-hidden="true">
+      <span></span>
+      <span></span>
+    </span>
+  </button>
+
+  <div id="nav-drawer" class="nav-drawer" hidden>
+    <div class="nav-drawer-scrim" data-nav-close></div>
+    <nav class="nav-drawer-panel" aria-label="Main">
+      <p class="nav-drawer-eyebrow">Frufresh</p>
+      <ul class="nav-drawer-list">
+        <li><a href="/" data-nav-close>Home</a></li>
+        <li><a href="/products/?fruit=apple" data-nav-close>Apple</a></li>
+        <li><a href="/products/?fruit=orange" data-nav-close>Orange</a></li>
+        <li><a href="/products/?fruit=dragonfruit" data-nav-close>Dragon Fruit</a></li>
+      </ul>
+      <p class="nav-drawer-foot">Known for knowing fruit.</p>
+    </nav>
+  </div>
 
   <img id="brand-logo" src="assets/images/logo.png" alt="Frufresh" />
 

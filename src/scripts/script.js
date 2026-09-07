@@ -1,3 +1,20 @@
+// Browsers put you back where you were when you reload. This page is
+// scroll-scrubbed — the frame sequence, the loading handoff and the guide
+// grid all assume you begin at the top — so a restored offset drops you
+// into the middle of the sequence with none of that set up: the loading
+// screen lifts onto a half-played scrub, and the intro video never gets
+// its hand-off. Reloads start at the hero instead.
+//
+// Set before anything else runs, because the browser restores during the
+// first frames of load. Anchored entries (/#founder from the footer, or a
+// shared link) keep their target — only a plain reload is sent to the top.
+if ("scrollRestoration" in history) {
+  history.scrollRestoration = "manual";
+}
+if (!window.location.hash) {
+  window.scrollTo(0, 0);
+}
+
 // ---------------------------------------------------------------
 // TUNE THE SCROLL EXPERIENCE HERE
 // ---------------------------------------------------------------

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 // Frames per sequence, counted from what is actually in
 // assets/images/frames/<fruit>/. Exported so App can size the scroll track
@@ -20,14 +21,48 @@ export const INTRO_FRACTION = 0.12;
 // How large the media sits in the frame. 1 = full-bleed cover, leaving no
 // margin — which is why the backdrop colour below no longer has to match
 // anything. Drop this below 1 and the surrounding tone becomes visible.
-const MEDIA_SCALE = 1;
+//
+// The footage is 16:9. Cover-fitting that to a portrait phone scales it
+// until it fills the *height*, which on a 390x844 screen means drawing it
+// ~1500px wide and showing the middle quarter — the fruit filled the
+// screen and the copy sat on top of it with nothing to read against.
+// Pulling the scale back lets the studio backdrop return around the
+// media, which is what the copy then reads on.
+// Kept at or above the point where the media is still wider than the
+// viewport (~0.26 here), so it stays full-bleed horizontally and only the
+// top and bottom fall back to the backdrop. Below that it detaches into a
+// floating panel with visible edges, which reads as a card rather than a
+// backdrop.
+const MEDIA_SCALE_DESKTOP = 1;
+const MEDIA_SCALE_MOBILE = 0.5;
+
+// The footage is 16:9.
+const MEDIA_NATIVE = { w: 1920, h: 1080 };
 
 // Sampled from the edges of the media as it actually renders, so the
 // margin around the scaled-down footage continues its sweep.
+//
+// Two sets, because the hero clip and the frame sequence are different
+// shots and do not share an edge tone — the apple frames run 216 at the
+// edge where its clip runs 228, and the orange and dragon fruit clips are
+// macro shots whose edges are the fruit itself rather than any backdrop.
+// One constant for both left a visible band against whichever it did not
+// match. It only started to matter once MEDIA_SCALE dropped below 1 and
+// the margin became visible at all.
+
+// Read by the canvas fill, so measured off the frame sequences.
 const BACKDROP = {
-  apple: [223, 223, 222] as const,
-  orange: [203, 188, 174] as const,
-  dragonfruit: [228, 228, 226] as const,
+  apple: [216, 211, 210] as const,
+  orange: [201, 191, 181] as const,
+  dragonfruit: [229, 225, 222] as const,
+  dark: [8, 8, 10] as const,
+};
+
+// Sits behind the hero clip, so measured off the clips themselves.
+const VIDEO_BACKDROP = {
+  apple: [228, 228, 228] as const,
+  orange: [219, 138, 21] as const,
+  dragonfruit: [235, 180, 170] as const,
   dark: [8, 8, 10] as const,
 };
 
@@ -50,12 +85,18 @@ export function ScrollFrameBackground({
   const lastRenderedFrameRef = useRef<number>(-1);
   const animationFrameId = useRef<number | null>(null);
 
-  const getBackdropColor = (id: string, dark: boolean): readonly [number, number, number] => {
-    if (dark) return BACKDROP.dark;
-    if (id === 'dragonfruit') return BACKDROP.dragonfruit;
-    if (id === 'orange') return BACKDROP.orange;
-    return BACKDROP.apple;
+  const pickBackdrop = (
+    set: typeof BACKDROP | typeof VIDEO_BACKDROP,
+    id: string,
+    dark: boolean
+  ): readonly [number, number, number] => {
+    if (dark) return set.dark;
+    if (id === 'dragonfruit') return set.dragonfruit;
+    if (id === 'orange') return set.orange;
+    return set.apple;
   };
+
+  const getBackdropColor = (id: string, dark: boolean) => pickBackdrop(BACKDROP, id, dark);
 
   const initialBackdrop = getBackdropColor(fruitId, isDarkMode);
 
@@ -66,7 +107,46 @@ export function ScrollFrameBackground({
   // Held in a ref, not read from props inside the render loop: that loop's
   // effect does not depend on fruitId, so a prop read there could go stale.
   const backdropRef = useRef<readonly [number, number, number]>(initialBackdrop);
-  
+
+  // Same reasoning: the render loop's effect does not depend on this, so it
+  // is read through a ref rather than closed over. Rotating a phone has to
+  // change the framing, and a stale closure would keep the portrait scale
+  // in landscape.
+  const isMobile = useIsMobile();
+  const mediaScale = isMobile ? MEDIA_SCALE_MOBILE : MEDIA_SCALE_DESKTOP;
+  const mediaScaleRef = useRef<number>(mediaScale);
+
+  useEffect(() => {
+    mediaScaleRef.current = mediaScale;
+    // The loop only redraws when the frame index changes, so a scale change
+    // on its own would not repaint until the next scroll.
+    lastRenderedFrameRef.current = -1;
+  }, [mediaScale]);
+
+  // The box the hero video is drawn into. The canvas fills itself with the
+  // backdrop and draws the frame smaller inside it, so at scale < 1 it is
+  // still edge to edge; a transform on the video instead shrinks the
+  // element, exposing its own edges as a panel floating on the backdrop.
+  // Sizing the video to the same box the canvas draws into keeps the two
+  // identical — the fruit must not move or resize at the hand-over — and
+  // keeps it wider than the viewport, so only top and bottom fall back to
+  // the backdrop.
+  const [videoBox, setVideoBox] = useState<{ w: number; h: number } | null>(null);
+
+  useEffect(() => {
+    const measure = () => {
+      const cover = Math.max(
+        window.innerWidth / MEDIA_NATIVE.w,
+        window.innerHeight / MEDIA_NATIVE.h
+      );
+      const s = cover * mediaScale;
+      setVideoBox({ w: MEDIA_NATIVE.w * s, h: MEDIA_NATIVE.h * s });
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [mediaScale]);
+
   const [activeFruit, setActiveFruit] = useState(fruitId);
   const [isTransitioning, setIsTransitioning] = useState(false);
   // Only the two layer-visibility flags live in state. The raw scroll
@@ -89,7 +169,10 @@ export function ScrollFrameBackground({
     backdropRef.current = getBackdropColor(fruitId, isDarkMode);
   }, [fruitId, isDarkMode]);
 
-  const activeBackdrop = getBackdropColor(fruitId, isDarkMode);
+  // The wrapper is only ever visible behind the hero clip — once the
+  // sequence takes over, the canvas fills the viewport with its own
+  // backdrop — so it takes the tone measured off the clips.
+  const activeBackdrop = pickBackdrop(VIDEO_BACKDROP, fruitId, isDarkMode);
   const backdropCss = `rgb(${activeBackdrop.join(', ')})`;
 
   // .jpg, not .png: the sequences live in the same frames/ folder as
@@ -277,7 +360,7 @@ export function ScrollFrameBackground({
               // Clean centered object-fit cover rendering, scaled down so
               // the fruit sits smaller in the frame. The studio fill above
               // covers whatever the shrunken image no longer reaches.
-              const scale = Math.max(cw / iw, ch / ih) * MEDIA_SCALE;
+              const scale = Math.max(cw / iw, ch / ih) * mediaScaleRef.current;
               const imgW = iw * scale;
               const imgH = ih * scale;
               const x = (cw - imgW) / 2;
@@ -360,16 +443,22 @@ export function ScrollFrameBackground({
         muted
         playsInline
         preload="auto"
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out will-change-transform ${
+        className={`absolute object-cover transition-opacity duration-500 ease-out will-change-transform ${
           isVideoVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
-        style={{
-          width: '100vw',
-          height: '100vh',
-          // Matches the canvas scale, so the hero video and the frame
-          // sequence it hands over to are the same size.
-          transform: `scale(${MEDIA_SCALE})`,
-        }}
+        style={
+          videoBox
+            ? {
+                // Centred on the same box the canvas draws its frame into,
+                // so the fruit does not jump at the hand-over.
+                width: `${videoBox.w}px`,
+                height: `${videoBox.h}px`,
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
+              }
+            : { width: '100vw', height: '100vh', inset: 0 }
+        }
       />
 
       {/* 2. Scroll-Driven 3D Canvas Frame Animation */}

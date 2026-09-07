@@ -89,6 +89,16 @@ count += copyDir(path.join(SRC, "assets"), path.join(OUT, "assets"), {
 count += copyDir(PRODUCT_ASSETS, path.join(OUT, "products-assets"));
 count += copyDir(PRODUCT_BUILD, path.join(OUT, "products"));
 
+// Apache config for shared hosting (GoDaddy and similar). Netlify reads
+// netlify.toml and ignores this; Apache reads this and knows nothing
+// about netlify.toml, so both ship and whichever host is in use picks up
+// the one it understands. Stored undotted in the repo so it is visible.
+const htaccess = path.join(root, "deploy", "htaccess");
+if (fs.existsSync(htaccess)) {
+  fs.copyFileSync(htaccess, path.join(OUT, ".htaccess"));
+  count++;
+}
+
 console.log(`dist/ assembled — ${count} files, ${mb(dirSize(OUT))}`);
 for (const p of ["assets", "products", "products-assets"]) {
   console.log(`  /${p.padEnd(16)} ${mb(dirSize(path.join(OUT, p)))}`);

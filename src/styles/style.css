@@ -437,59 +437,33 @@ body::-webkit-scrollbar {
 }
 
 .gallery-item {
-  display: block;
-}
-
-.gallery-placeholder {
   position: relative;
-  width: 100%;
-  height: 100%;
+  display: block;
   border-radius: 20px;
-  background: rgba(20, 18, 14, 0.025);
-  border: 1px dashed rgba(20, 18, 14, 0.18);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  color: rgba(20, 18, 14, 0.35);
-  transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+  overflow: hidden;
+  background: rgba(20, 18, 14, 0.03);
+  box-shadow: 0 4px 20px rgba(20, 18, 14, 0.05);
+  border: 1px solid rgba(20, 18, 14, 0.08);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
 }
 
-.gallery-placeholder:hover {
-  border-color: var(--brand-red);
-  color: var(--brand-red);
-  background: rgba(199, 47, 29, 0.04);
+.gallery-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(20, 18, 14, 0.12);
+  border-color: rgba(199, 47, 29, 0.25);
 }
 
-.gallery-placeholder-icon svg {
-  width: 28px;
-  height: 28px;
+.gallery-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 19px;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.gallery-placeholder-label {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-/* Varied aspect ratios so the grid reads as a masonry layout rather
-   than a uniform tile grid, matching the reference layout. */
-.gallery-item--tall .gallery-placeholder {
-  aspect-ratio: 3 / 4.3;
-}
-
-.gallery-item--medium .gallery-placeholder {
-  aspect-ratio: 3 / 4;
-}
-
-.gallery-item--short .gallery-placeholder {
-  aspect-ratio: 4 / 3;
-}
-
-.gallery-item--square .gallery-placeholder {
-  aspect-ratio: 1 / 1;
+.gallery-item:hover .gallery-img {
+  transform: scale(1.035);
 }
 
 /* ---- Profiles (Founder & Leadership) -------------------------------- */
@@ -735,10 +709,11 @@ body::-webkit-scrollbar {
     display: contents;
   }
 
-  /* Flattening the columns leaves the photos in column order — 01, 04,
-     07, 02, … — so the rail would swipe out of sequence. These put them
-     back into the order the desktop grid reads in, left to right across
-     each row: column n's nth photo is (row-1) * 3 + n. */
+  /* Flattening the columns leaves the photos in column order — the whole
+     of column one, then column two — so the rail would swipe out of the
+     sequence the desktop grid reads in. These put them back into row
+     order, left to right: column n's nth photo is (row - 1) * 3 + n.
+     Covers six rows, which is the deepest column. */
   .gallery-column:nth-child(1) .gallery-item:nth-child(1) { order: 1; }
   .gallery-column:nth-child(2) .gallery-item:nth-child(1) { order: 2; }
   .gallery-column:nth-child(3) .gallery-item:nth-child(1) { order: 3; }
@@ -748,6 +723,15 @@ body::-webkit-scrollbar {
   .gallery-column:nth-child(1) .gallery-item:nth-child(3) { order: 7; }
   .gallery-column:nth-child(2) .gallery-item:nth-child(3) { order: 8; }
   .gallery-column:nth-child(3) .gallery-item:nth-child(3) { order: 9; }
+  .gallery-column:nth-child(1) .gallery-item:nth-child(4) { order: 10; }
+  .gallery-column:nth-child(2) .gallery-item:nth-child(4) { order: 11; }
+  .gallery-column:nth-child(3) .gallery-item:nth-child(4) { order: 12; }
+  .gallery-column:nth-child(1) .gallery-item:nth-child(5) { order: 13; }
+  .gallery-column:nth-child(2) .gallery-item:nth-child(5) { order: 14; }
+  .gallery-column:nth-child(3) .gallery-item:nth-child(5) { order: 15; }
+  .gallery-column:nth-child(1) .gallery-item:nth-child(6) { order: 16; }
+  .gallery-column:nth-child(2) .gallery-item:nth-child(6) { order: 17; }
+  .gallery-column:nth-child(3) .gallery-item:nth-child(6) { order: 18; }
 
   .gallery-item {
     flex: 0 0 auto;
@@ -756,10 +740,14 @@ body::-webkit-scrollbar {
     scroll-snap-align: center;
   }
 
-  .gallery-item .gallery-placeholder {
-    aspect-ratio: auto;
+  /* One band height across the rail. The photos run from 2.15 to 0.46 in
+     aspect, and left to their own ratios a horizontal strip staggers
+     badly — the variety is what the vertical masonry wants, not this.
+     Cropping to fill keeps the row even. */
+  .gallery-item .gallery-img {
     height: 64vw;
     max-height: 270px;
+    object-fit: cover;
   }
 }
 

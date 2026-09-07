@@ -1,0 +1,71 @@
+# Apache config for shared hosting (GoDaddy cPanel and similar).
+# Copied to dist/.htaccess by tools/build-static.js — it is named without
+# the dot in the repo so it is not hidden from you in an editor or file
+# listing while you are working on it.
+#
+# Netlify reads netlify.toml and ignores this file; Apache reads this and
+# knows nothing about netlify.toml. The two carry the same intent.
+
+# ---- MIME types ------------------------------------------------------
+# The important part. This site is 143 WebP frames, 17 AVIF photos and 5
+# MP4s. Apache only serves what its mime.types knows, and older shared-
+# hosting configs predate AVIF — an unknown type goes out as
+# application/octet-stream, which browsers will not render as an image.
+# That would take out the hero sequence and the whole gallery at once.
+# Declaring them here costs nothing if the host already knows them.
+AddType image/avif .avif
+AddType image/webp .webp
+AddType video/mp4 .mp4
+AddType image/svg+xml .svg
+AddType application/json .json
+AddType text/javascript .js
+AddType font/woff2 .woff2
+
+# ---- caching ---------------------------------------------------------
+# The frame sequences, gallery photos and videos are ~110MB of the site
+# and never change without a new filename. Without this every revisit
+# re-downloads the lot, which on shared hosting is slow enough to feel
+# broken.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/avif "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType video/mp4 "access plus 1 year"
+  # The HTML is the one thing that must not be pinned, or a redeploy
+  # leaves visitors on the old page pointing at old asset names.
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(webp|avif|jpg|jpeg|png|mp4|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Vite fingerprints its bundles, so those are safe to pin too.
+  <FilesMatch "^index-[A-Za-z0-9_-]+\.(js|css)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+# ---- compression -----------------------------------------------------
+# Text only. The images and video are already compressed; running deflate
+# over them burns CPU for nothing.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+
+# ---- routing ---------------------------------------------------------
+# /products/ is a real folder with a real index.html, so Apache's default
+# DirectoryIndex already serves it. Stated explicitly in case the host
+# has changed the default.
+DirectoryIndex index.html
+
+# Directory listings off, so a folder without an index does not expose
+# the file tree.
+Options -Indexes

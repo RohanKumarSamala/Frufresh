@@ -1,5 +1,7 @@
 node_modules/
 src/product-page/dist/
+dist/
+.netlify/
 *.log
 .env*
 !.env.example

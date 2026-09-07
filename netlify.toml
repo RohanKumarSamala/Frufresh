@@ -1,0 +1,33 @@
+# Netlify serves static files only — there is no Node process to do the
+# mounts server/index.js does in development. `npm run build` assembles
+# dist/ so those URLs exist as real folders instead. See tools/build-static.js.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# The frame sequences and videos are the bulk of the site (~110MB) and
+# never change without a new filename, so let browsers keep them. Without
+# this every revisit re-downloads the whole hero sequence.
+[[headers]]
+  for = "/assets/frames/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/products-assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/video/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Vite fingerprints these, so they are safe to pin too.
+[[headers]]
+  for = "/products/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

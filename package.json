@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node server/index.js",
+    "build": "npm run build:products && node tools/build-static.js",
     "build:products": "vite build",
     "lint:products": "tsc --noEmit -p src/product-page/tsconfig.json",
     "convert-frames": "node tools/convert-frames.js",

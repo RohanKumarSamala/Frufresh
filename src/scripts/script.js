@@ -660,6 +660,31 @@ function hexToRgb(hex) {
 // below can never drift out of sync.
 const PLAIN_RGB = hexToRgb(CONFIG.plainColor);
 
+// Which rung of the sequence to load. The frames are scrubbed — a new one
+// is decoded on every scroll tick — so the cost that matters is decode,
+// not download, and decode scales with pixels. A 1920-wide frame costs
+// ~36ms to decode against a 16.7ms budget at 60fps, which is why the
+// sequence could not hold 30fps however fast the network was. 1280 costs
+// ~11ms, 720 costs ~4ms.
+//
+// Picked once, from the width at load. Not re-picked on resize: swapping
+// the whole sequence mid-scroll would stall on a fresh set of downloads
+// for no visible gain, and phones do not change width except on rotate.
+function pickVariant(manifest) {
+  if (!Array.isArray(manifest.variants)) return manifest;
+
+  // innerWidth reads 0 in a detached or not-yet-painted view, which would
+  // otherwise match the smallest rung and hand a desktop the phone frames.
+  // Fall through to the full-size set when the width is not yet knowable.
+  const w = window.innerWidth || document.documentElement.clientWidth || 0;
+  if (!w) return manifest;
+
+  return (
+    manifest.variants.find((v) => v.maxWidth == null || w <= v.maxWidth) ||
+    manifest
+  );
+}
+
 function frameUrl(manifest, index) {
   const n = String(index + 1).padStart(manifest.digits, "0");
   return `${manifest.prefix}${n}.${manifest.ext}`;
@@ -1009,7 +1034,11 @@ function updateIntro() {
 }
 
 async function init() {
-  const manifest = await manifestPromise;
+  const loaded = await manifestPromise;
+  // Variants carry only a prefix; everything else (count, digits, ext) is
+  // shared, so the chosen rung is merged over the base rather than
+  // replacing it.
+  const manifest = { ...loaded, ...pickVariant(loaded) };
   frameCount = manifest.count;
   images = new Array(frameCount);
 

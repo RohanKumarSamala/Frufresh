@@ -1,6 +1,10 @@
 {
   "count": 143,
-  "prefix": "assets/frames/hero/frame_",
   "digits": 4,
-  "ext": "webp"
-}
+  "ext": "jpg",
+  "variants": [
+    { "maxWidth": 768, "prefix": "assets/frames/hero-sm/frame_" },
+    { "prefix": "assets/frames/hero/frame_" }
+  ],
+  "prefix": "assets/frames/hero/frame_"
+}

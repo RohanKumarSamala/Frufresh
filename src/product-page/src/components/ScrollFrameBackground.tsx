@@ -179,9 +179,20 @@ export function ScrollFrameBackground({
   // before, but re-encoded (tools/convert-product-frames.js). The PNGs
   // decoded in ~18ms — longer than a whole frame at 60fps — so scrubbing
   // dropped a frame every time it reached a new one.
+  // These are scrubbed, so the cost that matters is decode, not download,
+  // and decode scales with pixels. The sequences shipped at 1920 wide,
+  // which costs ~36ms to decode against a 16.7ms budget at 60fps — the
+  // scrub could not hold 30fps however fast the network was. They are now
+  // 1280, with a 720 rung for phones that were being handed five times the
+  // pixels they could show.
+  //
+  // The rung is not in the preload effect's dependencies: the whole set is
+  // fetched up front, so re-picking it on a rotate would throw that away
+  // and re-download the lot mid-scroll for no visible gain.
   const getFrameUrl = (fruit: string, index: number) => {
-    const padded = String(index).padStart(3, '0');
-    return `/products-assets/images/frames/${fruit}/frame_${padded}.jpg`;
+    const padded = String(index).padStart(4, '0');
+    const rung = isMobile ? '-sm' : '';
+    return `/products-assets/images/frames/${fruit}${rung}/frame_${padded}.jpg`;
   };
 
   // Preload frames for given fruit

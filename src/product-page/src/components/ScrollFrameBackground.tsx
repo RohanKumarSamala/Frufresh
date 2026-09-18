@@ -192,7 +192,7 @@ export function ScrollFrameBackground({
   const getFrameUrl = (fruit: string, index: number) => {
     const padded = String(index).padStart(4, '0');
     const rung = isMobile ? '-sm' : '';
-    return `/products-assets/images/frames/${fruit}${rung}/frame_${padded}.jpg`;
+    return `/products-assets/images/frames/${fruit}${rung}/frame_${padded}.webp`;
   };
 
   // Preload frames for given fruit

@@ -1048,7 +1048,10 @@ async function init() {
   resizeCanvas();
   buildTracker();
 
-  for (let i = 0; i < frameCount; i++) {
+  const CRITICAL_COUNT = Math.min(20, frameCount);
+
+  function loadFrame(i) {
+    if (images[i]) return;
     const img = new Image();
     img.decoding = "async";
     img.onload = img.onerror = () => {
@@ -1057,14 +1060,35 @@ async function init() {
       loaderFill.style.width = pct + "%";
       if (i === 0) drawFrame(0);
       if (i === frameCount - 1 && img.naturalWidth > 0) buildGrain();
-      if (loadedCount === frameCount) {
-        loaderBar.classList.add("hidden");
+      if (!framesReady && loadedCount >= CRITICAL_COUNT) {
         framesReady = true;
         dismissLoadingScreen();
+      }
+      if (loadedCount === frameCount) {
+        loaderBar.classList.add("hidden");
       }
     };
     img.src = frameUrl(manifest, i);
     images[i] = img;
+  }
+
+  // Load the initial interactive window + last frame for grain dissolve first
+  for (let i = 0; i < CRITICAL_COUNT; i++) {
+    loadFrame(i);
+  }
+  loadFrame(frameCount - 1);
+
+  // Stream remaining frames in the background without choking the initial render
+  const loadRemaining = () => {
+    for (let i = CRITICAL_COUNT; i < frameCount - 1; i++) {
+      loadFrame(i);
+    }
+  };
+
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(loadRemaining, { timeout: 800 });
+  } else {
+    setTimeout(loadRemaining, 150);
   }
 
   window.addEventListener("scroll", onScroll, { passive: true });

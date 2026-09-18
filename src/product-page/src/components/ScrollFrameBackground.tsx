@@ -77,6 +77,7 @@ export function ScrollFrameBackground({
   totalFrames = 30,
   isDarkMode = false,
 }: ScrollFrameBackgroundProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
@@ -270,7 +271,12 @@ export function ScrollFrameBackground({
     };
 
     const handleScroll = () => {
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrubTrackEl = document.getElementById('fruit-scrub-track');
+      const trackHeight = scrubTrackEl
+        ? scrubTrackEl.offsetHeight - window.innerHeight
+        : document.documentElement.scrollHeight - window.innerHeight;
+      const docHeight = Math.max(1, trackHeight);
+
       if (docHeight <= 0) {
         applyScroll(0);
         targetFrameRef.current = 0;
@@ -279,6 +285,20 @@ export function ScrollFrameBackground({
 
       const scrollFraction = Math.max(0, Math.min(1, window.scrollY / docHeight));
       applyScroll(scrollFraction);
+
+      // Fade out background canvas smoothly when scrolling past the 3D scrub track into lower content
+      const excess = window.scrollY - docHeight;
+      if (containerRef.current) {
+        if (excess > 0) {
+          const fadeDist = Math.max(200, window.innerHeight * 0.45);
+          const exitOpacity = Math.max(0, 1 - excess / fadeDist);
+          containerRef.current.style.opacity = (exitOpacity * (isTransitioning ? 0.3 : 1)).toFixed(3);
+          containerRef.current.style.display = exitOpacity <= 0.005 ? 'none' : '';
+        } else {
+          containerRef.current.style.opacity = isTransitioning ? '0.3' : '1';
+          containerRef.current.style.display = '';
+        }
+      }
 
       // The sequence owns the scroll *after* the intro, remapped so it
       // still runs frame 1 to last across whatever is left.
@@ -375,7 +395,7 @@ export function ScrollFrameBackground({
               const imgW = iw * scale;
               const imgH = ih * scale;
               const x = (cw - imgW) / 2;
-              const y = (ch - imgH) / 2;
+              const y = isMobile ? (ch - imgH) / 2 - 30 : (ch - imgH) / 2;
 
               ctx.clearRect(0, 0, cw, ch);
               ctx.fillStyle = `rgb(${bgR}, ${bgG}, ${bgB})`;
@@ -437,6 +457,7 @@ export function ScrollFrameBackground({
 
   return (
     <div
+      ref={containerRef}
       className={`fixed inset-0 z-0 pointer-events-none transition-opacity duration-300 will-change-transform transform-gpu overflow-hidden ${
         isTransitioning ? 'opacity-30' : 'opacity-100'
       }`}
@@ -465,7 +486,7 @@ export function ScrollFrameBackground({
                 width: `${videoBox.w}px`,
                 height: `${videoBox.h}px`,
                 left: '50%',
-                top: '50%',
+                top: isMobile ? 'calc(50% - 30px)' : '50%',
                 transform: 'translate(-50%, -50%)',
               }
             : { width: '100vw', height: '100vh', inset: 0 }

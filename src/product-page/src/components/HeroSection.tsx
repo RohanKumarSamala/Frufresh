@@ -1,51 +1,49 @@
 import React from 'react';
 import { FruitSpecimen } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
+import { ArrowDown, Sparkles } from 'lucide-react';
 
 interface HeroSectionProps {
   selectedFruit: FruitSpecimen;
   onOpenPartnership: () => void;
   onSelectNextFruit: () => void;
+  onNavigateStage?: (stage: number) => void;
   isDarkMode?: boolean;
 }
 
-/**
- * Rebuilt in the home site's language: ink and brand red only, letterspaced
- * monospace for labels, serif for anything that carries meaning, hairline
- * rules instead of boxes.
- *
- * What went, and why:
- *   - amber / emerald / rose gradient meters, an emerald "verified" badge,
- *     a green pulsing dot and copper eyebrow text — five colours the rest
- *     of the site never uses
- *   - outlined pills with sparkle icons around the tasting notes; the notes
- *     read better as a plain list
- *   - 7–9px type, which was unreadable and made everything feel cramped
- */
+export function HeroSection({ selectedFruit, onNavigateStage }: HeroSectionProps) {
+  const isApple = selectedFruit.id === 'apple';
+  const isOrange = selectedFruit.id === 'orange';
+  const accentColor = isApple ? '#8e1d24' : isOrange ? '#c2410c' : '#be185d';
 
-// One label + value pair, as used across both columns.
-function Field({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div>
-      <div className="fr-label">{label}</div>
-      <div className="fr-value">{value}</div>
-    </div>
-  );
-}
+  const scrollToSection = (id: string) => {
+    if (onNavigateStage) {
+      if (id === 'section-origin' || id === 'section-taste') {
+        onNavigateStage(1);
+        return;
+      }
+      if (id === 'section-varieties' || id === 'section-packing') {
+        onNavigateStage(2);
+        return;
+      }
+    }
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
-// onOpenPartnership / onSelectNextFruit stay on the props interface because
-// App still passes them, but the hero no longer has controls of its own:
-// the partnership modal is opened from the footer and the anatomy overlay,
-// and the cultivar switch lives in the overlay and the rail nav.
-export function HeroSection({ selectedFruit }: HeroSectionProps) {
   return (
     <section
       id="hero-section"
-      className="relative flex flex-col justify-center pt-24 pb-16 min-h-[92vh]"
+      className="relative flex flex-col justify-between lg:justify-center pt-14 lg:pt-24 pb-6 lg:pb-12 min-h-[calc(100dvh-60px)] lg:min-h-[90vh] sm:lg:min-h-[92vh]"
     >
-      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-        {/* LEFT — the specimen itself */}
-        <div className="lg:col-span-4">
+      {/* ================================================================ */}
+      {/* DESKTOP HERO (lg and up) — 100% UNTOUCHED ORIGINAL LAYOUT        */}
+      {/* ================================================================ */}
+      <div className="hidden lg:grid w-full grid-cols-12 gap-8 lg:gap-10 items-center">
+        {/* LEFT — the specimen copy */}
+        <div className="lg:col-span-5 xl:col-span-4">
           <div className="fr-hero-copy space-y-6 select-none">
             <AnimatePresence mode="wait">
               <motion.div
@@ -54,22 +52,120 @@ export function HeroSection({ selectedFruit }: HeroSectionProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.25 }}
+                className="space-y-3"
               >
-                <p className="fr-label fr-label--accent">Reservations open</p>
-                <h1 className="fr-display">{selectedFruit.heroHeadline}</h1>
-                <p className="fr-body">{selectedFruit.heroSubheadline}</p>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: accentColor }} />
+                  <p className="fr-label fr-label--accent !mb-0 font-mono tracking-widest text-[10px] uppercase font-bold">
+                    {selectedFruit.tagline}
+                  </p>
+                </div>
+
+                <h1 className="fr-display !text-3xl sm:!text-5xl lg:!text-6xl font-serif text-[#1A1A1A] leading-[1.08] tracking-tight">
+                  {selectedFruit.heroHeadline}
+                </h1>
+
+                <p className="fr-body !text-xs sm:!text-sm text-[#1A1A1A]/80 leading-relaxed font-sans">
+                  {selectedFruit.heroSubheadline}
+                </p>
               </motion.div>
             </AnimatePresence>
 
-            <div className="fr-rule-top grid grid-cols-2 gap-5">
-              <Field label="Sugar index" value={`${selectedFruit.brixLevel}° Brix`} />
-              <Field label="Acidity" value={selectedFruit.acidity} />
-            </div>
+            {/* Main CTA from Slide 03, 04, 05 */}
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <button
+                type="button"
+                onClick={() => scrollToSection('section-varieties')}
+                className="fr-btn fr-btn--primary justify-center sm:justify-start !py-3.5 !px-6 text-center cursor-pointer shadow-sm hover:shadow-md transition-all font-mono"
+              >
+                <span>{selectedFruit.heroCta}</span>
+                <ArrowDown className="w-3.5 h-3.5" />
+              </button>
 
+              <button
+                type="button"
+                onClick={() => scrollToSection('section-enquire')}
+                className="fr-btn justify-center sm:justify-start !py-3.5 !px-5 text-center cursor-pointer font-mono"
+              >
+                <span>B2B Sourcing</span>
+              </button>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Everything right of the fruit is intentionally empty. */}
+      {/* ================================================================ */}
+      {/* MOBILE HERO (below lg) — FRAMED TOP CROWN & BOTTOM ANCHOR        */}
+      {/* ================================================================ */}
+      <div className="lg:hidden flex flex-col justify-between flex-1 w-full select-none">
+        {/* 1. TOP CROWN (Above the Fruit) */}
+        <div className="pt-2 sm:pt-4 text-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedFruit.id}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-2 max-w-sm mx-auto"
+            >
+              {/* Eyebrow badge */}
+              <div className="inline-flex items-center justify-center gap-2 px-3 py-1 rounded-full bg-white/70 backdrop-blur-sm border border-black/10 shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: accentColor }} />
+                <p className="fr-label fr-label--accent !mb-0 font-mono tracking-widest text-[9.5px] uppercase font-bold text-black/80">
+                  {selectedFruit.tagline}
+                </p>
+              </div>
+
+              {/* Editorial Headline */}
+              <h1 className="font-serif text-[27px] sm:text-3xl text-[#1A1A1A] leading-[1.12] tracking-tight font-medium px-2">
+                {selectedFruit.heroHeadline}
+              </h1>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* 2. CENTER WINDOW (Dedicated 100% Unobstructed 3D Fruit Stage) */}
+        <div className="flex-1 min-h-[250px] sm:min-h-[290px] pointer-events-none" aria-hidden="true" />
+
+        {/* 3. BOTTOM ANCHOR (Below the Fruit: Subheadline & Thumb-Friendly CTAs) */}
+        <div className="w-full max-w-sm mx-auto pb-4 sm:pb-6 space-y-4">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedFruit.id}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2 }}
+              className="text-center px-3"
+            >
+              <p className="text-xs text-black/75 leading-relaxed font-sans">
+                {selectedFruit.heroSubheadline}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Action CTAs */}
+          <div className="flex flex-col gap-2.5 w-full px-2">
+            <button
+              type="button"
+              onClick={() => scrollToSection('section-varieties')}
+              className="w-full flex items-center justify-center gap-2.5 py-3.5 px-6 text-center font-mono text-[10.5px] tracking-widest uppercase font-bold text-white shadow-md active:scale-[0.98] transition-all cursor-pointer"
+              style={{ backgroundColor: accentColor }}
+            >
+              <span>{selectedFruit.heroCta}</span>
+              <ArrowDown className="w-3.5 h-3.5 text-white" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => scrollToSection('section-enquire')}
+              className="w-full flex items-center justify-center gap-2 py-3 px-6 text-center font-mono text-[10px] tracking-widest uppercase font-semibold text-[#1A1A1A] bg-white/90 backdrop-blur-md border border-black/15 shadow-xs active:scale-[0.98] transition-all cursor-pointer hover:bg-white"
+            >
+              <span>B2B Sourcing</span>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );

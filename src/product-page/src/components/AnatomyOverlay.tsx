@@ -28,7 +28,21 @@ export function AnatomyOverlay({
   const isApple = selectedFruit.id === 'apple';
   const isOrange = selectedFruit.id === 'orange';
   const isDragonFruit = selectedFruit.id === 'dragonfruit';
-  const isVisible = scrollProgress >= 0.78;
+  // Sliced fruit phase starts at ~86% scrub. Fades out smoothly when scrolling past track into lower dossier.
+  const scrubEl = typeof document !== 'undefined' ? document.getElementById('fruit-scrub-track') : null;
+  const scrubHeight = scrubEl ? Math.max(1, scrubEl.offsetHeight - window.innerHeight) : 2000;
+  const excess = typeof window !== 'undefined' ? Math.max(0, window.scrollY - scrubHeight) : 0;
+
+  // Clean entry opacity: ONLY starts fading in at 0.86 (when slices expand), fully opaque by 0.91
+  const entryOpacity = scrollProgress < 0.86
+    ? 0
+    : Math.min(1, (scrollProgress - 0.86) / 0.05);
+
+  // Clean exit opacity: fades out smoothly over 40% of viewport height as commercial dossier enters
+  const exitOpacity = excess > 0 ? Math.max(0, 1 - excess / (window.innerHeight * 0.40)) : 1;
+
+  const totalOpacity = entryOpacity * exitOpacity;
+  const isVisible = totalOpacity > 0.005;
   const isMobile = useIsMobile();
 
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -46,141 +60,135 @@ export function AnatomyOverlay({
   // Card element refs
   const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
-  /* Memoised, and it has to be. This array is a dependency of
-     updateCoordinates, which is a dependency of the effect that calls
-     setLineCoords. Rebuilt inline on every render it gave that callback
-     a new identity each time, so the effect re-ran, set state, and
-     re-rendered — a render loop that ran for as long as the page was
-     open ("Maximum update depth exceeded", tens of thousands of times).
-     Keyed on the cultivar, which is the only thing the contents vary on. */
+  /* Memoised commercial anatomy data with pinpoint precision on fruit slices */
   const anatomyData: AnatomyPoint[] = useMemo(
     () =>
       isApple
     ? [
         {
           id: 'layer',
-          title: 'Layered Structure',
-          subtitle: 'Dense cellular walls designed for maximum acoustic snap.',
+          title: 'Cellular Wall & Firmness',
+          subtitle: '7.8–9.0 kg/cm² penetrometer pressure for signature acoustic crispness.',
           accentColor: '#B87333',
-          imageNormX: 0.410,
-          imageNormY: 0.405, // Exactly Slice 2 top slice cut
+          imageNormX: 0.445,
+          imageNormY: 0.375, // Inside golden cut surface / cellular wall of Slice 2
           side: 'left',
           className: 'top-[30%] sm:top-[32%] left-4 sm:left-[10%] lg:left-[14%] xl:left-[18%]',
         },
         {
           id: 'moisture',
-          title: 'Moisture Retention',
-          subtitle: '86% cold juice retention locked within the core matrix.',
+          title: '86% Cold Juice Retention',
+          subtitle: 'Turgid cellular structure locks cold juice throughout prolonged retail display.',
           accentColor: '#B87333',
-          imageNormX: 0.605,
-          imageNormY: 0.565, // Exactly Slice 4 center cut
+          imageNormX: 0.585,
+          imageNormY: 0.525, // Inside exposed golden succulent cut flesh of Slice 4
           side: 'right',
-          className: 'top-[46%] sm:top-[48%] right-4 sm:right-[10%] lg:right-[14%] xl:right-[18%]',
-        },
-        {
-          id: 'defects',
-          title: 'Zero Internal Defects',
-          subtitle: 'Pristine carpel cavity with balanced natural malic acid.',
-          accentColor: '#059669',
-          imageNormX: 0.435,
-          imageNormY: 0.655, // Exactly Slice 5 internal carpel cavity
-          side: 'left',
-          className: 'bottom-[22%] sm:bottom-[24%] left-4 sm:left-[12%] lg:left-[16%] xl:left-[20%]',
+          className: 'top-[44%] sm:top-[46%] right-4 sm:right-[10%] lg:right-[14%] xl:right-[18%]',
         },
         {
           id: 'sugar',
+          title: 'Zero Internal Defects (NIR)',
+          subtitle: '100% Near-Infrared optical sorting: zero watercore, zero internal browning.',
+          accentColor: '#10b981',
+          imageNormX: 0.450,
+          imageNormY: 0.695, // Inside defect-free interior flesh of Slice 6
+          side: 'left',
+          className: 'top-[68%] sm:top-[70%] left-4 sm:left-[10%] lg:left-[14%] xl:left-[18%]',
+        },
+        {
+          id: 'core',
           title: 'Refractive Sugar Core',
-          subtitle: `${selectedFruit.brixLevel}° Brix gold-standard concentrated distribution.`,
-          accentColor: '#D97706',
-          imageNormX: 0.595,
-          imageNormY: 0.735, // Exactly Slice 6 lower slice cut
+          subtitle: '15.8° Brix gold-standard concentrated sugar distribution.',
+          accentColor: '#f59e0b',
+          imageNormX: 0.535,
+          imageNormY: 0.770, // Sugar core / sweet flesh of lower slice (Slice 7)
           side: 'right',
-          className: 'bottom-[22%] sm:bottom-[24%] right-4 sm:right-[12%] lg:right-[16%] xl:right-[20%]',
+          className: 'top-[70%] sm:top-[72%] right-4 sm:right-[10%] lg:right-[14%] xl:right-[18%]',
         },
       ]
     : isOrange
     ? [
         {
           id: 'layer',
-          title: 'Anthocyanin Vesicles',
-          subtitle: 'Deep ruby pigmentation rich in natural antioxidants.',
-          accentColor: '#E11D48',
+          title: 'Vesicle Turgor & Juice Density',
+          subtitle: '52% extraction efficiency with microscopic juice vesicle membranes.',
+          accentColor: '#ea580c',
           imageNormX: 0.440,
-          imageNormY: 0.440,
+          imageNormY: 0.420,
           side: 'left',
           className: 'top-[30%] sm:top-[32%] left-4 sm:left-[10%] lg:left-[14%] xl:left-[18%]',
         },
         {
           id: 'moisture',
-          title: 'Flavedo Essential Oils',
-          subtitle: 'Aromatic zest with intense terpene and citrus oil density.',
-          accentColor: '#EA580C',
+          title: 'Aromatic Flavedo Terpenes',
+          subtitle: 'Dense oil glands providing explosive citrus bouquet and natural wax defense.',
+          accentColor: '#ea580c',
           imageNormX: 0.610,
-          imageNormY: 0.500,
+          imageNormY: 0.440,
           side: 'right',
-          className: 'top-[46%] sm:top-[48%] right-4 sm:right-[10%] lg:right-[14%] xl:right-[18%]',
-        },
-        {
-          id: 'defects',
-          title: 'Zero Bitter Pith',
-          subtitle: 'Delicate albedo with seamless natural segment separation.',
-          accentColor: '#059669',
-          imageNormX: 0.430,
-          imageNormY: 0.560,
-          side: 'left',
-          className: 'bottom-[22%] sm:bottom-[24%] left-4 sm:left-[12%] lg:left-[16%] xl:left-[20%]',
+          className: 'top-[36%] sm:top-[38%] right-4 sm:right-[10%] lg:right-[14%] xl:right-[18%]',
         },
         {
           id: 'sugar',
-          title: 'Volcanic Sugar Core',
-          subtitle: `${selectedFruit.brixLevel}° Brix gold-standard concentrated distribution.`,
-          accentColor: '#D97706',
+          title: 'High Soluble Solids (Brix)',
+          subtitle: '13.5° Brix concentrated in segment pulp with harmonious 9.5:1 acid ratio.',
+          accentColor: '#f59e0b',
+          imageNormX: 0.435,
+          imageNormY: 0.580,
+          side: 'left',
+          className: 'top-[68%] sm:top-[70%] left-4 sm:left-[10%] lg:left-[14%] xl:left-[18%]',
+        },
+        {
+          id: 'core',
+          title: 'Pristine Segment Pith',
+          subtitle: 'Tender albedo membrane allowing seamless separation without fibrous stringing.',
+          accentColor: '#d97706',
           imageNormX: 0.505,
-          imageNormY: 0.505,
+          imageNormY: 0.515,
           side: 'right',
-          className: 'bottom-[22%] sm:bottom-[24%] right-4 sm:right-[12%] lg:right-[16%] xl:right-[20%]',
+          className: 'top-[70%] sm:top-[72%] right-4 sm:right-[10%] lg:right-[14%] xl:right-[18%]',
         },
       ]
     : [
         {
-          id: 'defects',
-          title: 'Micro-Seed Matrix',
-          subtitle: 'Thousands of edible black seeds loaded with oleic fatty acids & micro-crunch.',
-          accentColor: '#4B5563',
-          imageNormX: 0.365,
-          imageNormY: 0.540,
-          side: 'left',
-          className: 'top-[26%] sm:top-[28%] left-4 sm:left-[8%] lg:left-[12%] xl:left-[15%]',
-        },
-        {
           id: 'layer',
-          title: 'Foliar Bract Scales',
-          subtitle: 'Chlorophyll-rich jade-tipped scales protecting tender epidermis.',
-          accentColor: '#10B981',
-          imageNormX: 0.285,
-          imageNormY: 0.670,
-          side: 'left',
-          className: 'bottom-[18%] sm:bottom-[20%] left-4 sm:left-[8%] lg:left-[12%] xl:left-[15%]',
-        },
-        {
-          id: 'sugar',
-          title: 'Refractive Floral Core',
-          subtitle: `${selectedFruit.brixLevel}° Brix crystalline sweetness with delicate melon-pear notes.`,
-          accentColor: '#D97706',
-          imageNormX: 0.655,
+          title: 'Crystalline Betacyanin Flesh',
+          subtitle: 'Dense anthocyanin matrix yielding rich floral sweetness and natural pigment.',
+          accentColor: '#ec4899',
+          imageNormX: 0.350,
           imageNormY: 0.540,
-          side: 'right',
-          className: 'top-[26%] sm:top-[28%] right-4 sm:right-[8%] lg:right-[12%] xl:right-[15%]',
+          side: 'left',
+          className: 'top-[30%] sm:top-[32%] left-4 sm:left-[10%] lg:left-[14%] xl:left-[18%]',
         },
         {
           id: 'moisture',
-          title: 'Betacyanin Pericarp',
-          subtitle: 'Vivid magenta protective rind rich in potent betalain antioxidants.',
-          accentColor: '#E11D74',
-          imageNormX: 0.655,
-          imageNormY: 0.700,
+          title: 'Turgid Jade-Green Bracts',
+          subtitle: 'Air-washed and refrigerated immediately to preserve fresh scales.',
+          accentColor: '#10b981',
+          imageNormX: 0.720,
+          imageNormY: 0.510,
           side: 'right',
-          className: 'bottom-[18%] sm:bottom-[20%] right-4 sm:right-[8%] lg:right-[12%] xl:right-[15%]',
+          className: 'top-[36%] sm:top-[38%] right-4 sm:right-[10%] lg:right-[14%] xl:right-[18%]',
+        },
+        {
+          id: 'sugar',
+          title: 'Edible Micro-Seed Snap',
+          subtitle: 'Delicate edible black seeds providing acoustic texture and Omega oils.',
+          accentColor: '#be185d',
+          imageNormX: 0.370,
+          imageNormY: 0.580,
+          side: 'left',
+          className: 'top-[68%] sm:top-[70%] left-4 sm:left-[10%] lg:left-[14%] xl:left-[18%]',
+        },
+        {
+          id: 'core',
+          title: 'Cold Sea Freight Integrity',
+          subtitle: 'Chilled at 3.0°C directly from Binh Thuan packhouse to Indian arrival ports.',
+          accentColor: '#059669',
+          imageNormX: 0.630,
+          imageNormY: 0.550,
+          side: 'right',
+          className: 'top-[70%] sm:top-[72%] right-4 sm:right-[10%] lg:right-[14%] xl:right-[18%]',
         },
       ],
     [isApple, isOrange]
@@ -217,78 +225,37 @@ export function AnatomyOverlay({
         const rect = cardEl.getBoundingClientRect();
         if (item.side === 'left') {
           startX = rect.right + 12;
-          startY = rect.top + 22;
+          startY = rect.top + 16;
         } else {
           startX = rect.left - 12;
-          startY = rect.top + 22;
+          startY = rect.top + 16;
         }
       } else {
         if (item.side === 'left') {
-          startX = W * 0.32;
+          startX = W * 0.28;
           startY = endY;
         } else {
-          startX = W * 0.68;
+          startX = W * 0.72;
           startY = endY;
         }
       }
 
-      // Generate leader line matching user's architectural guide aesthetics
+      // Elegant architectural leader line with horizontal shoulders
       let pathData = '';
-      if (isDragonFruit) {
-        if (item.side === 'left') {
-          const isTop = endY > startY;
-          if (isTop) {
-            // Horizontal out from card, smooth rounded bend, drops down into cut face
-            const cp1X = startX + (endX - startX) * 0.72;
-            const cp1Y = startY;
-            const cp2X = endX;
-            const cp2Y = startY + (endY - startY) * 0.45;
-            pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
-          } else {
-            // Smooth upward swoop from bottom card into lower contour
-            const dx = Math.max(20, endX - startX);
-            const cp1X = startX + dx * 0.45;
-            const cp1Y = startY;
-            const cp2X = endX - dx * 0.15;
-            const cp2Y = endY + (startY - endY) * 0.35;
-            pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
-          }
-        } else {
-          const isTop = endY > startY;
-          if (isTop) {
-            // Horizontal out from card (heading left), smooth rounded bend, drops down into cut face
-            const cp1X = startX - (startX - endX) * 0.72;
-            const cp1Y = startY;
-            const cp2X = endX;
-            const cp2Y = startY + (endY - startY) * 0.45;
-            pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
-          } else {
-            // Smooth upward swoop from bottom card into lower contour
-            const dx = Math.max(20, startX - endX);
-            const cp1X = startX - dx * 0.45;
-            const cp1Y = startY;
-            const cp2X = endX + dx * 0.15;
-            const cp2Y = endY + (startY - endY) * 0.35;
-            pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
-          }
-        }
+      if (item.side === 'left') {
+        const span = Math.max(30, endX - startX);
+        const cp1X = startX + span * 0.55;
+        const cp1Y = startY;
+        const cp2X = endX - span * 0.20;
+        const cp2Y = endY;
+        pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
       } else {
-        // Original S-curve path for apple & orange
-        if (item.side === 'left') {
-          const dx = Math.max(20, endX - startX);
-          const cp1X = startX + dx * 0.40;
-          const cp1Y = startY;
-          const cp2X = endX - dx * 0.25;
-          const cp2Y = endY;
-          pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
-        } else {
-          const dx = Math.max(20, startX - endX);
-          const cp1X = startX - dx * 0.40;
-          const cp1Y = startY;
-          const cp2X = endX + dx * 0.25;
-          const cp2Y = endY;
-          pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
-        }
+        const span = Math.max(30, startX - endX);
+        const cp1X = startX - span * 0.55;
+        const cp1Y = startY;
+        const cp2X = endX + span * 0.20;
+        const cp2Y = endY;
+        pathData = `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${endX} ${endY}`;
       }
 
       return {
@@ -304,42 +271,45 @@ export function AnatomyOverlay({
     setLineCoords(calculated);
   }, [anatomyData]);
 
-  // Recalculate on resize, scroll, and fruit change. Skipped on a phone,
-  // where the callouts are a stacked list rather than pinned to points on
-  // the fruit — there is nothing for a leader line to join up.
+  // Recalculate on resize and fruit change
   useEffect(() => {
     if (isMobile) return;
 
     updateCoordinates();
     window.addEventListener('resize', updateCoordinates);
-    window.addEventListener('scroll', updateCoordinates, { passive: true });
 
-    const timer = setTimeout(updateCoordinates, 50);
-    const timer2 = setTimeout(updateCoordinates, 250);
+    const timer = setTimeout(updateCoordinates, 60);
+    const timer2 = setTimeout(updateCoordinates, 300);
 
     return () => {
       window.removeEventListener('resize', updateCoordinates);
-      window.removeEventListener('scroll', updateCoordinates);
       clearTimeout(timer);
       clearTimeout(timer2);
     };
-  }, [updateCoordinates, selectedFruit.id, isVisible, isMobile]);
+  }, [updateCoordinates, selectedFruit.id, isMobile]);
 
-  /* Phone layout. Four callouts pinned around the fruit need margins to
-     sit in; at 390px they landed on top of each other and on the fruit.
-     They become a sheet along the bottom instead — the fruit still reads
-     above it, and the copy is finally legible. The leader lines go with
-     them, since there is no longer a point on the image to lead to. */
+  /* Phone layout. Four callouts pinned around the fruit become a sleek docked sheet along bottom */
   if (isMobile) {
+    const accent = isApple ? '#8e1d24' : isOrange ? '#ea580c' : '#be185d';
     return (
       <div
         id="anatomy-section-container"
-        className={`fixed inset-x-0 bottom-0 z-20 transition-opacity duration-700 ${
-          isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+        style={{
+          opacity: totalOpacity,
+          pointerEvents: totalOpacity > 0.3 ? 'auto' : 'none',
+          visibility: isVisible ? 'visible' : 'hidden',
+          transition: 'opacity 0.35s ease',
+        }}
+        className="fixed inset-x-0 bottom-0 z-30 select-none"
       >
         <div className="fr-anatomy-sheet">
-          <p className="fr-anatomy-sheet-title">Anatomy</p>
+          <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-black/10">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: accent }} />
+              <p className="fr-anatomy-sheet-title !mb-0">[ 05 // INTERNAL SPECIFICATION ]</p>
+            </div>
+            <span className="font-mono text-[9px] text-black/50 uppercase tracking-wider">Internal Grading</span>
+          </div>
           <ul className="fr-anatomy-sheet-list">
             {anatomyData.map((item) => (
               <li key={item.id}>
@@ -363,9 +333,13 @@ export function AnatomyOverlay({
   return (
     <div
       id="anatomy-section-container"
-      className={`transition-opacity duration-700 ${
-        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
-      }`}
+      style={{
+        opacity: totalOpacity,
+        pointerEvents: totalOpacity > 0.3 ? 'auto' : 'none',
+        visibility: isVisible ? 'visible' : 'hidden',
+        transition: 'opacity 0.35s ease',
+      }}
+      className="fixed inset-0 z-20 pointer-events-none select-none"
     >
       {/* 1. HIGH-PRECISION WHITE ANATOMICAL LEADER LINES SVG OVERLAY */}
       <svg
@@ -373,7 +347,7 @@ export function AnatomyOverlay({
         style={{ width: '100vw', height: '100vh' }}
       >
         <defs>
-          {/* Subtle Glow & Drop-Shadow Filter for Pure White Crispness */}
+          {/* Crisp White Glow & Drop-Shadow Filter */}
           <filter id="white-glow" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0" dy="1.5" stdDeviation="3" floodColor="#000000" floodOpacity="0.45" />
             <feDropShadow dx="0" dy="0" stdDeviation="1.5" floodColor="#FFFFFF" floodOpacity="0.8" />
@@ -393,82 +367,76 @@ export function AnatomyOverlay({
           return (
             <g
               key={line.id}
-              className="transition-all duration-300"
-              style={{ opacity: isDimmed ? 0.35 : 1 }}
+              style={{
+                opacity: isDimmed ? 0.35 : 1,
+                transition: 'opacity 0.2s ease',
+              }}
             >
               {/* Primary White Anatomical Leader Line */}
               <path
                 d={line.pathData}
                 fill="none"
                 stroke="#FFFFFF"
-                strokeWidth={isHovered ? 2.8 : 2.0}
+                strokeWidth={isHovered ? 2.4 : 1.8}
                 strokeLinecap="round"
                 filter="url(#white-glow)"
-                className="transition-all duration-300"
               />
 
               {/* Card Connection Anchor Dot */}
               <circle
                 cx={line.startX}
                 cy={line.startY}
-                r={isHovered ? 4.5 : 3.5}
+                r={isHovered ? 4 : 3}
                 fill="#FFFFFF"
                 filter="url(#white-glow)"
-                className="transition-all duration-300"
               />
               <circle
                 cx={line.startX}
                 cy={line.startY}
-                r={isHovered ? 7 : 5.5}
+                r={isHovered ? 6.5 : 5}
                 fill="none"
                 stroke="#FFFFFF"
                 strokeWidth="1.2"
                 strokeOpacity="0.75"
               />
 
-              {/* Fruit Slice Target Node: Outer Expanding Radar Ping */}
+              {/* Fruit Slice Target Node: High-precision botanical inspection reticle */}
+              {/* Outer clean accent ring */}
               <circle
                 cx={line.endX}
                 cy={line.endY}
-                r={isHovered ? 16 : 12}
+                r={isHovered ? 12 : 9}
                 fill="none"
                 stroke="#FFFFFF"
                 strokeWidth="1.2"
-                strokeOpacity={isHovered ? '0.85' : '0.45'}
-                className="animate-ping"
-                style={{
-                  animationDuration: isHovered ? '1.5s' : '3s',
-                  transformOrigin: `${line.endX}px ${line.endY}px`,
-                }}
+                strokeOpacity={isHovered ? '0.9' : '0.45'}
               />
 
-              {/* Fruit Slice Target Node: Middle Glowing Ring */}
+              {/* Middle Glowing Ring */}
               <circle
                 cx={line.endX}
                 cy={line.endY}
-                r={isHovered ? 7.5 : 5.5}
+                r={isHovered ? 6.5 : 4.5}
                 fill="none"
                 stroke="#FFFFFF"
-                strokeWidth="1.6"
+                strokeWidth="1.5"
                 filter="url(#node-glow)"
-                className="transition-all duration-300"
               />
 
-              {/* Fruit Slice Target Node: Solid Center Core Dot */}
+              {/* Solid Center Core Dot */}
               <circle
                 cx={line.endX}
                 cy={line.endY}
-                r={isHovered ? 3.5 : 2.5}
+                r={isHovered ? 3 : 2}
                 fill={item?.accentColor || '#FFFFFF'}
                 filter="url(#white-glow)"
-                className="transition-all duration-300"
               />
 
               {/* Crosshair Accent Ticks for Botanical Precision */}
               <line
-                x1={line.endX - (isHovered ? 12 : 9)}
+                x1={line.endX - (isHovered ? 11 : 8)}
                 y1={line.endY}
-                x2={line.endX - (isHovered ? 7 : 5)}
+                x2={line.endX - (isHovered ? 6 : 4)}
                 y2={line.endY}
                 stroke="#FFFFFF"
                 strokeWidth="1.2"
@@ -476,9 +444,9 @@ export function AnatomyOverlay({
                 filter="url(#white-glow)"
               />
               <line
-                x1={line.endX + (isHovered ? 7 : 5)}
+                x1={line.endX + (isHovered ? 6 : 4)}
                 y1={line.endY}
-                x2={line.endX + (isHovered ? 12 : 9)}
+                x2={line.endX + (isHovered ? 11 : 8)}
                 y2={line.endY}
                 stroke="#FFFFFF"
                 strokeWidth="1.2"
@@ -487,9 +455,9 @@ export function AnatomyOverlay({
               />
               <line
                 x1={line.endX}
-                y1={line.endY - (isHovered ? 12 : 9)}
+                y1={line.endY - (isHovered ? 11 : 8)}
                 x2={line.endX}
-                y2={line.endY - (isHovered ? 7 : 5)}
+                y2={line.endY - (isHovered ? 6 : 4)}
                 stroke="#FFFFFF"
                 strokeWidth="1.2"
                 strokeOpacity="0.85"
@@ -497,9 +465,9 @@ export function AnatomyOverlay({
               />
               <line
                 x1={line.endX}
-                y1={line.endY + (isHovered ? 7 : 5)}
+                y1={line.endY + (isHovered ? 6 : 4)}
                 x2={line.endX}
-                y2={line.endY + (isHovered ? 12 : 9)}
+                y2={line.endY + (isHovered ? 11 : 8)}
                 stroke="#FFFFFF"
                 strokeWidth="1.2"
                 strokeOpacity="0.85"
@@ -522,7 +490,7 @@ export function AnatomyOverlay({
             }}
             onMouseEnter={() => setHoveredId(item.id)}
             onMouseLeave={() => setHoveredId(null)}
-            className={`fixed ${item.className} z-20 pointer-events-auto max-w-[210px] sm:max-w-[240px] cursor-pointer transition-all duration-300 ${
+            className={`fixed ${item.className} z-20 pointer-events-auto max-w-[210px] sm:max-w-[240px] cursor-pointer transition-transform duration-200 ${
               isHovered ? 'scale-105' : 'hover:scale-[1.02]'
             }`}
           >
@@ -530,15 +498,12 @@ export function AnatomyOverlay({
               {/* Category / Accent Dot */}
               <div className="flex items-center gap-2">
                 <span
-                  className="w-2 h-2 rounded-full transition-transform duration-300"
+                  className="w-2 h-2 rounded-full transition-transform duration-200"
                   style={{
                     backgroundColor: item.accentColor,
                     transform: isHovered ? 'scale(1.4)' : 'scale(1)',
                   }}
                 />
-                {/* The reading face, not the display serif: this is 14px, and
-                    the display serif is a single weight — font-semibold on it
-                    is a synthesised bold rather than a drawn one. */}
                 <span className="font-sans text-sm font-semibold text-[#1A1A1A]">
                   {item.title}
                 </span>

@@ -800,12 +800,15 @@ body.fr-nav-open {
    the bottom instead of four labels pinned around the fruit, which at
    this width overlapped each other and the fruit both. */
 .fr-anatomy-sheet {
-  background: rgba(254, 254, 247, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(254, 254, 247, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid rgba(20, 18, 14, 0.12);
-  padding: 18px clamp(18px, 5vw, 28px) calc(18px + env(safe-area-inset-bottom, 0px));
-  max-height: 52vh;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.07);
+  padding: 16px clamp(16px, 4vw, 24px) calc(16px + env(safe-area-inset-bottom, 0px));
+  max-height: 40vh;
   overflow-y: auto;
 }
 
@@ -882,18 +885,7 @@ body.fr-nav-open {
 
   /* Without the rules to clear, the column can use the full width. */
   #fruit-website-root > main {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  /* Both chapter panels are pinned to one side of the fruit at desktop
-     and given a max-width. On a phone there is no "side" to sit in, so
-     they span the column instead — anchored on both edges, which also
-     stops the right-hand one running off-screen (its right-4 inset plus
-     a content-width block was 32px wider than the viewport). */
-  #fruit-website-root .fr-chapter {
-    left: 20px;
-    right: 20px;
-    max-width: none;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }

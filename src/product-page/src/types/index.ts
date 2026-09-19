@@ -47,7 +47,6 @@ export interface FruitSpecimen {
   heroHeadline: string;
   heroSubheadline: string;
   strongStatement: string;
-  heroCta: string;
   brixLevel: number;
   acidity: string;
   harvestWindow: string;

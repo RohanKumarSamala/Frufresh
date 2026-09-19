@@ -1,7 +1,6 @@
 import React from 'react';
 import { FruitSpecimen } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowDown, Sparkles } from 'lucide-react';
 
 interface HeroSectionProps {
   selectedFruit: FruitSpecimen;
@@ -71,21 +70,16 @@ export function HeroSection({ selectedFruit, onNavigateStage }: HeroSectionProps
               </motion.div>
             </AnimatePresence>
 
-            {/* Main CTA from Slide 03, 04, 05 */}
+            {/* One call to action. The varieties button next to this one
+                only scrolled down the page, which the page already invites
+                by being scrollable — it competed with the enquiry for
+                attention while leading somewhere the reader would reach
+                anyway. */}
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <button
                 type="button"
-                onClick={() => scrollToSection('section-varieties')}
-                className="fr-btn fr-btn--primary justify-center sm:justify-start !py-3.5 !px-6 text-center cursor-pointer shadow-sm hover:shadow-md transition-all font-mono"
-              >
-                <span>{selectedFruit.heroCta}</span>
-                <ArrowDown className="w-3.5 h-3.5" />
-              </button>
-
-              <button
-                type="button"
                 onClick={() => scrollToSection('section-enquire')}
-                className="fr-btn justify-center sm:justify-start !py-3.5 !px-5 text-center cursor-pointer font-mono"
+                className="fr-btn fr-btn--primary justify-center sm:justify-start !py-3.5 !px-6 text-center cursor-pointer shadow-sm hover:shadow-md transition-all font-mono"
               >
                 <span>B2B Sourcing</span>
               </button>
@@ -145,22 +139,16 @@ export function HeroSection({ selectedFruit, onNavigateStage }: HeroSectionProps
             </motion.div>
           </AnimatePresence>
 
-          {/* Action CTAs */}
+          {/* Action CTA. Takes the filled treatment the varieties button
+              used to hold: it is the only one here now, and left as the
+              outline style it would have read as the secondary of a pair
+              that no longer exists. */}
           <div className="flex flex-col gap-2.5 w-full px-2">
             <button
               type="button"
-              onClick={() => scrollToSection('section-varieties')}
+              onClick={() => scrollToSection('section-enquire')}
               className="w-full flex items-center justify-center gap-2.5 py-3.5 px-6 text-center font-mono text-[10.5px] tracking-widest uppercase font-bold text-white shadow-md active:scale-[0.98] transition-all cursor-pointer"
               style={{ backgroundColor: accentColor }}
-            >
-              <span>{selectedFruit.heroCta}</span>
-              <ArrowDown className="w-3.5 h-3.5 text-white" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => scrollToSection('section-enquire')}
-              className="w-full flex items-center justify-center gap-2 py-3 px-6 text-center font-mono text-[10px] tracking-widest uppercase font-semibold text-[#1A1A1A] bg-white/90 backdrop-blur-md border border-black/15 shadow-xs active:scale-[0.98] transition-all cursor-pointer hover:bg-white"
             >
               <span>B2B Sourcing</span>
             </button>

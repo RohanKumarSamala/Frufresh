@@ -890,7 +890,6 @@ export default function App() {
         <div className="relative z-20 bg-gradient-to-b from-transparent via-[#fefef7] to-[#fbfbf2] pt-8">
           <CommercialDossier
             selectedFruit={selectedFruit}
-            onOpenPartnershipModal={() => setIsPartnershipOpen(true)}
             isDarkMode={isDarkMode}
           />
         </div>

@@ -100,11 +100,11 @@ export const FRUIT_SPECIMENS: FruitSpecimen[] = [
     },
     // 05 Season Calendar
     seasonality: [
-      { country: 'Washington, USA', flag: '🇺🇸', region: 'Wenatchee & Yakima', activeMonths: [9, 10, 11, 12, 1, 2, 3, 4], status: 'active', journeyDays: '32 days' },
-      { country: 'Chile', flag: '🇨🇱', region: 'Curicó Valley', activeMonths: [3, 4, 5, 6, 7, 8], status: 'peak', journeyDays: '38 days' },
-      { country: 'New Zealand', flag: '🇳🇿', region: "Hawke's Bay", activeMonths: [4, 5, 6, 7, 8, 9], status: 'active', journeyDays: '28 days' },
-      { country: 'South Africa', flag: '🇿🇦', region: 'Ceres Valley', activeMonths: [3, 4, 5, 6, 7], status: 'active', journeyDays: '22 days' },
-      { country: 'Northern Italy', flag: '🇮🇹', region: 'South Tyrol', activeMonths: [10, 11, 12, 1, 2], status: 'upcoming', journeyDays: '26 days' },
+      { country: 'Washington, USA',region: 'Wenatchee & Yakima', activeMonths: [9, 10, 11, 12, 1, 2, 3, 4], status: 'active', journeyDays: '32 days' },
+      { country: 'Chile',region: 'Curicó Valley', activeMonths: [3, 4, 5, 6, 7, 8], status: 'peak', journeyDays: '38 days' },
+      { country: 'New Zealand',region: "Hawke's Bay", activeMonths: [4, 5, 6, 7, 8, 9], status: 'active', journeyDays: '28 days' },
+      { country: 'South Africa',region: 'Ceres Valley', activeMonths: [3, 4, 5, 6, 7], status: 'active', journeyDays: '22 days' },
+      { country: 'Northern Italy',region: 'South Tyrol', activeMonths: [10, 11, 12, 1, 2], status: 'upcoming', journeyDays: '26 days' },
     ],
     // 06 Quality Standards
     qualityGuide: {
@@ -252,10 +252,10 @@ export const FRUIT_SPECIMENS: FruitSpecimen[] = [
     },
     // 05 Season Calendar
     seasonality: [
-      { country: 'Egypt', flag: '🇪🇬', region: 'Nile Delta & Desert Road', activeMonths: [12, 1, 2, 3, 4, 5], status: 'peak', journeyDays: '14 days' },
-      { country: 'South Africa', flag: '🇿🇦', region: 'Citrusdal & Eastern Cape', activeMonths: [6, 7, 8, 9, 10, 11], status: 'active', journeyDays: '20 days' },
-      { country: 'Spain', flag: '🇪🇸', region: 'Valencia & Seville', activeMonths: [11, 12, 1, 2, 3], status: 'upcoming', journeyDays: '24 days' },
-      { country: 'Australia', flag: '🇦🇺', region: 'Riverina', activeMonths: [7, 8, 9, 10], status: 'active', journeyDays: '22 days' },
+      { country: 'Egypt',region: 'Nile Delta & Desert Road', activeMonths: [12, 1, 2, 3, 4, 5], status: 'peak', journeyDays: '14 days' },
+      { country: 'South Africa',region: 'Citrusdal & Eastern Cape', activeMonths: [6, 7, 8, 9, 10, 11], status: 'active', journeyDays: '20 days' },
+      { country: 'Spain',region: 'Valencia & Seville', activeMonths: [11, 12, 1, 2, 3], status: 'upcoming', journeyDays: '24 days' },
+      { country: 'Australia',region: 'Riverina', activeMonths: [7, 8, 9, 10], status: 'active', journeyDays: '22 days' },
     ],
     // 06 Quality Standards
     qualityGuide: {
@@ -381,8 +381,8 @@ export const FRUIT_SPECIMENS: FruitSpecimen[] = [
     },
     // 05 Season Calendar
     seasonality: [
-      { country: 'Vietnam (Natural Season)', flag: '🇻🇳', region: 'Binh Thuan & Long An', activeMonths: [5, 6, 7, 8, 9, 10, 11], status: 'peak', journeyDays: '10 days' },
-      { country: 'Vietnam (Light Season)', flag: '🇻🇳', region: 'Binh Thuan Foothills', activeMonths: [12, 1, 2, 3, 4], status: 'active', journeyDays: '12 days' },
+      { country: 'Vietnam (Natural Season)',region: 'Binh Thuan & Long An', activeMonths: [5, 6, 7, 8, 9, 10, 11], status: 'peak', journeyDays: '10 days' },
+      { country: 'Vietnam (Light Season)',region: 'Binh Thuan Foothills', activeMonths: [12, 1, 2, 3, 4], status: 'active', journeyDays: '12 days' },
     ],
     // 06 Quality Standards
     qualityGuide: {

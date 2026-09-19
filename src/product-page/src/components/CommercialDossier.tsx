@@ -26,16 +26,13 @@ import {
 
 interface CommercialDossierProps {
   selectedFruit: FruitSpecimen;
-  onOpenPartnershipModal: () => void;
   isDarkMode?: boolean;
 }
 
 const MONTH_NAMES = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-const CURRENT_MONTH = new Date().getMonth() + 1; // 1-12
 
 export function CommercialDossier({
   selectedFruit,
-  onOpenPartnershipModal,
   isDarkMode = false,
 }: CommercialDossierProps) {
   const isApple = selectedFruit.id === 'apple';
@@ -148,7 +145,8 @@ export function CommercialDossier({
             {selectedFruit.name}: Sourcing Strength, Knowledge & Quality Standards.
           </h2>
           <p className="lg:col-span-4 font-sans text-xs sm:text-sm text-[#1A1A1A]/70 leading-relaxed">
-            The customer should finish this page thinking: <em className="text-[#1A1A1A] font-medium not-italic">“They know exactly what I need.”</em> Built to commercial B2B procurement standards.
+            Origins, varieties, counts and cold-chain protocol — the specification
+            a buyer needs before placing an allocation.
           </p>
         </div>
       </div>
@@ -158,7 +156,7 @@ export function CommercialDossier({
       {/* ========================================================================= */}
       <div id="section-origin" className="space-y-6">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ 02 // ORIGIN ]</span>
+          <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ ORIGIN ]</span>
           <h3 className="font-serif text-2xl sm:text-3xl text-[#1A1A1A]">Where It Comes From & The Journey To India</h3>
         </div>
 
@@ -233,7 +231,7 @@ export function CommercialDossier({
       <div id="section-varieties" className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ 03 // VARIETIES ]</span>
+            <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ VARIETIES ]</span>
             <h3 className="font-serif text-2xl sm:text-3xl text-[#1A1A1A]">Commercial Varieties Handled by FRU FRESH</h3>
           </div>
           <span className="font-mono text-xs text-black/50 hidden sm:inline-block">
@@ -305,7 +303,7 @@ export function CommercialDossier({
       {/* ========================================================================= */}
       <div id="section-taste" className="space-y-6">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ 04 // TASTE ]</span>
+          <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ TASTE ]</span>
           <h3 className="font-serif text-2xl sm:text-3xl text-[#1A1A1A]">Sensory Architecture & Flavour Profile</h3>
         </div>
 
@@ -313,7 +311,7 @@ export function CommercialDossier({
           {/* Star rating meters */}
           <div className="lg:col-span-7 rounded-2xl border border-black/10 bg-transparent p-6 sm:p-7 space-y-4">
             <span className="font-mono text-[9px] uppercase tracking-widest text-black/50 block">
-              SENSORY STAR METRICS (1 – 5 CALIBRATION)
+              Sensory profile — calibrated 1 to 5
             </span>
 
             <div className="space-y-3">
@@ -327,12 +325,11 @@ export function CommercialDossier({
                 <div key={idx} className="space-y-1">
                   <div className="flex items-center justify-between text-xs font-mono">
                     <span className="text-[#1A1A1A] font-medium">{m.label}</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-amber-500 tracking-tighter text-xs">
-                        {'★'.repeat(Math.round(m.val)) + '☆'.repeat(5 - Math.round(m.val))}
-                      </span>
-                      <span className="font-bold text-[#1A1A1A]">{m.val}/5</span>
-                    </div>
+                    {/* The bar below already carries the value, and the
+                        figure states it exactly — a row of stars was a third
+                        reading of the same number, in an amber that appears
+                        nowhere else in the palette. */}
+                    <span className="font-bold text-[#1A1A1A]">{m.val}/5</span>
                   </div>
                   <div className="h-1.5 w-full bg-black/[0.06] rounded-full overflow-hidden">
                     <div
@@ -388,26 +385,25 @@ export function CommercialDossier({
       <div id="section-season" className="space-y-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ 07 // VISUAL SEASONALITY ]</span>
+            <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ SEASONALITY ]</span>
             <span className="font-mono text-[10px] text-black/40 uppercase tracking-wider">Origin-by-Origin Calendar</span>
           </div>
-          <h3 className="font-serif text-3xl sm:text-4xl text-[#1A1A1A]">07 — Seasonality should be visual</h3>
+          <h3 className="font-serif text-3xl sm:text-4xl text-[#1A1A1A]">Availability Through the Year</h3>
           <p className="font-sans text-xs sm:text-sm text-[#1A1A1A]/70">
-            This is one of the most useful tools for buyers. Keep it simple and update it when sourcing changes.
+            When each origin is in season, so a buyer can plan cover across the calendar.
           </p>
         </div>
 
-        {/* Dual Cards matching Slide 07 */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-          {/* Left Card: EXAMPLE STRUCTURE */}
-          <div className="lg:col-span-7 xl:col-span-8 rounded-3xl border-2 border-[#8e1d24]/30 bg-white/70 backdrop-blur-sm p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-sm">
+        {/* The calendar alone. It used to sit beside a "why it matters"
+            card explaining the chart to the reader, which is brief copy
+            rather than anything a buyer needs — a seasonality grid reads
+            itself. Full width now that it is not sharing the row. */}
+        <div>
+          <div className="rounded-3xl border-2 border-[#8e1d24]/30 bg-white/70 backdrop-blur-sm p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-sm">
             <div>
               <div className="flex items-center justify-between pb-3 mb-4 border-b border-black/10">
                 <span className="font-mono text-xs font-bold text-[#8e1d24] uppercase tracking-widest">
-                  EXAMPLE STRUCTURE
-                </span>
-                <span className="font-mono text-[9px] uppercase tracking-wider text-black/50">
-                  {selectedFruit.name} Origin Availability
+                  {selectedFruit.name} — Origin Availability
                 </span>
               </div>
 
@@ -425,9 +421,8 @@ export function CommercialDossier({
                   <tbody className="divide-y divide-black/5 text-[11px]">
                     {selectedFruit.seasonality.map((s, idx) => (
                       <tr key={idx} className="hover:bg-black/[0.02] transition-colors">
-                        <td className="py-3 pr-4 font-bold text-[#1A1A1A] whitespace-nowrap flex items-center gap-1.5">
-                          <span>{s.flag}</span>
-                          <span>{s.country.toUpperCase()}</span>
+                        <td className="py-3 pr-4 font-bold text-[#1A1A1A] whitespace-nowrap">
+                          {s.country.toUpperCase()}
                         </td>
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => {
                           const isActive = s.activeMonths.includes(m);
@@ -460,52 +455,6 @@ export function CommercialDossier({
             </div>
           </div>
 
-          {/* Right Card: WHY IT MATTERS */}
-          <div className="lg:col-span-5 xl:col-span-4 rounded-3xl border-2 border-black/15 bg-[#fbfbf2] p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-sm">
-            <div className="space-y-4">
-              <div className="pb-3 border-b border-black/10">
-                <span className="font-mono text-xs font-bold text-[#8e1d24] uppercase tracking-widest">
-                  WHY IT MATTERS
-                </span>
-              </div>
-
-              <div className="space-y-2">
-                <p className="font-sans text-xs text-black/70 font-medium">Buyers can quickly see:</p>
-                <ul className="space-y-3 font-sans text-xs sm:text-sm text-[#1A1A1A]/90">
-                  <li className="flex items-start gap-2.5">
-                    <span className="text-[#8e1d24] font-bold text-sm leading-none">•</span>
-                    <span><strong>Where fruit is coming from</strong> directly without intermediary brokerage.</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="text-[#8e1d24] font-bold text-sm leading-none">•</span>
-                    <span><strong>When it is normally available</strong> across global harvest windows.</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="text-[#8e1d24] font-bold text-sm leading-none">•</span>
-                    <span><strong>What origin can bridge an off-season</strong> ensuring 52-week supply.</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="text-[#8e1d24] font-bold text-sm leading-none">•</span>
-                    <span><strong>When to plan enquiries</strong> ahead of cold-store dispatches.</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <span className="text-[#8e1d24] font-bold text-sm leading-none">•</span>
-                    <span><strong>What is available now vs upcoming</strong> for pre-booking allocations.</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-black/10 font-mono text-[10px] text-black/50 flex items-center justify-between">
-              <span>52-Week Procurement Pipeline</span>
-              <span className="text-emerald-700 font-bold">Month {CURRENT_MONTH}: In Harvest Now</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Warning Callout */}
-        <div className="py-3 px-5 rounded-2xl bg-red-50 border border-red-200 text-center font-mono text-xs font-bold text-[#8e1d24]">
-          Do not publish generic season charts without checking FRU FRESH&apos;s actual import calendar.
         </div>
       </div>
 
@@ -514,7 +463,7 @@ export function CommercialDossier({
       {/* ========================================================================= */}
       <div id="section-quality" className="space-y-6">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ 06 // QUALITY ]</span>
+          <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ QUALITY ]</span>
           <h3 className="font-serif text-2xl sm:text-3xl text-[#1A1A1A]">Inspection Parameters & Quality Protocol</h3>
         </div>
 
@@ -597,7 +546,7 @@ export function CommercialDossier({
       {/* ========================================================================= */}
       <div id="section-packing" className="space-y-6">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ 07 // PACKING ]</span>
+          <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ PACKING ]</span>
           <h3 className="font-serif text-2xl sm:text-3xl text-[#1A1A1A]">Packing Formats, Count Sizes & Palletization</h3>
         </div>
 
@@ -693,14 +642,14 @@ export function CommercialDossier({
       <div id="section-availability" className="space-y-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ 09 // LIVE RADAR ]</span>
+            <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ AVAILABILITY ]</span>
             <span className="font-mono text-[10px] text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-300 font-bold">
-              ● LIVING SOURCING PLATFORM
+              ● UPDATED THIS SEASON
             </span>
           </div>
-          <h3 className="font-serif text-3xl sm:text-4xl text-[#1A1A1A]">09 — Add “Now Available” + “Coming Soon”</h3>
+          <h3 className="font-serif text-3xl sm:text-4xl text-[#1A1A1A]">Current & Incoming Sourcing</h3>
           <p className="font-sans text-xs sm:text-sm text-[#1A1A1A]/70">
-            This turns the website into a living sourcing platform rather than a static brochure.
+            What is in cold store now, and what lands next.
           </p>
         </div>
 
@@ -722,7 +671,6 @@ export function CommercialDossier({
                 <div className="p-4 rounded-2xl border border-black/10 bg-black/[0.02] flex items-center justify-between gap-3">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="text-base">🍎</span>
                       <span className="font-serif text-lg font-medium text-[#1A1A1A]">HIMACHAL APPLES</span>
                     </div>
                     <p className="font-mono text-[10px] text-black/60">Kinnaur & Shimla High-Altitude Crisp Harvest</p>
@@ -736,7 +684,6 @@ export function CommercialDossier({
                 <div className="p-4 rounded-2xl border border-black/10 bg-black/[0.02] flex items-center justify-between gap-3">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="text-base">🐉</span>
                       <span className="font-serif text-lg font-medium text-[#1A1A1A]">VIETNAM DRAGON FRUIT</span>
                     </div>
                     <p className="font-mono text-[10px] text-black/60">Binh Thuan & Long An 4.5kg / 9kg Cartons</p>
@@ -750,7 +697,6 @@ export function CommercialDossier({
                 <div className="p-4 rounded-2xl border border-black/10 bg-black/[0.02] flex items-center justify-between gap-3">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="text-base">🍊</span>
                       <span className="font-serif text-lg font-medium text-[#1A1A1A]">SOUTH AFRICAN / EGYPTIAN VALENCIA</span>
                     </div>
                     <p className="font-mono text-[10px] text-black/60">High Juice Yield 52% • Counts 64 / 72 / 88</p>
@@ -792,7 +738,6 @@ export function CommercialDossier({
                 <div className="p-4 rounded-2xl border border-black/10 bg-white/70 flex items-center justify-between gap-3">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="text-base">🍎</span>
                       <span className="font-serif text-lg font-medium text-[#1A1A1A]">USA WASHINGTON GALA & FUJI</span>
                     </div>
                     <p className="font-mono text-[10px] text-black/60">Vessel MSC Alizee • ETA 6 Days to Nhava Sheva</p>
@@ -806,7 +751,6 @@ export function CommercialDossier({
                 <div className="p-4 rounded-2xl border border-black/10 bg-white/70 flex items-center justify-between gap-3">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="text-base">🍊</span>
                       <span className="font-serif text-lg font-medium text-[#1A1A1A]">AUSTRALIAN NAVEL & MIDKNIGHT</span>
                     </div>
                     <p className="font-mono text-[10px] text-black/60">Vessel CMA CGM Mozart • Pre-Booking Open</p>
@@ -820,7 +764,6 @@ export function CommercialDossier({
                 <div className="p-4 rounded-2xl border border-black/10 bg-white/70 flex items-center justify-between gap-3">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="text-base">🐉</span>
                       <span className="font-serif text-lg font-medium text-[#1A1A1A]">VIETNAM RUBY RED DRAGON FRUIT</span>
                     </div>
                     <p className="font-mono text-[10px] text-black/60">Binh Thuan High-Betacyanin Export Batches</p>
@@ -860,26 +803,18 @@ export function CommercialDossier({
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/10 pb-6">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ 08 // B2B ENQUIRY PATH ]</span>
+              <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ ENQUIRY ]</span>
               <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 font-mono text-[9px] font-bold uppercase">
                 Auto-Attached Product Route
               </span>
             </div>
             <h3 className="font-serif text-3xl sm:text-4xl text-[#1A1A1A]">
-              08 — Every product needs a B2B enquiry path
+              Enquire
             </h3>
             <p className="font-sans text-xs sm:text-sm text-[#1A1A1A]/70">
-              Don’t force a buyer to leave the product page and hunt for Contact Us.
+              Your selection is attached to the enquiry automatically.
             </p>
           </div>
-
-          <button
-            type="button"
-            onClick={onOpenPartnershipModal}
-            className="fr-btn fr-btn--primary"
-          >
-            Open Full Allocation Modal
-          </button>
         </div>
 
         {/* Segmented Product Switcher matching Slide 08 */}
@@ -896,7 +831,6 @@ export function CommercialDossier({
                 : 'text-black/60 hover:text-black hover:bg-black/[0.02]'
             }`}
           >
-            <span>🍎</span>
             <span>APPLE ENQUIRY</span>
           </button>
 
@@ -912,7 +846,6 @@ export function CommercialDossier({
                 : 'text-black/60 hover:text-black hover:bg-black/[0.02]'
             }`}
           >
-            <span>🍊</span>
             <span>ORANGE ENQUIRY</span>
           </button>
 
@@ -928,7 +861,6 @@ export function CommercialDossier({
                 : 'text-black/60 hover:text-black hover:bg-black/[0.02]'
             }`}
           >
-            <span>🐉</span>
             <span>DRAGON FRUIT</span>
           </button>
         </div>
@@ -1421,195 +1353,6 @@ export function CommercialDossier({
             <span>The form sends the enquiry to the FRU FRESH sales team with the product and page automatically attached.</span>
           </div>
           <span className="text-black/40 uppercase">Direct B2B Sales Protocol</span>
-        </div>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 11 — INFORMATION FRU FRESH MUST SUPPLY BEFORE LAUNCH (Slide 11)           */}
-      {/* ========================================================================= */}
-      <div id="section-master-specs" className="space-y-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-[10px] font-bold text-[#8e1d24] uppercase tracking-widest">[ 11 // MASTER DATA SPEC ]</span>
-            <span className="font-mono text-[10px] text-black/40 uppercase tracking-wider">Quality & Compliance Checklist</span>
-          </div>
-          <h3 className="font-serif text-3xl sm:text-4xl text-[#1A1A1A]">
-            11 — Information FRU FRESH must supply before launch
-          </h3>
-          <p className="font-sans text-xs sm:text-sm text-[#1A1A1A]/70">
-            The website developer should not invent these details. Give them a master product data sheet.
-          </p>
-        </div>
-
-        {/* 3 Master Columns matching Slide 11 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-          {/* Column 1: FOR APPLES */}
-          <div className="rounded-3xl border-2 border-[#8e1d24]/30 bg-white/80 p-6 sm:p-7 space-y-4 shadow-sm">
-            <div className="pb-3 border-b border-black/10">
-              <span className="font-mono text-xs font-bold text-[#8e1d24] uppercase tracking-widest block">
-                FOR APPLES
-              </span>
-              <span className="font-serif text-lg text-[#1A1A1A] font-medium">Verified Commercial Data Sheet</span>
-            </div>
-
-            <div className="space-y-2.5 font-sans text-xs text-[#1A1A1A]/85">
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Actual origins:</span>
-                <span className="font-medium text-right">USA, Chile, NZ, Italy, South Africa</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Actual varieties:</span>
-                <span className="font-medium text-right">Gala, Fuji, Granny Smith, Pink Lady, Red Delicious</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Available counts:</span>
-                <span className="font-mono text-[11px] font-bold text-right">80, 88, 100, 113, 125, 138, 150</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Grades:</span>
-                <span className="font-medium text-right">Extra Fancy, Class 1 Export</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Packing formats:</span>
-                <span className="font-medium text-right">18–19.8kg Telescopic, 13kg Euro</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Season by origin:</span>
-                <span className="font-medium text-right">Sep–Apr (USA) • Mar–Aug (Southern)</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Current availability:</span>
-                <span className="text-emerald-700 font-bold text-right">Mumbai & Delhi Cold Stores</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Typical Brix / specs:</span>
-                <span className="font-mono font-bold text-right">14.5°–16.5° Bx • 7.5–9.2 kg/cm²</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Storage / handling:</span>
-                <span className="font-medium text-right">0.5°C to 1.5°C • 90–95% RH</span>
-              </div>
-              <div className="pt-1 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Images:</span>
-                <span className="text-emerald-700 font-bold text-right">✓ Verified Orchard & Cut Specimen</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Column 2: FOR ORANGES */}
-          <div className="rounded-3xl border-2 border-[#c2410c]/30 bg-white/80 p-6 sm:p-7 space-y-4 shadow-sm">
-            <div className="pb-3 border-b border-black/10">
-              <span className="font-mono text-xs font-bold text-[#c2410c] uppercase tracking-widest block">
-                FOR ORANGES
-              </span>
-              <span className="font-serif text-lg text-[#1A1A1A] font-medium">Verified Commercial Data Sheet</span>
-            </div>
-
-            <div className="space-y-2.5 font-sans text-xs text-[#1A1A1A]/85">
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Actual origins:</span>
-                <span className="font-medium text-right">Egypt, South Africa, Spain, Australia</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Actual varieties:</span>
-                <span className="font-medium text-right">Valencia Late, Navel, Mandarin, Cara Cara</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Counts / sizes:</span>
-                <span className="font-mono text-[11px] font-bold text-right">48, 56, 64, 72, 80, 88, 100</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Grades:</span>
-                <span className="font-medium text-right">Class 1 Export, Juicing Grade A</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Packing formats:</span>
-                <span className="font-medium text-right">15.0kg Telescopic, 10kg Open Box</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Season by origin:</span>
-                <span className="font-medium text-right">Dec–May (Egypt) • Jun–Nov (SA/Aus)</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Current availability:</span>
-                <span className="text-emerald-700 font-bold text-right">Ready Cold Stock & In-Transit</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Eating / juice suitability:</span>
-                <span className="font-mono font-bold text-right">52% Juice Yield • 11.5°–13.5° Bx</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Storage / handling:</span>
-                <span className="font-medium text-right">3.5°C to 5.5°C • 85–90% RH</span>
-              </div>
-              <div className="pt-1 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Images:</span>
-                <span className="text-emerald-700 font-bold text-right">✓ Verified Vesicle Cut & Flavedo</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Column 3: FOR DRAGON FRUIT */}
-          <div className="rounded-3xl border-2 border-[#be185d]/30 bg-white/80 p-6 sm:p-7 space-y-4 shadow-sm">
-            <div className="pb-3 border-b border-black/10">
-              <span className="font-mono text-xs font-bold text-[#be185d] uppercase tracking-widest block">
-                FOR DRAGON FRUIT
-              </span>
-              <span className="font-serif text-lg text-[#1A1A1A] font-medium">Verified Commercial Data Sheet</span>
-            </div>
-
-            <div className="space-y-2.5 font-sans text-xs text-[#1A1A1A]/85">
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Actual Vietnam regions:</span>
-                <span className="font-medium text-right">Binh Thuan, Long An, Tien Giang</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Types / varieties:</span>
-                <span className="font-medium text-right">White Flesh, Red / Magenta, Yellow</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Pack formats:</span>
-                <span className="font-medium text-right">NEW 9.0kg FRU FRESH Carton, 4kg Box</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Count / grade:</span>
-                <span className="font-mono text-[11px] font-bold text-right">Counts 10, 12, 14, 16 • Grade A</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Seasonality:</span>
-                <span className="font-medium text-right">Natural (May–Nov) • Light (Dec–Apr)</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Current availability:</span>
-                <span className="text-emerald-700 font-bold text-right">Weekly Chennai & Nhava Sheva Reefer</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Storage / handling:</span>
-                <span className="font-medium text-right">4.5°C to 6.5°C • 85–90% RH</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Quality checks:</span>
-                <span className="font-medium text-right">100% Crisp Jade-Green Bract Scales</span>
-              </div>
-              <div className="border-b border-black/5 pb-1.5 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Real carton images:</span>
-                <span className="text-pink-700 font-bold text-right">✓ Official Vietnam Branded Box</span>
-              </div>
-              <div className="pt-1 flex justify-between gap-2">
-                <span className="font-mono text-[10px] text-black/40 uppercase">Product photography:</span>
-                <span className="text-emerald-700 font-bold text-right">✓ Authentic GAP Farm Imagery</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Master Data Guarantee Badge */}
-        <div className="p-4 rounded-2xl border border-black/10 bg-black/[0.02] flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-700" />
-            <span className="font-bold text-[#1A1A1A]">Master Product Data Sheet Integrity</span>
-          </div>
-          <span className="text-black/60">Verified & Approved by FRU FRESH Commercial Operations • 2026/27</span>
         </div>
       </div>
 

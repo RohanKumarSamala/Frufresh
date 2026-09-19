@@ -13,7 +13,6 @@ export interface VarietyItem {
 
 export interface SeasonOriginItem {
   country: string;
-  flag: string;
   region: string;
   activeMonths: number[]; // 1-12
   status: 'peak' | 'active' | 'upcoming';

@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
+/* Fallbacks only — :root below repoints all four at the --fr-* faces, which
+   are the real type system. Kept in step with those so a utility used
+   before :root applies does not flash a face the page never otherwise
+   uses. */
 @theme {
-  --font-serif: 'Newsreader', 'Instrument Serif', 'Cinzel', Georgia, serif;
-  --font-editorial: 'Newsreader', Georgia, serif;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-editorial: 'Plus Jakarta Sans', -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -155,13 +159,16 @@ body::-webkit-scrollbar {
    part of the same site.
    ============================================================ */
 :root {
-  /* Display — headings and titles. Cormorant Garamond is an old-style
-     serif with fine, drawn detail; it suits a page of specimens and
-     measurements far better than the previous display face, which had
-     quirky proportions that fought the photography. It runs small on the
-     body, so the display sizes below are set larger to compensate, and at
-     500 rather than 400 so it does not read as thin. */
-  --fr-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  /* Display — headings and titles. The same face the home page sets its
+     names and pull quotes in, so the two halves of the site share one
+     display voice instead of each having its own.
+
+     It replaces Cormorant Garamond, which ran small enough on the body
+     that the sizes here were inflated to compensate and set at 500 so it
+     would not read as thin — both of which were working against the
+     typeface. Instrument Serif is drawn to be set large at a single
+     weight, so those compensations come back out below. */
+  --fr-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
 
   /* Running text and UI. Plus Jakarta Sans is a humanist sans with a
      large x-height and open apertures — crisp at 15px, where any serif
@@ -566,13 +573,16 @@ body::-webkit-scrollbar {
 
 .fr-display {
   font-family: var(--fr-serif);
-  /* Larger than the old 24–34px: Cormorant has a small x-height, so it
-     sets visually smaller than a display face at the same pixel size.
-     The vw term does the work here — at 3vw it never came off its 30px
+  /* The vw term does the work here — at 3vw it never came off its 30px
      floor below a desktop width, so on a narrow screen the headline stayed
-     large, ran wide and collided with the fruit behind it. */
-  font-size: clamp(21px, 3.9vw, 44px);
-  font-weight: 500;
+     large, ran wide and collided with the fruit behind it.
+
+     The ceiling was 44px to compensate for Cormorant's small x-height;
+     Instrument Serif sets visually larger at the same pixel size, so it
+     comes back down. */
+  font-size: clamp(21px, 3.9vw, 40px);
+  /* Single-weight face — 500 would be synthesised. */
+  font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.005em;
   color: var(--fr-red-text);
@@ -635,7 +645,9 @@ body::-webkit-scrollbar {
 .fr-heading {
   font-family: var(--fr-serif);
   font-size: clamp(23px, 2.2vw, 31px);
-  font-weight: 500;
+  /* 400, not 500: the display face has one weight, so anything heavier is
+     a browser-synthesised bold rather than a drawn one. */
+  font-weight: 400;
   line-height: 1.18;
   color: rgba(20, 18, 14, 0.92);
 }

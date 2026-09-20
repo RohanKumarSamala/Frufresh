@@ -89,7 +89,7 @@ export default function App() {
       if (stageIndex <= 0) return 0; // Stage 0: Hero section
       if (stageIndex === 1) return Math.round(scrubHeight * 0.30); // Stage 1: Origin & Taste ratings
       if (stageIndex === 2) return Math.round(scrubHeight * 0.60); // Stage 2: Varieties & Packing specs
-      return Math.round(scrubHeight * 0.92); // Stage 3: Sliced fruit anatomy (end of frames)
+      return scrubHeight; // Stage 3: Sliced fruit anatomy (final frame of specimen)
     },
     [getScrubTrackHeight]
   );
@@ -100,9 +100,9 @@ export default function App() {
     const scrubHeight = getScrubTrackHeight();
 
     if (y < scrubHeight * 0.16) return 0;
-    if (y < scrubHeight * 0.46) return 1;
-    if (y < scrubHeight * 0.78) return 2;
-    return 3; // Stage 3: Sliced fruit anatomy
+    if (y < scrubHeight * 0.45) return 1;
+    if (y < scrubHeight * 0.80) return 2;
+    return 3; // Stage 3: Sliced fruit anatomy (last frame)
   }, [getScrubTrackHeight]);
 
   // Smooth liquid cubic ease-out animation to target stage
@@ -176,17 +176,15 @@ export default function App() {
       const scrubTrackHeight = getScrubTrackHeight();
       const currentY = window.scrollY;
 
-      // 1. ANY PART OF THE PAGE AFTER THE FRAMES SECTION IS NEVER AUTOSCROLLED:
-      // When at or past the frames section (in the commercial dossier), wheel events
-      // are NEVER intercepted and native browser scrolling runs 100% unrestricted.
-      if (currentY >= scrubTrackHeight) {
+      // 1. In the commercial dossier (strictly past the frames section),
+      // wheel events are NEVER intercepted and native browser scrolling runs 100% unrestricted.
+      if (currentY > scrubTrackHeight) {
         return;
       }
 
-      // 2. AFTER THE FRAMES SECTION (STAGE 3 / SLICED FRUIT), THERE IS NO AUTO SCROLL:
-      // When at Stage 3 (sliced fruit) and scrolling DOWN towards or into the dossier,
-      // never intercept! Native browser scrolling smoothly glides into the dossier.
-      if (currentY >= scrubTrackHeight * 0.88 && e.deltaY > 0) {
+      // 2. When at Stage 3 (last frame / sliced fruit) and scrolling DOWN into the dossier,
+      // never intercept! Native browser scrolling smoothly glides right into the information.
+      if (currentY >= scrubTrackHeight - 8 && e.deltaY > 0) {
         return;
       }
 
@@ -244,10 +242,10 @@ export default function App() {
       const scrubTrackHeight = getScrubTrackHeight();
 
       // In or past the dossier: completely native touch scrolling
-      if (window.scrollY >= scrubTrackHeight) return;
+      if (window.scrollY > scrubTrackHeight) return;
 
       // When at Stage 3 and swiping up (scrolling down into dossier): completely native
-      if (window.scrollY >= scrubTrackHeight * 0.88) return;
+      if (window.scrollY >= scrubTrackHeight - 8) return;
 
       if (isAnimatingRef.current) {
         e.preventDefault();
@@ -261,13 +259,13 @@ export default function App() {
       const currentY = window.scrollY;
 
       // In or past the dossier: completely native touch scrolling
-      if (currentY >= scrubTrackHeight) return;
+      if (currentY > scrubTrackHeight) return;
 
       const touchEndY = e.changedTouches[0].clientY;
       const diffY = touchStartYRef.current - touchEndY; // positive = swipe up = scroll down
 
       // If at or past Stage 3 and swiping up (scrolling DOWN into dossier): 100% native!
-      if (currentY >= scrubTrackHeight * 0.88 && diffY > 0) return;
+      if (currentY >= scrubTrackHeight - 8 && diffY > 0) return;
 
       const now = performance.now();
       if (now < coolDownUntilRef.current) return;
@@ -296,11 +294,11 @@ export default function App() {
       const currentY = window.scrollY;
 
       // In or past the dossier: keyboard arrows and page keys scroll 100% natively
-      if (currentY >= scrubTrackHeight) return;
+      if (currentY > scrubTrackHeight) return;
 
       if (['ArrowDown', 'PageDown', ' '].includes(e.key)) {
         const currentStage = getCurrentStage();
-        if (currentStage >= TOTAL_STAGES - 1 || currentY >= scrubTrackHeight * 0.88) {
+        if (currentStage >= TOTAL_STAGES - 1 || currentY >= scrubTrackHeight - 8) {
           // At or after Stage 3: let keys scroll natively down into the dossier!
           return;
         }
@@ -900,7 +898,7 @@ export default function App() {
       {/* ========================================================================= */}
       <div
         className={`fixed bottom-4 left-4 right-4 z-40 sm:hidden flex items-center justify-between p-3 rounded-2xl bg-white/95 backdrop-blur-xl border border-black/15 shadow-2xl transition-all duration-500 ease-out ${
-          scrubProgress >= 0.96 || (getScrubTrackHeight() > 0 && scrollY >= getScrubTrackHeight() - 60)
+          getScrubTrackHeight() > 0 && scrollY > getScrubTrackHeight() + 30
             ? 'opacity-100 translate-y-0 pointer-events-auto'
             : 'opacity-0 translate-y-12 pointer-events-none'
         }`}

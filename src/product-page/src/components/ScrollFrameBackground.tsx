@@ -50,17 +50,26 @@ const MEDIA_NATIVE = { w: 1920, h: 1080 };
 // match. It only started to matter once MEDIA_SCALE dropped below 1 and
 // the margin became visible at all.
 
-// Read by the canvas fill, so measured off the frame sequences.
+// Sampled accurately off the studio backdrop of the frame sequences.
+// On mobile, the media is rendered at scale 0.5 to fit gracefully within the viewport.
+// These exact sampled RGB tones ensure the canvas fill and page background match the image seamlessly.
 const BACKDROP = {
-  apple: [216, 211, 210] as const,
-  orange: [201, 191, 181] as const,
-  dragonfruit: [229, 225, 222] as const,
+  apple: [221, 222, 222] as const,
+  orange: [202, 202, 202] as const,
+  dragonfruit: [231, 231, 230] as const,
   dark: [8, 8, 10] as const,
 };
 
-// Sits behind the hero clip, so measured off the clips themselves.
+const BACKDROP_MOBILE_GRADIENT = {
+  apple: { top: [220, 221, 221], bottom: [224, 225, 225] },
+  orange: { top: [199, 199, 199], bottom: [205, 205, 205] },
+  dragonfruit: { top: [228, 228, 227], bottom: [236, 235, 235] },
+  dark: { top: [8, 8, 10], bottom: [8, 8, 10] },
+};
+
+// Sits behind the hero clip:
 const VIDEO_BACKDROP = {
-  apple: [228, 228, 228] as const,
+  apple: [221, 222, 222] as const,
   orange: [219, 138, 21] as const,
   dragonfruit: [235, 180, 170] as const,
   dark: [8, 8, 10] as const,
@@ -398,15 +407,59 @@ export function ScrollFrameBackground({
               const y = isMobile ? (ch - imgH) / 2 - 30 : (ch - imgH) / 2;
 
               ctx.clearRect(0, 0, cw, ch);
-              ctx.fillStyle = `rgb(${bgR}, ${bgG}, ${bgB})`;
-              ctx.fillRect(0, 0, cw, ch);
-              ctx.drawImage(img, x, y, imgW, imgH);
+
+              if (isMobile) {
+                // 1. Fill mobile background with studio linear gradient matching the photo top & bottom
+                const gColors =
+                  BACKDROP_MOBILE_GRADIENT[fruitId as keyof typeof BACKDROP_MOBILE_GRADIENT] ||
+                  BACKDROP_MOBILE_GRADIENT.apple;
+                const grad = ctx.createLinearGradient(0, 0, 0, ch);
+                grad.addColorStop(0, `rgb(${gColors.top.join(',')})`);
+                grad.addColorStop(1, `rgb(${gColors.bottom.join(',')})`);
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, cw, ch);
+
+                // 2. Draw fruit specimen frame
+                ctx.drawImage(img, x, y, imgW, imgH);
+
+                // 3. Feather the top & bottom edges so the frame melts 100% seamlessly into the background
+                const featherH = Math.min(26, imgH * 0.08);
+
+                // Top feather
+                const topFeather = ctx.createLinearGradient(0, y - 1, 0, y + featherH);
+                topFeather.addColorStop(0, `rgb(${gColors.top.join(',')})`);
+                topFeather.addColorStop(1, `rgba(${gColors.top.join(',')}, 0)`);
+                ctx.fillStyle = topFeather;
+                ctx.fillRect(0, y - 2, cw, featherH + 2);
+
+                // Bottom feather
+                const botEdgeY = y + imgH;
+                const botFeather = ctx.createLinearGradient(0, botEdgeY - featherH, 0, botEdgeY + 1);
+                botFeather.addColorStop(0, `rgba(${gColors.bottom.join(',')}, 0)`);
+                botFeather.addColorStop(1, `rgb(${gColors.bottom.join(',')})`);
+                ctx.fillStyle = botFeather;
+                ctx.fillRect(0, botEdgeY - featherH, cw, featherH + 2);
+              } else {
+                ctx.fillStyle = `rgb(${bgR}, ${bgG}, ${bgB})`;
+                ctx.fillRect(0, 0, cw, ch);
+                ctx.drawImage(img, x, y, imgW, imgH);
+              }
             }
           } else if (lastRenderedFrameRef.current === -1) {
             const cw = canvas.clientWidth || window.innerWidth;
             const ch = canvas.clientHeight || window.innerHeight;
             ctx.clearRect(0, 0, cw, ch);
-            ctx.fillStyle = `rgb(${bgR}, ${bgG}, ${bgB})`;
+            if (isMobile) {
+              const gColors =
+                BACKDROP_MOBILE_GRADIENT[fruitId as keyof typeof BACKDROP_MOBILE_GRADIENT] ||
+                BACKDROP_MOBILE_GRADIENT.apple;
+              const grad = ctx.createLinearGradient(0, 0, 0, ch);
+              grad.addColorStop(0, `rgb(${gColors.top.join(',')})`);
+              grad.addColorStop(1, `rgb(${gColors.bottom.join(',')})`);
+              ctx.fillStyle = grad;
+            } else {
+              ctx.fillStyle = `rgb(${bgR}, ${bgG}, ${bgB})`;
+            }
             ctx.fillRect(0, 0, cw, ch);
           }
         }
@@ -479,17 +532,22 @@ export function ScrollFrameBackground({
           isVideoVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         style={
-          videoBox
+          videoBox && fruitId === 'apple'
             ? {
-                // Centred on the same box the canvas draws its frame into,
-                // so the fruit does not jump at the hand-over.
+                // Centred on the same box the canvas draws its frame into (Apple only)
                 width: `${videoBox.w}px`,
                 height: `${videoBox.h}px`,
                 left: '50%',
                 top: isMobile ? 'calc(50% - 30px)' : '50%',
                 transform: 'translate(-50%, -50%)',
+                maskImage: isMobile
+                  ? 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)'
+                  : undefined,
+                WebkitMaskImage: isMobile
+                  ? 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)'
+                  : undefined,
               }
-            : { width: '100vw', height: '100vh', inset: 0 }
+            : { width: '100vw', height: '100vh', inset: 0, objectFit: 'cover' }
         }
       />
 

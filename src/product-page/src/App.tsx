@@ -11,6 +11,7 @@ import { MobileNav } from './components/MobileNav';
 import { AnatomyOverlay } from './components/AnatomyOverlay';
 import { CommercialDossier } from './components/CommercialDossier';
 import { ArrowUp, ArrowDown, Send } from 'lucide-react';
+import { useIsMobile } from './hooks/useIsMobile';
 
 export default function App() {
   // Robust fruit resolver handling various query parameter formats
@@ -370,10 +371,15 @@ export default function App() {
   const phase2Opacity = calcOpacity(0.18, 0.44, 0.06);
   const phase3Opacity = calcOpacity(0.48, 0.74, 0.06);
 
+  const isMobile = useIsMobile();
+  // Background styling on mobile is ONLY for apple; orange and dragon fruit use their original full-bleed hero presentation
+  const mobileBgCss = isApple ? 'rgb(221, 222, 222)' : undefined;
+
   return (
     <div
       id="fruit-website-root"
       className="min-h-screen relative flex flex-col justify-between overflow-x-hidden bg-[#fefef7] text-[#1A1A1A] selection:bg-[#1A1A1A] selection:text-white transition-colors duration-700 ease-in-out"
+      style={isMobile && mobileBgCss ? { backgroundColor: mobileBgCss } : undefined}
     >
       {/* Scroll-Driven 3D Frame Background with Looping Video */}
       <ScrollFrameBackground fruitId={selectedFruit.id} isDarkMode={isDarkMode} />

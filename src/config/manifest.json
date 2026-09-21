@@ -3,7 +3,7 @@
   "digits": 4,
   "ext": "jpg",
   "variants": [
-    { "maxWidth": 768, "prefix": "assets/frames/hero-sm/frame_" },
+    { "maxWidth": 768, "prefix": "assets/frames/hero-portrait/frame_" },
     { "prefix": "assets/frames/hero/frame_" }
   ],
   "prefix": "assets/frames/hero/frame_"

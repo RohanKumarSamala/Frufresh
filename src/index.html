@@ -25,15 +25,26 @@
   <!-- Loops on open, then fades out over the first stretch of scroll to
        hand off to the frame sequence underneath. -->
   <div id="hero-loop">
+    <!-- Two sources, picked by width. The clip is 16:9 and cover-fitted, so
+         a portrait phone only ever shows its centre strip, enlarged; the
+         phone source is that strip cropped from the full-size original, so
+         it keeps its detail instead of being stretched.
+
+         The desktop source is listed first and carries its own media query:
+         a browser that ignores `media` on <source> takes the first one, so
+         older phones fall back to the desktop clip rather than a desktop
+         getting the narrow crop. -->
     <video
       id="loop-video"
-      src="assets/video/hero-section.mp4?v=2"
       autoplay
       muted
       loop
       playsinline
       preload="auto"
-    ></video>
+    >
+      <source src="assets/video/hero-section.mp4?v=3" media="(min-width: 769px)" type="video/mp4" />
+      <source src="assets/video/hero-section-sm.mp4?v=1" media="(max-width: 768px)" type="video/mp4" />
+    </video>
   </div>
 
   <!-- One line at a time, surfacing over the frame sequence. Each owns a

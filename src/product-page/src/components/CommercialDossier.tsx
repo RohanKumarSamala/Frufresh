@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FruitSpecimen, VarietyItem } from '../types';
+import { CustomSelect } from './CustomSelect';
 import {
   CheckCircle2,
   Ship,
@@ -88,9 +89,9 @@ export function CommercialDossier({
     phoneEmail: '',
     type: 'White Flesh Pitaya (Snow White)',
     origin: 'Binh Thuan Province, Vietnam',
-    packSize: 'NEW FRU FRESH 9.0kg Export Carton',
+    packSize: 'NEW 9.0kg FRU FRESH Carton',
     quantity: 'Full 40ft Reefer Container (~2,000 Cartons)',
-    destination: 'Chennai Port',
+    destination: 'Chennai Port (10-Day Direct Sea Transit)',
     requiredDate: '',
   });
 
@@ -948,91 +949,96 @@ export function CommercialDossier({
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Origin</label>
-                    <select
+                    <CustomSelect
                       value={appleForm.origin}
-                      onChange={(e) => setAppleForm({ ...appleForm, origin: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#8e1d24]"
-                    >
-                      <option value="Washington, USA (Wenatchee & Yakima)">Washington, USA (Wenatchee & Yakima)</option>
-                      <option value="Curicó Valley, Chile">Curicó Valley, Chile</option>
-                      <option value="Hawke's Bay, New Zealand">Hawke&apos;s Bay, New Zealand</option>
-                      <option value="South Tyrol, Northern Italy">South Tyrol, Northern Italy</option>
-                      <option value="Ceres Valley, South Africa">Ceres Valley, South Africa</option>
-                    </select>
+                      onChange={(val) => setAppleForm({ ...appleForm, origin: val })}
+                      accentColor="#8e1d24"
+                      options={[
+                        'Washington, USA (Wenatchee & Yakima)',
+                        'Curicó Valley, Chile',
+                        "Hawke's Bay, New Zealand",
+                        'South Tyrol, Northern Italy',
+                        'Ceres Valley, South Africa',
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Variety</label>
-                    <select
+                    <CustomSelect
                       value={appleForm.variety}
-                      onChange={(e) => setAppleForm({ ...appleForm, variety: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#8e1d24]"
-                    >
-                      <option value="Royal Gala">Royal Gala (High Volume Mover)</option>
-                      <option value="Red Fuji">Red Fuji (Highest Brix 16°+)</option>
-                      <option value="Granny Smith">Granny Smith (Tart & Firm Crunch)</option>
-                      <option value="Pink Lady">Pink Lady / Cripps Pink (Gourmet Benchmark)</option>
-                      <option value="Red Delicious">Washington Red Delicious (Classic)</option>
-                    </select>
+                      onChange={(val) => setAppleForm({ ...appleForm, variety: val })}
+                      accentColor="#8e1d24"
+                      options={[
+                        { value: 'Royal Gala', label: 'Royal Gala (High Volume Mover)' },
+                        { value: 'Red Fuji', label: 'Red Fuji (Highest Brix 16°+)' },
+                        { value: 'Granny Smith', label: 'Granny Smith (Tart & Firm Crunch)' },
+                        { value: 'Pink Lady', label: 'Pink Lady / Cripps Pink (Gourmet Benchmark)' },
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Count</label>
-                    <select
+                    <CustomSelect
                       value={appleForm.count}
-                      onChange={(e) => setAppleForm({ ...appleForm, count: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#8e1d24]"
-                    >
-                      <option value="Count 80">Count 80 (Extra Large)</option>
-                      <option value="Count 88">Count 88 (Large Benchmark)</option>
-                      <option value="Count 100">Count 100 (Medium-Large)</option>
-                      <option value="Count 113">Count 113 (Standard Retail)</option>
-                      <option value="Count 125">Count 125 (Medium)</option>
-                      <option value="Count 138">Count 138 (Small-Medium)</option>
-                      <option value="Count 150">Count 150 (Compact)</option>
-                    </select>
+                      onChange={(val) => setAppleForm({ ...appleForm, count: val })}
+                      accentColor="#8e1d24"
+                      options={[
+                        { value: 'Count 80', label: 'Count 80 (Extra Large)' },
+                        { value: 'Count 88', label: 'Count 88 (Large Benchmark)' },
+                        { value: 'Count 100', label: 'Count 100 (Medium-Large)' },
+                        { value: 'Count 113', label: 'Count 113 (Standard Retail)' },
+                        { value: 'Count 125', label: 'Count 125 (Medium)' },
+                        { value: 'Count 138', label: 'Count 138 (Small-Medium)' },
+                        { value: 'Count 150', label: 'Count 150 (Compact)' },
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Grade</label>
-                    <select
+                    <CustomSelect
                       value={appleForm.grade}
-                      onChange={(e) => setAppleForm({ ...appleForm, grade: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#8e1d24]"
-                    >
-                      <option value="Washington Extra Fancy">Washington Extra Fancy (Top 5% Blush)</option>
-                      <option value="Chilean Export Standard">Chilean Export Standard</option>
-                      <option value="New Zealand Class 1">New Zealand Class 1 Premium</option>
-                    </select>
+                      onChange={(val) => setAppleForm({ ...appleForm, grade: val })}
+                      accentColor="#8e1d24"
+                      options={[
+                        { value: 'Washington Extra Fancy', label: 'Washington Extra Fancy (Top 5% Blush)' },
+                        { value: 'Chilean Export Standard', label: 'Chilean Export Standard' },
+                        { value: 'New Zealand Class 1', label: 'New Zealand Class 1 Premium' },
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Quantity</label>
-                    <select
+                    <CustomSelect
                       value={appleForm.quantity}
-                      onChange={(e) => setAppleForm({ ...appleForm, quantity: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#8e1d24]"
-                    >
-                      <option value="Full 40ft Reefer Container (FCL)">Full 40ft Reefer Container (FCL - ~1,180 Cartons)</option>
-                      <option value="Multi-Pallet Allocation (LCL)">Multi-Pallet Allocation (2 to 10 Pallets)</option>
-                      <option value="Trial Sample Consignment">Trial Sample Consignment (1 Pallet)</option>
-                    </select>
+                      onChange={(val) => setAppleForm({ ...appleForm, quantity: val })}
+                      accentColor="#8e1d24"
+                      options={[
+                        { value: 'Full 40ft Reefer Container (FCL)', label: 'Full 40ft Reefer Container (FCL - ~1,180 Cartons)' },
+                        { value: 'Multi-Pallet Allocation (LCL)', label: 'Multi-Pallet Allocation (2 to 10 Pallets)' },
+                        { value: 'Trial Sample Consignment', label: 'Trial Sample Consignment (1 Pallet)' },
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Delivery Location</label>
-                    <select
+                    <CustomSelect
                       value={appleForm.deliveryLocation}
-                      onChange={(e) => setAppleForm({ ...appleForm, deliveryLocation: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#8e1d24]"
-                    >
-                      <option value="Mumbai (Nhava Sheva / Vashi)">Mumbai (Nhava Sheva / Vashi Cold Storage)</option>
-                      <option value="Delhi NCR (Azadpur / Kundli)">Delhi NCR (Azadpur Terminal / Kundli Hub)</option>
-                      <option value="Chennai (Chennai Port)">Chennai (Chennai Port / Koyambedu)</option>
-                      <option value="Bengaluru (Yeshwanthpur)">Bengaluru (Yeshwanthpur / Hoskote)</option>
-                      <option value="Hyderabad (Gaddi Annaram)">Hyderabad (Gaddi Annaram Terminal)</option>
-                      <option value="Mundra Port (Gujarat)">Mundra Port (Gujarat Clearance)</option>
-                    </select>
+                      onChange={(val) => setAppleForm({ ...appleForm, deliveryLocation: val })}
+                      accentColor="#8e1d24"
+                      options={[
+                        { value: 'Mumbai (Nhava Sheva / Vashi)', label: 'Mumbai (Nhava Sheva / Vashi Cold Storage)' },
+                        { value: 'Delhi NCR (Azadpur / Kundli)', label: 'Delhi NCR (Azadpur Terminal / Kundli Hub)' },
+                        { value: 'Chennai (Chennai Port)', label: 'Chennai (Chennai Port / Koyambedu)' },
+                        { value: 'Bengaluru (Yeshwanthpur)', label: 'Bengaluru (Yeshwanthpur / Hoskote)' },
+                        { value: 'Hyderabad (Gaddi Annaram)', label: 'Hyderabad (Gaddi Annaram Terminal)' },
+                        { value: 'Mundra Port (Gujarat)', label: 'Mundra Port (Gujarat Clearance)' },
+                      ]}
+                    />
                   </div>
 
                   <div className="sm:col-span-2 lg:col-span-3 space-y-1.5">
@@ -1045,7 +1051,8 @@ export function CommercialDossier({
                       required
                       value={appleForm.requiredDate}
                       onChange={(e) => setAppleForm({ ...appleForm, requiredDate: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#8e1d24]"
+                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#8e1d24] cursor-pointer"
+                      style={{ colorScheme: 'light' }}
                     />
                   </div>
                 </div>
@@ -1102,90 +1109,96 @@ export function CommercialDossier({
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Origin</label>
-                    <select
+                    <CustomSelect
                       value={orangeForm.origin}
-                      onChange={(e) => setOrangeForm({ ...orangeForm, origin: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#c2410c]"
-                    >
-                      <option value="Egypt (Nile Delta & Desert Road)">Egypt (Nile Delta & Desert Road)</option>
-                      <option value="South Africa (Western & Eastern Cape)">South Africa (Western & Eastern Cape)</option>
-                      <option value="Spain (Valencia & Seville)">Spain (Valencia & Seville)</option>
-                      <option value="Australia (Riverina & Murray Valley)">Australia (Riverina & Murray Valley)</option>
-                    </select>
+                      onChange={(val) => setOrangeForm({ ...orangeForm, origin: val })}
+                      accentColor="#c2410c"
+                      options={[
+                        'Egypt (Nile Delta & Desert Road)',
+                        'South Africa (Western & Eastern Cape)',
+                        'Spain (Valencia & Seville)',
+                        'Australia (Riverina & Murray Valley)',
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Variety</label>
-                    <select
+                    <CustomSelect
                       value={orangeForm.variety}
-                      onChange={(e) => setOrangeForm({ ...orangeForm, variety: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#c2410c]"
-                    >
-                      <option value="Valencia Late">Valencia Late (Maximum 52% Juice Yield)</option>
-                      <option value="Washington Navel">Washington Navel (Premier Seedless Table)</option>
-                      <option value="Murcott Mandarin">Murcott / Afourer Mandarin (Easy-Peel)</option>
-                      <option value="Cara Cara Navel">Cara Cara Navel (Ruby Lycopene Flesh)</option>
-                      <option value="Clementine">Clementine (Seedless Grab-and-Go)</option>
-                    </select>
+                      onChange={(val) => setOrangeForm({ ...orangeForm, variety: val })}
+                      accentColor="#c2410c"
+                      options={[
+                        { value: 'Valencia Late', label: 'Valencia Late (Maximum 52% Juice Yield)' },
+                        { value: 'Washington Navel', label: 'Washington Navel (Premier Seedless Table)' },
+                        { value: 'Murcott Mandarin', label: 'Murcott / Afourer Mandarin (Easy-Peel)' },
+                        { value: 'Cara Cara Navel', label: 'Cara Cara Navel (Ruby Lycopene Flesh)' },
+                        { value: 'Clementine', label: 'Clementine (Seedless Grab-and-Go)' },
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Count</label>
-                    <select
+                    <CustomSelect
                       value={orangeForm.count}
-                      onChange={(e) => setOrangeForm({ ...orangeForm, count: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#c2410c]"
-                    >
-                      <option value="Count 48">Count 48 (Jumbo Table)</option>
-                      <option value="Count 56">Count 56 (Extra Large)</option>
-                      <option value="Count 64">Count 64 (Large Juicing/Table)</option>
-                      <option value="Count 72">Count 72 (Standard Retail)</option>
-                      <option value="Count 80">Count 80 (Commercial Juicing)</option>
-                      <option value="Count 88">Count 88 (Medium)</option>
-                      <option value="Count 100">Count 100 (Compact Easy-Peel)</option>
-                    </select>
+                      onChange={(val) => setOrangeForm({ ...orangeForm, count: val })}
+                      accentColor="#c2410c"
+                      options={[
+                        { value: 'Count 48', label: 'Count 48 (Jumbo Table)' },
+                        { value: 'Count 56', label: 'Count 56 (Extra Large)' },
+                        { value: 'Count 64', label: 'Count 64 (Large Juicing/Table)' },
+                        { value: 'Count 72', label: 'Count 72 (Standard Retail)' },
+                        { value: 'Count 80', label: 'Count 80 (Commercial Juicing)' },
+                        { value: 'Count 88', label: 'Count 88 (Medium)' },
+                        { value: 'Count 100', label: 'Count 100 (Compact Easy-Peel)' },
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Grade</label>
-                    <select
+                    <CustomSelect
                       value={orangeForm.grade}
-                      onChange={(e) => setOrangeForm({ ...orangeForm, grade: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#c2410c]"
-                    >
-                      <option value="Export Class 1 Premium">Export Class 1 Premium</option>
-                      <option value="Choice Table Citrus">Choice Table Citrus</option>
-                      <option value="Commercial Juicing Grade A">Commercial Juicing Grade A</option>
-                    </select>
+                      onChange={(val) => setOrangeForm({ ...orangeForm, grade: val })}
+                      accentColor="#c2410c"
+                      options={[
+                        { value: 'Export Class 1 Premium', label: 'Export Class 1 Premium' },
+                        { value: 'Choice Table Citrus', label: 'Choice Table Citrus' },
+                        { value: 'Commercial Juicing Grade A', label: 'Commercial Juicing Grade A' },
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Quantity</label>
-                    <select
+                    <CustomSelect
                       value={orangeForm.quantity}
-                      onChange={(e) => setOrangeForm({ ...orangeForm, quantity: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#c2410c]"
-                    >
-                      <option value="Full 40ft Reefer Container (FCL)">Full 40ft Reefer Container (1,600 Cartons of 15kg)</option>
-                      <option value="Multi-Pallet Allocation (LCL)">Multi-Pallet Allocation (2 to 10 Pallets)</option>
-                      <option value="Trial Sample Consignment">Trial Sample Consignment (1 Pallet)</option>
-                    </select>
+                      onChange={(val) => setOrangeForm({ ...orangeForm, quantity: val })}
+                      accentColor="#c2410c"
+                      options={[
+                        { value: 'Full 40ft Reefer Container (FCL)', label: 'Full 40ft Reefer Container (1,600 Cartons of 15kg)' },
+                        { value: 'Multi-Pallet Allocation (LCL)', label: 'Multi-Pallet Allocation (2 to 10 Pallets)' },
+                        { value: 'Trial Sample Consignment', label: 'Trial Sample Consignment (1 Pallet)' },
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Delivery Location</label>
-                    <select
+                    <CustomSelect
                       value={orangeForm.deliveryLocation}
-                      onChange={(e) => setOrangeForm({ ...orangeForm, deliveryLocation: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#c2410c]"
-                    >
-                      <option value="Mumbai (Nhava Sheva / Vashi)">Mumbai (Nhava Sheva / Vashi Cold Storage)</option>
-                      <option value="Delhi NCR (Azadpur / Kundli)">Delhi NCR (Azadpur Terminal / Kundli Hub)</option>
-                      <option value="Chennai (Chennai Port)">Chennai (Chennai Port / Koyambedu)</option>
-                      <option value="Bengaluru (Yeshwanthpur)">Bengaluru (Yeshwanthpur / Hoskote)</option>
-                      <option value="Hyderabad (Gaddi Annaram)">Hyderabad (Gaddi Annaram Terminal)</option>
-                      <option value="Mundra Port (Gujarat)">Mundra Port (Gujarat Clearance)</option>
-                    </select>
+                      onChange={(val) => setOrangeForm({ ...orangeForm, deliveryLocation: val })}
+                      accentColor="#c2410c"
+                      options={[
+                        { value: 'Mumbai (Nhava Sheva / Vashi)', label: 'Mumbai (Nhava Sheva / Vashi Cold Storage)' },
+                        { value: 'Delhi NCR (Azadpur / Kundli)', label: 'Delhi NCR (Azadpur Terminal / Kundli Hub)' },
+                        { value: 'Chennai (Chennai Port)', label: 'Chennai (Chennai Port / Koyambedu)' },
+                        { value: 'Bengaluru (Yeshwanthpur)', label: 'Bengaluru (Yeshwanthpur / Hoskote)' },
+                        { value: 'Hyderabad (Gaddi Annaram)', label: 'Hyderabad (Gaddi Annaram Terminal)' },
+                        { value: 'Mundra Port (Gujarat)', label: 'Mundra Port (Gujarat Clearance)' },
+                      ]}
+                    />
                   </div>
 
                   <div className="sm:col-span-2 lg:col-span-3 space-y-1.5">
@@ -1198,7 +1211,8 @@ export function CommercialDossier({
                       required
                       value={orangeForm.requiredDate}
                       onChange={(e) => setOrangeForm({ ...orangeForm, requiredDate: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#c2410c]"
+                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#c2410c] cursor-pointer"
+                      style={{ colorScheme: 'light' }}
                     />
                   </div>
                 </div>
@@ -1255,68 +1269,73 @@ export function CommercialDossier({
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Type</label>
-                    <select
+                    <CustomSelect
                       value={dragonForm.type}
-                      onChange={(e) => setDragonForm({ ...dragonForm, type: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#be185d]"
-                    >
-                      <option value="White Flesh Pitaya (Snow White)">White Flesh Pitaya (Snow White • Crisp Seeds)</option>
-                      <option value="Red / Magenta Flesh Pitaya (Ruby)">Red / Magenta Flesh Pitaya (Ruby Betacyanin)</option>
-                      <option value="Yellow Dragon Fruit (Palora)">Yellow Dragon Fruit (Palora • Ultra Sweet 18° Brix)</option>
-                    </select>
+                      onChange={(val) => setDragonForm({ ...dragonForm, type: val })}
+                      accentColor="#be185d"
+                      options={[
+                        { value: 'White Flesh Pitaya (Snow White)', label: 'White Flesh Pitaya (Snow White • Crisp Seeds)' },
+                        { value: 'Red / Magenta Flesh Pitaya (Ruby)', label: 'Red / Magenta Flesh Pitaya (Ruby Betacyanin)' },
+                        { value: 'Yellow Dragon Fruit (Palora)', label: 'Yellow Dragon Fruit (Palora • Ultra Sweet 18° Brix)' },
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Origin</label>
-                    <select
+                    <CustomSelect
                       value={dragonForm.origin}
-                      onChange={(e) => setDragonForm({ ...dragonForm, origin: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#be185d]"
-                    >
-                      <option value="Binh Thuan Province, Vietnam">Binh Thuan Province, Vietnam (Capital of Pitaya)</option>
-                      <option value="Long An Province, Vietnam">Long An Province, Vietnam</option>
-                      <option value="Tien Giang (Mekong Delta), Vietnam">Tien Giang (Mekong Delta), Vietnam</option>
-                    </select>
+                      onChange={(val) => setDragonForm({ ...dragonForm, origin: val })}
+                      accentColor="#be185d"
+                      options={[
+                        { value: 'Binh Thuan Province, Vietnam', label: 'Binh Thuan Province, Vietnam (Capital of Pitaya)' },
+                        { value: 'Long An Province, Vietnam', label: 'Long An Province, Vietnam' },
+                        { value: 'Tien Giang (Mekong Delta), Vietnam', label: 'Tien Giang (Mekong Delta), Vietnam' },
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Pack size</label>
-                    <select
+                    <CustomSelect
                       value={dragonForm.packSize}
-                      onChange={(e) => setDragonForm({ ...dragonForm, packSize: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#be185d]"
-                    >
-                      <option value="NEW 9.0kg FRU FRESH Carton">NEW 9.0kg FRU FRESH Vietnam Branded Carton</option>
-                      <option value="4.0kg Luxury Presentation Gift Box">4.0kg Luxury Presentation Gift Box</option>
-                      <option value="18.0kg Bulk Reefer Bin">18.0kg Bulk Reefer Bin</option>
-                    </select>
+                      onChange={(val) => setDragonForm({ ...dragonForm, packSize: val })}
+                      accentColor="#be185d"
+                      options={[
+                        { value: 'NEW 9.0kg FRU FRESH Carton', label: 'NEW 9.0kg FRU FRESH Vietnam Branded Carton' },
+                        { value: '4.0kg Luxury Presentation Gift Box', label: '4.0kg Luxury Presentation Gift Box' },
+                        { value: '18.0kg Bulk Reefer Bin', label: '18.0kg Bulk Reefer Bin' },
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Quantity</label>
-                    <select
+                    <CustomSelect
                       value={dragonForm.quantity}
-                      onChange={(e) => setDragonForm({ ...dragonForm, quantity: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#be185d]"
-                    >
-                      <option value="Full 40ft Reefer Container (~2,000 Cartons)">Full 40ft Reefer Container (~2,000 Cartons)</option>
-                      <option value="Direct Air Cargo Pallet (500kg Fast Link)">Direct Air Cargo Pallet (500kg Fast Link)</option>
-                      <option value="Trial Assessment Pallet">Trial Assessment Pallet (1 Pallet / ~100 Cartons)</option>
-                    </select>
+                      onChange={(val) => setDragonForm({ ...dragonForm, quantity: val })}
+                      accentColor="#be185d"
+                      options={[
+                        { value: 'Full 40ft Reefer Container (~2,000 Cartons)', label: 'Full 40ft Reefer Container (~2,000 Cartons)' },
+                        { value: 'Direct Air Cargo Pallet (500kg Fast Link)', label: 'Direct Air Cargo Pallet (500kg Fast Link)' },
+                        { value: 'Trial Assessment Pallet', label: 'Trial Assessment Pallet (1 Pallet / ~100 Cartons)' },
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="font-mono text-[11px] uppercase font-bold text-black/70">Destination</label>
-                    <select
+                    <CustomSelect
                       value={dragonForm.destination}
-                      onChange={(e) => setDragonForm({ ...dragonForm, destination: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#be185d]"
-                    >
-                      <option value="Chennai Port (10-Day Direct Sea Transit)">Chennai Port (10-Day Direct Sea Transit)</option>
-                      <option value="Mumbai (Nhava Sheva / Vashi)">Mumbai (Nhava Sheva / Vashi Cold Storage)</option>
-                      <option value="Bengaluru (Cold Chain Terminal)">Bengaluru (Cold Chain Terminal)</option>
-                      <option value="Delhi NCR Air Cargo Terminal">Delhi NCR Air Cargo Terminal</option>
-                    </select>
+                      onChange={(val) => setDragonForm({ ...dragonForm, destination: val })}
+                      accentColor="#be185d"
+                      options={[
+                        { value: 'Chennai Port (10-Day Direct Sea Transit)', label: 'Chennai Port (10-Day Direct Sea Transit)' },
+                        { value: 'Mumbai (Nhava Sheva / Vashi)', label: 'Mumbai (Nhava Sheva / Vashi Cold Storage)' },
+                        { value: 'Bengaluru (Cold Chain Terminal)', label: 'Bengaluru (Cold Chain Terminal)' },
+                        { value: 'Delhi NCR Air Cargo Terminal', label: 'Delhi NCR Air Cargo Terminal' },
+                      ]}
+                    />
                   </div>
 
                   <div className="sm:col-span-2 lg:col-span-3 space-y-1.5">
@@ -1329,7 +1348,8 @@ export function CommercialDossier({
                       required
                       value={dragonForm.requiredDate}
                       onChange={(e) => setDragonForm({ ...dragonForm, requiredDate: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#be185d]"
+                      className="w-full px-4 py-3 rounded-xl border border-black/15 bg-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#be185d] cursor-pointer"
+                      style={{ colorScheme: 'light' }}
                     />
                   </div>
                 </div>
@@ -1409,16 +1429,17 @@ export function CommercialDossier({
 
                 <div className="space-y-1.5">
                   <label className="font-mono text-[10px] uppercase font-bold text-black/60">Upcoming Inflow Sourcing Target</label>
-                  <select
+                  <CustomSelect
                     value={notifyTargetFruit}
-                    onChange={(e) => setNotifyTargetFruit(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-black/15 bg-white font-sans text-xs focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
-                  >
-                    <option value="All Upcoming Arrivals">All Upcoming Fruit Shipments</option>
-                    <option value="USA Washington Gala & Fuji Apples">USA Washington Gala & Fuji Apples (ETA 6 Days)</option>
-                    <option value="Australian Navel & Midknight Oranges">Australian Navel & Midknight Oranges (Next Shipment)</option>
-                    <option value="Vietnam Ruby Red Dragon Fruit">Vietnam Ruby Red Dragon Fruit (Next Week)</option>
-                  </select>
+                    onChange={(val) => setNotifyTargetFruit(val)}
+                    accentColor="#1A1A1A"
+                    options={[
+                      { value: 'All Upcoming Arrivals', label: 'All Upcoming Fruit Shipments' },
+                      { value: 'USA Washington Gala & Fuji Apples', label: 'USA Washington Gala & Fuji Apples (ETA 6 Days)' },
+                      { value: 'Australian Navel & Midknight Oranges', label: 'Australian Navel & Midknight Oranges (Next Shipment)' },
+                      { value: 'Vietnam Ruby Red Dragon Fruit', label: 'Vietnam Ruby Red Dragon Fruit (Next Week)' },
+                    ]}
+                  />
                 </div>
 
                 <div className="space-y-1.5">

@@ -10,6 +10,7 @@ import { RailNav } from './components/RailNav';
 import { MobileNav } from './components/MobileNav';
 import { AnatomyOverlay } from './components/AnatomyOverlay';
 import { CommercialDossier } from './components/CommercialDossier';
+import { Footer } from './components/Footer';
 import { ArrowUp, ArrowDown, Send } from 'lucide-react';
 import { useIsMobile } from './hooks/useIsMobile';
 
@@ -35,6 +36,7 @@ export default function App() {
   const [isPartnershipOpen, setIsPartnershipOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [scrubProgress, setScrubProgress] = useState(0);
+  const [inDossier, setInDossier] = useState(false);
   const [mobilePhase2Tab, setMobilePhase2Tab] = useState<'origin' | 'taste'>('origin');
   const [mobilePhase3Tab, setMobilePhase3Tab] = useState<'varieties' | 'specs'>('varieties');
 
@@ -160,6 +162,9 @@ export default function App() {
       if (scrubTrackHeight > 0) {
         setScrubProgress(Math.max(0, Math.min(1, currentY / scrubTrackHeight)));
       }
+
+      // Check if user has scrolled past the 3D rotating fruit sequence into the commercial dossier text
+      setInDossier(currentY >= scrubTrackHeight - 80);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -385,7 +390,7 @@ export default function App() {
       <ScrollFrameBackground fruitId={selectedFruit.id} isDarkMode={isDarkMode} />
 
       {/* Guide Grid with Hairline Architectural Rules */}
-      <GuideGrid />
+      <GuideGrid inDossier={inDossier} />
 
       {/* Left-Rail Navigation (Desktop) & Mobile Drawer Navigation */}
       <RailNav activeView={activeView} onSelectView={handleSelectView} />
@@ -403,6 +408,7 @@ export default function App() {
         onSelectView={handleSelectView}
         onOpenPartnership={() => setIsPartnershipOpen(true)}
         isDarkMode={isDarkMode}
+        inDossier={inDossier}
       />
 
       {/* MAIN CONTAINER */}
@@ -898,6 +904,9 @@ export default function App() {
           />
         </div>
       </main>
+
+      {/* SITE FOOTER */}
+      <Footer onOpenPartnership={() => setIsPartnershipOpen(true)} />
 
       {/* ========================================================================= */}
       {/* MOBILE STICKY BOTTOM ACTION PILL (Commercial Dossier only) */}

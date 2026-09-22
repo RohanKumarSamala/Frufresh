@@ -497,6 +497,11 @@ body::-webkit-scrollbar {
   transition: transform 0.4s ease;
 }
 
+#leadership .portrait-image {
+  width: 80%;
+  margin: 0 auto;
+}
+
 .profile-portrait:hover .portrait-image {
   transform: translateY(-4px) scale(1.015);
 }

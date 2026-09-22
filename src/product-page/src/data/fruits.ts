@@ -78,16 +78,6 @@ export const FRUIT_SPECIMENS: FruitSpecimen[] = [
         bestFor: 'Gourmet boutiques & luxury hospitality',
         badge: 'Gourmet Benchmark',
       },
-      {
-        id: 'red-delicious',
-        name: 'Red Delicious',
-        grade: 'Washington Extra Fancy',
-        brix: '12.5° – 13.8°',
-        notes: 'Deep crimson conical fruit with five prominent basal lobes. Tender sweet flesh with classic aromatic bouquet.',
-        harvestWindow: 'Sep – Apr (USA/Washington)',
-        bestFor: 'Traditional wholesale & institutional supply',
-        badge: 'Classic Heritage',
-      },
     ],
     // 04 Sensory Star Ratings
     sensoryRatings: {

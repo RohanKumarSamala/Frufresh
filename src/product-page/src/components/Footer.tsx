@@ -1,29 +1,108 @@
 import React from 'react';
-import { FrufreshLogo } from './FrufreshLogo';
 
 interface FooterProps {
-  onOpenPartnership: () => void;
+  onOpenPartnership?: () => void;
 }
 
 export function Footer({ onOpenPartnership }: FooterProps) {
   return (
-    <footer id="editorial-footer" className="relative border-t border-[#E5E5E1] px-6 sm:px-12 md:px-16 lg:px-20 py-8 text-[#1A1A1A] bg-white/80 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-4 font-sans text-xs text-[#1A1A1A]/50">
-      <div className="flex items-center gap-3 text-[#1A1A1A]">
-        <FrufreshLogo size="sm" />
-        <span className="text-[10px] text-[#1A1A1A]/40 uppercase tracking-widest ml-1">• Cascade & Etna Cultivars</span>
+    <footer id="site-footer">
+      <div className="footer-main">
+        <div className="footer-brand">
+          <img className="footer-logo" src="/assets/images/logo.png" alt="Fru Fresh" />
+          <p className="footer-tagline">
+            Known for<br />
+            <em>knowing fruit.</em>
+          </p>
+          <p className="footer-blurb">
+            Fresh produce sourced from growers across 12+ countries and
+            distributed through 8 states in India — built on relationships
+            rather than transactions.
+          </p>
+        </div>
+
+        <nav className="footer-nav" aria-label="Footer">
+          <div className="footer-col">
+            <h2 className="footer-heading">Explore</h2>
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li><a href="/products/?fruit=apple">Apples</a></li>
+              <li><a href="/products/?fruit=orange">Oranges</a></li>
+              <li><a href="/products/?fruit=dragonfruit">Dragon Fruit</a></li>
+            </ul>
+          </div>
+
+          <div className="footer-col">
+            <h2 className="footer-heading">Company</h2>
+            <ul>
+              <li><a href="/#founder">The Founder</a></li>
+              <li><a href="/#leadership">Leadership</a></li>
+              <li><a href="/#story">Our Story</a></li>
+            </ul>
+          </div>
+
+          <div className="footer-col footer-col--contact">
+            <h2 className="footer-heading">Get in touch</h2>
+            <ul>
+              <li>
+                <a className="footer-email" href="mailto:frufreshindia@gmail.com">
+                  frufreshindia@gmail.com
+                </a>
+              </li>
+              <li>
+                <a
+                  className="footer-social"
+                  href="https://www.instagram.com/frufresh_ind"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Fru Fresh on Instagram"
+                >
+                  <span className="footer-social-glyph">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="3" y="3" width="18" height="18" rx="5" />
+                      <circle cx="12" cy="12" r="4.1" />
+                      <circle className="is-dot" cx="17.2" cy="6.8" r="1.15" />
+                    </svg>
+                  </span>
+                  <span>@frufresh_ind</span>
+                </a>
+              </li>
+              <li className="footer-place">Hyderabad, Telangana &middot; India</li>
+              {onOpenPartnership && (
+                <li className="pt-2">
+                  <button
+                    type="button"
+                    onClick={onOpenPartnership}
+                    className="inline-flex items-center gap-1 text-xs font-mono tracking-wider uppercase text-[#c72f1d] hover:underline cursor-pointer transition-colors"
+                  >
+                    <span>Allocation Inquiry &rarr;</span>
+                  </button>
+                </li>
+              )}
+            </ul>
+          </div>
+        </nav>
       </div>
 
-      <div className="flex items-center gap-6">
-        <span className="text-[11px] font-mono">LAT 47.38° N • LON 0.68° E</span>
-        <button
-          onClick={onOpenPartnership}
-          className="text-[#1A1A1A] font-bold uppercase tracking-wider hover:underline"
-        >
-          Inquire
-        </button>
+      <dl className="footer-figures">
+        <div>
+          <dt>12+</dt>
+          <dd>countries sourced from</dd>
+        </div>
+        <div>
+          <dt>8</dt>
+          <dd>states distributed across</dd>
+        </div>
+        <div>
+          <dt>50+</dt>
+          <dd>years in fresh produce</dd>
+        </div>
+      </dl>
+
+      <div className="footer-base">
+        <span>&copy; 2026 Fru Fresh. All rights reserved.</span>
+        <span className="footer-base-right">Fresh produce, sourced properly.</span>
       </div>
     </footer>
   );
 }
-
-

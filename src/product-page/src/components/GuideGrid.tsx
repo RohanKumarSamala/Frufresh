@@ -8,9 +8,14 @@ import React from 'react';
  * Deliberately static — no scroll listener, no animation, no state. The
  * positions come from the CSS custom properties in index.css.
  */
-export function GuideGrid() {
+export interface GuideGridProps {
+  inDossier?: boolean;
+}
+
+export function GuideGrid({ inDossier = false }: GuideGridProps) {
   return (
-    <div className="fr-grid" aria-hidden="true">
+    <div className={`fr-grid ${inDossier ? 'in-dossier' : ''}`} aria-hidden="true">
+      <div className="fr-nav-mask" />
       <span className="fr-line fr-line--v fr-l" />
       <span className="fr-line fr-line--h fr-t" />
       <span className="fr-mark fr-mark--tl" />

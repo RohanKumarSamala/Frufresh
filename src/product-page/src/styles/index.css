@@ -247,6 +247,25 @@ body::-webkit-scrollbar {
   pointer-events: none;
 }
 
+/* Hides the band above the top rule once the user scrolls into the
+   dossier text, so content vanishing at the top rule does not slide
+   behind the logo. Mirrors the home page's .nav-mask. Sits first in
+   .fr-grid so the rules and crosshair still draw over it. */
+.fr-nav-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--fr-t);
+  background: #fefef7;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.fr-grid.in-dossier .fr-nav-mask {
+  opacity: 1;
+}
+
 .fr-line { position: absolute; background: var(--fr-ink); }
 .fr-line--v { top: 0; bottom: 0; width: 1px; }
 .fr-line--h { left: 0; right: 0; height: 1px; }
@@ -901,3 +920,201 @@ body.fr-nav-open {
     padding-right: 16px;
   }
 }
+
+/* =========================================================================
+   SITE FOOTER (Signature Dark Ground matching home page)
+   ========================================================================= */
+#site-footer {
+  --beige: #fefef7;
+  --beige-dim: rgba(254, 254, 247, 0.62);
+  --beige-faint: rgba(254, 254, 247, 0.16);
+  --brand-red: #c72f1d;
+
+  position: relative;
+  /* Above the fixed guide overlay, the rail and the header logo.
+     Clearing them lets the footer read as a full panel the page ends on. */
+  z-index: 85;
+  background: #17150f;
+  color: var(--beige-dim);
+  padding: clamp(64px, 10vh, 120px) 6% clamp(28px, 4vh, 44px);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.footer-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.6fr);
+  gap: clamp(48px, 7vw, 120px);
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding-bottom: clamp(48px, 7vh, 88px);
+}
+
+.footer-logo {
+  display: block;
+  width: clamp(96px, 11vw, 132px);
+  height: auto;
+  margin-bottom: clamp(24px, 3.5vh, 40px);
+}
+
+.footer-tagline {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3.4vw, 44px);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  color: var(--beige);
+  margin-bottom: 0.7em;
+}
+
+.footer-tagline em {
+  font-style: italic;
+  color: var(--brand-red);
+}
+
+.footer-blurb {
+  font-family: var(--font-sans);
+  font-size: clamp(14px, 1.05vw, 16.5px);
+  line-height: 1.7;
+  max-width: 42ch;
+}
+
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: clamp(32px, 4vw, 64px);
+}
+
+.footer-heading {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brand-red);
+  margin-bottom: 1.9em;
+}
+
+.footer-col ul {
+  list-style: none;
+  display: grid;
+  gap: 0.95em;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-col a {
+  font-family: var(--font-sans);
+  font-size: clamp(15px, 1.15vw, 18px);
+  line-height: 1.35;
+  color: var(--beige);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.footer-col a:hover,
+.footer-col a:focus-visible {
+  color: var(--brand-red);
+}
+
+.footer-col a:focus-visible {
+  outline: 1px solid var(--brand-red);
+  outline-offset: 3px;
+}
+
+.footer-email {
+  word-break: break-word;
+}
+
+.footer-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+}
+
+.footer-social-glyph {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.footer-social-glyph svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+.footer-social-glyph .is-dot {
+  fill: currentColor;
+  stroke: none;
+}
+
+.footer-place {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(222, 220, 210, 0.62);
+  line-height: 1.7;
+  padding-top: 0.4em;
+}
+
+.footer-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: clamp(20px, 3vw, 56px);
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: clamp(32px, 4.5vh, 52px) 0;
+  border-top: 1px solid var(--beige-faint);
+  border-bottom: 1px solid var(--beige-faint);
+}
+
+.footer-figures dt {
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 3.6vw, 48px);
+  line-height: 1;
+  color: var(--beige);
+  margin-bottom: 0.3em;
+}
+
+.footer-figures dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(222, 220, 210, 0.62);
+  line-height: 1.6;
+}
+
+.footer-base {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding-top: clamp(22px, 3vh, 32px);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(222, 220, 210, 0.55);
+}
+
+@media (max-width: 880px) {
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: clamp(44px, 8vw, 64px);
+  }
+}
+
